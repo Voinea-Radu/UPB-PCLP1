@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "points_utils.h"
+#include "utils.h"
 
 int main(void)
 {
@@ -9,16 +10,8 @@ int main(void)
 
 	scanf("%d", &number_of_courses);
 
-	int grades[number_of_courses];
-	int credits[number_of_courses];
-
-	// Citire grades
-	for (int i = 0; i < number_of_courses; i++)
-		scanf("%d", &grades[i]);
-
-	// Citire credits
-	for (int i = 0; i < number_of_courses; i++)
-		scanf("%d", &credits[i]);
+	int *grades = read_int_array(number_of_courses);
+	int *credits = read_int_array(number_of_courses);
 
 	// Citire current_points minim
 	scanf("%d", &minim_points);

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include "board_utils.h"
+#include "utils.h"
 
 int main(void)
 {
@@ -9,14 +10,7 @@ int main(void)
 	// Citire numar de linii si coloane
 	scanf("%d", &baord_size);
 
-	int **board = malloc(baord_size * sizeof(int *));
-
-	// Citire board
-	for (int i = 0; i < baord_size; i++) {
-		board[i] = malloc(baord_size * sizeof(int));
-		for (int j = 0; j < baord_size; j++)
-			scanf("%d", &board[i][j]);
-	}
+	int **board = read_int_matrix(baord_size, baord_size);
 
 	// Procesare tablei
 	result res = process_board(baord_size, board, 0, 0);

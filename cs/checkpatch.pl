@@ -3691,7 +3691,7 @@ sub process {
 				possible($1, "B:" . $s);
 			}
 
-			# any (foo ... *) is a pointer cast, and foo is a type
+			# any (read_and_check_nanogram ... *) is a pointer cast, and foo is a type
 			while ($s =~ /\(($Ident)(?:\s+$Sparse)*[\s\*]+\s*\)/sg) {
 				possible($1, "C:" . $s);
 			}
