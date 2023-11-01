@@ -1,26 +1,24 @@
 #include <stdio.h>
-#include <math.h>
-#include <stdint.h>
-#include <inttypes.h>
-#include "math_util.h"
+#include "math_utils.h"
 
 int main(void)
 {
 	// Citirea numarului de coordonate
-	unsigned long n = 0;
-	scanf("%lu", &n);
+	unsigned long number_of_coordinates = 0;
+	scanf("%lu", &number_of_coordinates);
 
 	// Variabile pentru calculul produsului scalar
-	unsigned long long produs_scalar = 0;
+	unsigned long long scalar_product = 0;
 
 	// Variabile pentru calculul celui de al 2-lea maxim
-	unsigned long maxime_secunde[2] = {0};
+	unsigned long second_maxim[2] = {0};
 
 	// Variabile pentru calculul normei vectorilor
-	double norma[2] = {0};
+	double norm[2] = {0};
 
-	for (unsigned long coord_index = 0; coord_index < n; coord_index++) {
-		unsigned long coordonate[2] = {0};
+	for (unsigned long coord_index = 0; coord_index < number_of_coordinates;
+		 coord_index++) {
+		unsigned long coordinates[2] = {0};
 
 		for (unsigned long vector_index = 0; vector_index < 2; vector_index++) {
 			// Citim coordonatele vectorilor in baza 8
@@ -28,32 +26,33 @@ int main(void)
 			scanf("%lu", &tmp_b8);
 
 			// Convertim si salvam coordonata in baza 10
-			coordonate[vector_index] = convert_baza8_in_baza10(tmp_b8);
+			coordinates[vector_index] = convert_base8_to_base10(tmp_b8);
 
 			// Al 2-lea maxim
-			maxime_secunde[vector_index] = calcul_al_doilea_maxim
-					(vector_index, coordonate[vector_index]);
+			second_maxim[vector_index] = compute_second_maximum
+					(vector_index, coordinates[vector_index]);
 
 			// Norma
-			norma[vector_index] = calcul_norma
-					(vector_index, coordonate[vector_index]);
+			norm[vector_index] = compute_norm
+					(vector_index, coordinates[vector_index]);
 		}
 
 		// Produs scalar
-		produs_scalar = calcul_produs_scalar(2, coordonate);
+		scalar_product = compute_scalar_product
+				(2, coordinates);
 	}
 
 	// Afisare produs scalar
-	printf("%llu\n", produs_scalar);
+	printf("%llu\n", scalar_product);
 
 	// Afisare al 2-lea maxim
 	for (unsigned long vector_index = 0; vector_index < 2; vector_index++)
-		printf("%lu ", maxime_secunde[vector_index]);
+		printf("%lu ", second_maxim[vector_index]);
 	printf("\n");
 
-	// Afisare norma
+	// Afisare norm
 	for (unsigned long vector_index = 0; vector_index < 2; vector_index++)
-		printf("%.7f ", norma[vector_index]);
+		printf("%.7f ", norm[vector_index]);
 	printf("\n");
 
 	return 0;

@@ -5,7 +5,7 @@
  * @param credite Array-ul cu creditele asociate fiecarei materii
  * @return Punctajul studentului
  */
-int calcul_punctaj(int numar_materii, const int *note, const int *credite);
+int compute_points(int numar_materii, const int *note, const int *credite);
 
 /**
  * Calculeaza numarul minim de materii la care trebuie obtinuta nota 10 pentru
@@ -17,5 +17,5 @@ int calcul_punctaj(int numar_materii, const int *note, const int *credite);
  * @param credite Array-ul cu creditele asociate fiecarei materii
  * @return Numarul minim de materii
  */
-int calcul_minim_materii(int punctaj, int punctaj_minim, int numar_materii,
-						 int *note, const int *credite);
+int compute_minimum_courses(int punctaj, int punctaj_minim, int numar_materii,
+							int *note, const int *credite);

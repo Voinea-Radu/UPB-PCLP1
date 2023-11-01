@@ -1,9 +1,9 @@
 void f(int x)
 {
-    x = 2; // ups
+	x = 2; // ups
 }
 
 int main(void)
 {
-        return 0;
+	return 0;
 }

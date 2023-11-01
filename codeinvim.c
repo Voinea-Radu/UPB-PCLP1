@@ -1,37 +1,39 @@
 #include <stdio.h>
-#include "punctaje_util.h"
+#include "points_utils.h"
 
 int main(void)
 {
 	// Citire numar de materii
-	int n = 0;
-	int punctaj_minim = 0;
+	int number_of_courses = 0;
+	int minim_points = 0;
 
-	scanf("%d", &n);
+	scanf("%d", &number_of_courses);
 
-	int note[n];
-	int credite[n];
+	int grades[number_of_courses];
+	int credits[number_of_courses];
 
-	// Citire note
-	for (int i = 0; i < n; i++)
-		scanf("%d", &note[i]);
+	// Citire grades
+	for (int i = 0; i < number_of_courses; i++)
+		scanf("%d", &grades[i]);
 
-	// Citire credite
-	for (int i = 0; i < n; i++)
-		scanf("%d", &credite[i]);
+	// Citire credits
+	for (int i = 0; i < number_of_courses; i++)
+		scanf("%d", &credits[i]);
 
-	// Citire punctaj minim
-	scanf("%d", &punctaj_minim);
+	// Citire current_points minim
+	scanf("%d", &minim_points);
 
-	// Calculare punctaj curent
-	int punctaj = calcul_punctaj(n, note, credite);
+	// Calculare current_points curent
+	int current_points = compute_points
+			(number_of_courses, grades, credits);
 
 	// Calculare numar minim de materii	pentru a ajunge la punctajul minim
-	int minim_materii = calcul_minim_materii
-			(punctaj, punctaj_minim, n, note, credite);
+	int minimum_courses = compute_minimum_courses
+			(current_points, minim_points,
+			 number_of_courses, grades, credits);
 
 	// Afisarea numarului minim de materii pentru a ajunge la punctajul minim
-	printf("%d\n", minim_materii);
+	printf("%d\n", minimum_courses);
 
 	return 0;
 }

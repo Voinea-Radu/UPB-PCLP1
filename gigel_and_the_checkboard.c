@@ -1,38 +1,34 @@
 #include <stdio.h>
-#include <math.h>
-#include <stdint.h>
-#include <inttypes.h>
 #include <malloc.h>
-#include "tabla_util.h"
+#include "board_utils.h"
 
 int main(void)
 {
-	int n = 0;
+	int baord_size = 0;
 
 	// Citire numar de linii si coloane
-	scanf("%d", &n);
+	scanf("%d", &baord_size);
 
-	int **tabla = malloc(n * sizeof(int *));
+	int **board = malloc(baord_size * sizeof(int *));
 
-	// Citire tabla
-	for (int i = 0; i < n; i++) {
-		tabla[i] = malloc(n * sizeof(int));
-		for (int j = 0; j < n; j++)
-			scanf("%d", &tabla[i][j]);
+	// Citire board
+	for (int i = 0; i < baord_size; i++) {
+		board[i] = malloc(baord_size * sizeof(int));
+		for (int j = 0; j < baord_size; j++)
+			scanf("%d", &board[i][j]);
 	}
 
 	// Procesare tablei
-	rezultat rez = procesare_tabla(n, tabla, 0, 0);
+	result res = process_board(baord_size, board, 0, 0);
 
 	// Convertire coordonata x la litera
-	char coordonata_literal[2];
-	converteste_la_litera(rez.x, coordonata_literal);
+	char literal_coordinate[2];
+	convert_coord_to_literal(res.x, literal_coordinate);
 
 	// Afisare rezultate
-	printf("%d\n%d %s", rez.distanta, rez.y, coordonata_literal);
+	printf("%d\n%d %s", res.distance, res.y, literal_coordinate);
 
 	// Eliberare memorie
-	free(tabla);
+	free(board);
 	return 0;
 }
-

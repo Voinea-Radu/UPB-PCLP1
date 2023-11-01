@@ -9,19 +9,19 @@ add_compile_options(-Wall -Wextra -pedantic -Werror)
 
 add_executable(infinite_product
         infinite_product.c
-        math_util.h
-        math_util.c)
+        math_utils.h
+        math_utils.c)
 
 add_executable(codeinvim
         codeinvim.c
-        punctaje_util.h
-        punctaje_util.c
+        points_utils.h
+        points_utils.c
 )
 
 add_executable(gigel_and_the_checkboard
         gigel_and_the_checkboard.c
-        tabla_util.h
-        tabla_util.c
+        board_utils.h
+        board_utils.c
 )
 
 target_link_libraries(infinite_product -lm)

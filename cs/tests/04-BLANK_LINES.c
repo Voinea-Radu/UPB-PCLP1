@@ -2,10 +2,12 @@ void f(int x)
 {
 	// do something
 }
+
 void g(x)
 {
 	// do something
 }
+
 int main(void)
 {
 

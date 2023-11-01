@@ -2,10 +2,10 @@
 // n       - the base
 // k       - the exponente
 // @return - n raise to k
-int power(int n, int k) {
+int power(int n, int k)
+{
 	// base case: n raise to 0 is 1
-	if (!k)
-	{
+	if (!k) {
 		return 1;
 	}
 

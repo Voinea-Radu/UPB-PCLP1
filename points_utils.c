@@ -1,6 +1,6 @@
-#include "punctaje_util.h"
+#include "points_utils.h"
 
-int calcul_punctaj(int numar_materii, const int *note, const int *credite)
+int compute_points(int numar_materii, const int *note, const int *credite)
 {
 	int punctaj = 0;
 
@@ -11,8 +11,8 @@ int calcul_punctaj(int numar_materii, const int *note, const int *credite)
 	return punctaj;
 }
 
-int calcul_minim_materii(int punctaj, int punctaj_minim, int numar_materii,
-						 int *note, const int *credite)
+int compute_minimum_courses(int punctaj, int punctaj_minim, int numar_materii,
+							int *note, const int *credite)
 {
 	if (punctaj >= punctaj_minim)
 		return 0;
@@ -39,7 +39,7 @@ int calcul_minim_materii(int punctaj, int punctaj_minim, int numar_materii,
 	note[max_index] = 10;
 
 	// Apelam recursiv functia pentru a calcula numarul minim de materii
-	return 1 + calcul_minim_materii
+	return 1 + compute_minimum_courses
 			(punctaj, punctaj_minim, numar_materii, note, credite);
 }
 
