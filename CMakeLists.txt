@@ -6,7 +6,7 @@ project(nanogram_checker C)
 
 set(CMAKE_C_STANDARD 11)
 
-#add_compile_options(-Wall -Wextra -pedantic -Werror)
+add_compile_options(-Wall -Wextra -pedantic -Werror)
 
 add_executable(infinite_product
         infinite_product.c
