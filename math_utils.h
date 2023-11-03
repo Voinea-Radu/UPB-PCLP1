@@ -6,28 +6,33 @@
 unsigned long convert_base8_to_base10(unsigned long base8);
 
 /**
- * Calculeaza produsul scalar a number_of_coordinates vectori
- * @param number_of_coordinates Numarul de coordinates (implicit numarul de
- * vectori)
- * @param coordinates array-ul cu coordonatele vectorilor
- * @return
+ * Calculeaza produsul scalar dintre 2 vectori, coordonata cu coordonata.
+ * @param coord_v1 Coordonata primul vector
+ * @param coord_v2 Coordonata celui de al doilea vector
+ * @return Produsul scalar curent
  */
-unsigned long long compute_scalar_product(unsigned long number_of_coordinates,
-										  const unsigned long *coordinates);
+unsigned long long compute_scalar_product(unsigned long coord_v1,
+										  unsigned long coord_v2);
 
 /**
- * Calculeaza al doilea maxim dintr-un vector.
- * @param vector_index Indexul vectorului
- * @param coord Coordonata vectorului de la indexul vector_index
- * @return Al doilea maxim din vectorul de la indexul vector_index.
+ * Calculeaza al doilea maxim dintre 2 vectori, coordonata cu coordonata.
+ * @param coord_v1 Coordonata primul vector
+ * @param coord_v2 Coordonata celui de al doilea vector
+ * @param second_max_v1 Variabila de iesire a celui de al doilea maxim curent
+ * @param second_max_v2 Variabila de iesire a celui de al doilea maxim curent
  */
-unsigned long compute_second_maximum(unsigned long vector_index,
-									 unsigned long coord);
+void compute_second_maximum(unsigned long coord_v1, unsigned long coord_v2,
+							long long *second_max_v1,
+							long long *second_max_v2);
 
 /**
- * Calculeaza norma vectorului de la indexul vector_index.
- * @param vector_index Indexul vectorului
- * @param coord Coordonata vectorului de la indexul vector_index
- * @return Norma vectorului de la indexul vector_index.
+ * Calculeaza norma vectorilor, coordonata cu coordonata.
+ * @param coord_v1 Coordonata primul vector
+ * @param coord_v2 Coordonata celui de al doilea vector
+ * @param norma_v1 Variabila de iesire a normei primului vectorm
+ * @param norma_v2 Variabila de iesire a normei celui de al doilea vector
  */
-double compute_norm(unsigned long vector_index, unsigned long coord);
+void compute_norm(unsigned long coord_v1, unsigned long coord_v2,
+				  double *norma_v1, double *norma_v2);
+
+// TODO - Maybe make compute_second_maximum and compute_norm for only one vector
