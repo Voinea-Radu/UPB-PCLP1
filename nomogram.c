@@ -70,5 +70,5 @@ void read_and_check_nanogram(void)
 								(const int **)nanogram,
 								(const int **)line_rules,
 								(const int **)column_rules);
-	printf("%s", result == 1 ? "Corect" : "Eroare");
+	printf("%s\n", result == 1 ? "Corect" : "Eroare");
 }

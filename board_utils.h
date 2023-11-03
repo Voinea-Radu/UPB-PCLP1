@@ -1,7 +1,7 @@
 typedef struct {
 	int x;
 	int y;
-	int distance;
+	long long distance;
 } result;
 
 /**

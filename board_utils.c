@@ -4,7 +4,7 @@
 
 result process_board(int board_size, int **board, int x, int y)
 {
-	static int distance;
+	static long long distance;
 	int cell = board[y][x];
 
 	// Am ajuns la o celulta deja vizitata sau marcata ca cell de iesire (0)

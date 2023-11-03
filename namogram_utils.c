@@ -8,7 +8,6 @@ int check_nanogram(int number_of_lines, int number_of_columns,
 	for (int line_index = 0; line_index < number_of_lines; line_index++) {
 		if (!check_line(number_of_columns, line_index, nanogram,
 						line_rules[line_index])) {
-			printf("Failed line %d\n", line_index);
 			return 0;
 		}
 	}
@@ -19,7 +18,6 @@ int check_nanogram(int number_of_lines, int number_of_columns,
 						  nanogram,
 						  (const int *)column_rules[column_index]
 		)) {
-			printf("Failed column %d\n", column_index);
 			return 0;
 		}
 	}

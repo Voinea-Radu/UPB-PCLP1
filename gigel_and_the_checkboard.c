@@ -20,7 +20,7 @@ int main(void)
 	convert_coord_to_literal(res.x, literal_coordinate);
 
 	// Afisare rezultate
-	printf("%d\n%d %s", res.distance, res.y, literal_coordinate);
+	printf("%lld\n%d %s\n", res.distance, res.y, literal_coordinate);
 
 	// Eliberare memorie
 	free(board);
