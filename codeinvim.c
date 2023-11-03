@@ -21,6 +21,7 @@ int main(void)
 			(number_of_courses, grades, credits);
 
 	// Calculare numar minim de materii	pentru a ajunge la punctajul minim
+	// Calculare numar minim de materii	pentru a ajunge la punctajul minim
 	int minimum_courses = compute_minimum_courses
 			(current_points, minim_points,
 			 number_of_courses, grades, credits);

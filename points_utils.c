@@ -18,7 +18,7 @@ int compute_minimum_courses(int punctaj, int punctaj_minim, int numar_materii,
 		return 0;
 
 	int max = 0;
-	int max_index = 0;
+	int max_index = -1;
 
 	// Cautam materia cu cel mai mare delta de punctaj posibil
 	for (int i = 0; i < numar_materii; i++) {
@@ -33,13 +33,20 @@ int compute_minimum_courses(int punctaj, int punctaj_minim, int numar_materii,
 		}
 	}
 
+	if (max_index == -1)
+		return -1;
+
 	// Adaugam delta-ul de punctaj la punctajul curent
 	punctaj += max;
 	// Marcam nota ca fiind 10
 	note[max_index] = 10;
 
 	// Apelam recursiv functia pentru a calcula numarul minim de materii
-	return 1 + compute_minimum_courses
+	int result = compute_minimum_courses
 			(punctaj, punctaj_minim, numar_materii, note, credite);
-}
 
+	if (result == -1)
+		return -1;
+
+	return result + 1;
+}
