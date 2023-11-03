@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include "utils.h"
-#include "nanogram_utils.h"
+#include "namogram_utils.h"
 
 void read_and_check_nanogram(void);
 

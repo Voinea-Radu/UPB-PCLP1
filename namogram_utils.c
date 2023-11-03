@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "nanogram_utils.h"
+#include "namogram_utils.h"
 
 int check_nanogram(int number_of_lines, int number_of_columns,
 				   const int **nanogram, const int **line_rules,

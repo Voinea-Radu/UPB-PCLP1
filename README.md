@@ -1,53 +1,101 @@
-# Tema 1
+##### Copyright 2020 Darius Neatu (neatudarius@gmail.com)
+# README check
 
-**Nume**: Voinea Radu-Mihai
-**Grupa**: 315 CA
+## View as webpage
+```
+sudo pip3 install grip
+grip  README.md
+# open http://localhost:6419/
+```
 
-## Table Of Contents
+## Description
+This is the checker used to automatically grade homeworks at PCLP CA.
 
-1. [Un Produs Infinit](#un-produs-infinit)
-2. [Perfectionarea Punctajelor](#perfectionarea-punctajelor)
-3. [Gigel si Tabla de Sah](#gigel-si-tabla-de-sah)
-4. [Nanogram Checker](#nanogram-checker)
-
-### Un Produs Infinit
-
-In aceasta problema avem de calculat produsul scalar, al doilea maxim si norma
-asociata 2 vectori de dimensiune n. Pentru o eficienta a memoriei utilizate,
-vom procesa datele la citire, fara a le retine in memorie.
-Astfel:
-
-- Pentru a calcula produsul vectorial vom calcula produsul coordonatelor doua
-  cate doua, stocand suma acestora.
-- Pentru a calcula al doilea maxim vom retine in memorie maximum si cel de al
-  doilea maxim si le vom compara cu fiecare nou element
-- Pentru a calcula norma vom calcula patratelor coordonatelor, stocand suma
-  acestora. La final vom calcula radicalul din suma.
-
-### Perfectionarea Punctajelor
-
-In aceasta problema trebuie sa determinam numarul minim de materii la care
-media trebuie sa devina 10 pentru indeplinirea unui prag de punctaj.
-Pentru a rezolva aceasta problema trebuie sa calculam numarul de puncte
-dobandite curent urma de determinarea celor mai mari diferente dintre punctajul
-obtinut curent si punctajul posibil (il vom nota delta). Pentru fiecare iteratie
-vom calcula delta maxim si marca materia ca fiind perfectionata. Vom repeta
-pana cand punctajul total trece de pragul mentionat.
-
-### Gigel si Tabla de Sah
-
-In aceasta problema fiind data o tabla de dimensiune n*n si n*n bilete pentru
-fiecare pozitie, trebuie determinata pozitia in care procesarea tablii se
-opreste. Pentru a rezolva aceasta problema vom itera confirm regulilor si vom
-marca pozitiile pe care ne-am deplasat deja ca atare. Vom repeta pana cand
-se indeplineste conditia de temrinare sau revizitam aceasi casuta
-
-### Nanogram Checker
-
-In aceasta problema trebuie sa determinam daca o rezolvare a unei nanograme este
-valida. Pentru a rezolva aceasta problema vom verifica daca fiecare linie si
-fiecare coloana are exact numarul de reguli asociate fiecareia iar fiecare
-subsectiune de linie sau coloana are dimensiuna corelata din din regulile
-acesteia
+The name of the checker is `check`. It is written in `Python 3.6`.
 
 
+## What does it do?
+It will do the multiples steps.
+
+All steps marked with `[STOP]` are required. If one failed the checker will stop.
+All steps marked with `[OPTIONAL]` are optional and can be disabled from config.
+
+1.  `deps`: Check if all dependencies are installed on local system in order to build/run/grade the homerwork.
+
+2. `build`: Build homework.
+	2.1. [STOP] `Makefile`: Check if `Makefile` exists.
+	2.2. [STOP] `make`:  Run `make build` in order to build all binaries.
+	2.3. [OPT]`warnings`:  If warnings are detected, a penalty to final grade is applied.
+
+3. `run`: Run all tests for specified tasks (all or one).
+	3.1 [STOP] `run`: Run task for current test. Continue iff the program exited successfully.
+	3.2 [STOP] `check`: Check if the solution is correction. Continue iff the program found solution for task/at least one subtask.
+	3.3 [OPT ] `valgrind`: Check for memory leaks and errors. If valgrind found problems, the test grade is 0.
+
+	`Note`: This stage is using an explained `legend`:
+	1. `UPS`: Ups, program crashed
+		e.g null pointer dereference, negative or to big array/matrix indices
+	2. `TLE`: Time Limit Exceed
+		e.g. infinit loop or too slow
+	3. `MLE`: Memory Limit Exceed
+		e.g. too much allocated memory (in total or for some segments)
+	3. `MEM_UPS`: Memory leaks or errors
+		e.g. invalid memory access, unfreed dynamic-allocated arrays
+	4. `WA`: Wrong Answer (wrong or partial output)
+		e.g. output is missing or has other value
+	5. `OK`: Everything is OK.
+
+4. `style`: Run coding style checker to automatically report most common mistakes.
+
+5. `README`: Basic check for reminding students to put a readme file before final submission.
+  	`Note`: If the `README` is missing, a penalty to final grade is applied.
+
+6. `clean`: Remove all generated files by running the `make clean` command.
+
+7. `grade`: Print final grade (which is always non-negative).
+
+
+## Installation
+
+The `install.sh` script can be used to install all dependencies for `check`.
+
+Note: Please inspect  the script to see which are the requirements.
+
+```
+sudo ./install.sh
+```
+
+## Usage
+- all sources should be named as requested and should NOT be in the folder tasks;
+  
+- help
+
+```
+    usage: check [-h] [--task {infinite_product,codeinvim,gigel_and_the_checkboard,nomogram}]
+                [--legend {True,False}]
+
+check homework
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --task {infinite_product,codeinvim,gigel_and_the_checkboard,nomogram}
+                        task name
+  --legend {True,False}
+                        print legend
+```
+
+- run entire homework
+
+```
+./check
+```
+
+- run only one task
+
+```
+./check --task <task_name>
+```
+
+## Coding style checker
+
+Please read `cs/README.md`.

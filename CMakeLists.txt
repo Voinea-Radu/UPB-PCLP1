@@ -19,7 +19,7 @@ add_executable(codeinvim
         codeinvim.c
         points_utils.h
         points_utils.c
-        nanogram_checker.c
+        nomogram.c
         utils.h
         utils.c
 )
@@ -33,10 +33,10 @@ add_executable(gigel_and_the_checkboard
 )
 
 add_executable(nanogram_checker
-        nanogram_checker.c
+        nomogram.c
         utils.h
         utils.c
-        nanogram_utils.h
-        nanogram_utils.c)
+        namogram_utils.h
+        namogram_utils.c)
 
 target_link_libraries(infinite_product -lm)
