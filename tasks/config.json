@@ -1,0 +1,52 @@
+{
+    "name": "first_blood_remastered",
+    "deps": [
+        "gcc",
+        "perl",
+        "python3",
+        "valgrind"
+    ],
+    "tasks": [
+        {
+            "name": "infinite_product",
+            "points": 10,
+            "tests": 15,
+            "stdin": true,
+            "stdout": true,
+            "valgrind": false
+        },
+
+        {
+            "name": "codeinvim",
+            "points": 20,
+            "tests" : 20,
+            "timeout": 10,
+            "stdin": true,
+            "stdout": true,
+            "valgrind": false
+        },
+	{
+            "name": "gigel_and_the_checkboard",
+            "points": 25,
+            "tests": 25,
+            "timeout": 10,
+            "stdin": true,
+            "stdout": true,
+            "valgrind": false
+        },
+	{
+            "name": "nomogram",
+            "points": 25,
+            "tests": 15,
+            "timeout": 10,
+            "stdin": true,
+            "stdout": true,
+            "valgrind": false
+        }
+
+
+    ],
+    "coding_style": 10,
+    "penalty_warnings": 10,
+    "penalty_readme": 10
+}

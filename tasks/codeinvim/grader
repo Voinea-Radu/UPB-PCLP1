@@ -1,0 +1,36 @@
+#!/usr/bin/python3
+# Copyright 2019 Darius Neatu (neatudarius@gmail.com)
+
+import inspect
+import pathlib
+import os
+import sys
+
+current_dir = os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe())))
+root_dir = pathlib.Path(current_dir).parent.parent
+sys.path.insert(0, str(root_dir))
+
+from check_utils.grader import Grader
+
+
+class CodeInVimGrader(Grader):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def grade_test(self):
+        input, output, ref = self.read()
+
+        try:
+            out_m, ref_m = int(output[0]), int(ref[0])
+        except:
+            self.exit(code=-1, err='m is missing or is not an integer')
+        else:
+            if out_m == ref_m:
+                self.add_points(self.max_points)
+            else:
+                self.exit(code=-1, err='m - {} vs {}'.format(out_m, ref_m))
+
+
+if __name__ == '__main__':
+    CodeInVimGrader(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]).run()

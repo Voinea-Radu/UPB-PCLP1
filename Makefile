@@ -22,7 +22,7 @@ nomogram: nomogram.c
 	$(CC) $(CFLAGS) nomogram.c namogram_utils.h namogram_utils.c utils.h utils.c -o nomogram
 
 pack:
-	zip -FSr 3XYCA_FirstnameLastname_Tema1.zip README Makefile *.c *.h
+	zip -FSr 315CA_VoineaRadu_Tema1.zip README Makefile *.c *.h
 
 clean:
 	rm -f $(TARGETS)
