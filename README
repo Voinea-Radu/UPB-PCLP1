@@ -47,8 +47,7 @@ se indeplineste conditia de temrinare sau revizitam aceasi casuta
 In aceasta problema trebuie sa determinam daca o rezolvare a unei nanograme este
 valida. Pentru a rezolva aceasta problema vom verifica daca fiecare linie si
 fiecare coloana are exact numarul de reguli asociate fiecareia iar fiecare
-subsectiune de linie sau coloana are dimensiuna corelata din din regulile
-acesteia
+subsectiune de linie sau coloana are dimensiuna corelata din regulile acesteia
 
 
 
