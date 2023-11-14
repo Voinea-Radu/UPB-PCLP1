@@ -70,3 +70,54 @@ MatrixRegistry *create_from(MatrixRegistry *registry, int new_rows_count, const 
 
 	return output_registry;
 }
+
+MatrixRegistry *multiply(MatrixRegistry *registry1, MatrixRegistry *registry2)
+{
+	if (registry1->columns_count != registry2->rows_count) {
+		printf("Error: Cannot multiply matrices with incompatible sizes\n");
+		return NULL;
+	}
+
+	MatrixRegistry *output_registry = malloc(sizeof(MatrixRegistry));
+
+	output_registry->rows_count = registry1->rows_count;
+	output_registry->columns_count = registry2->columns_count;
+
+	double **matrix = malloc(sizeof(double *) * output_registry->rows_count);
+	for (int i = 0; i < output_registry->rows_count; i++) {
+		matrix[i] = malloc(sizeof(double) * output_registry->columns_count);
+		for (int j = 0; j < output_registry->columns_count; j++) {
+			matrix[i][j] = 0;
+			for (int k = 0; k < registry1->columns_count; k++) {
+				matrix[i][j] += registry1->matrix[i][k] * registry2->matrix[k][j];
+			}
+		}
+	}
+
+	output_registry->matrix = matrix;
+
+	return output_registry;
+}
+
+int compare(MatrixRegistry *registry1, MatrixRegistry *registry2)
+{
+	// compare the sum of elements
+	double sum1 = 0, sum2 = 0;
+	for (int i = 0; i < registry1->rows_count; i++) {
+		for (int j = 0; j < registry1->columns_count; j++) {
+			sum1 += registry1->matrix[i][j];
+		}
+	}
+
+	for (int i = 0; i < registry2->rows_count; i++) {
+		for (int j = 0; j < registry2->columns_count; j++) {
+			sum2 += registry2->matrix[i][j];
+		}
+	}
+
+	if (sum1 == sum2) {
+		return 0;
+	}
+
+	return sum1 > sum2 ? 1 : -1;
+}

@@ -6,13 +6,19 @@
 #include <malloc.h>
 #include "state_manager.h"
 
-void handle_load_matrix(int *size, MatrixRegistry **memory);
+void handle_read(int *size, MatrixRegistry **memory);
 
-void handle_print_matrix_dimension(const int *size, MatrixRegistry **memory);
+void handle_save(int *size, MatrixRegistry **memory, MatrixRegistry *registry);
 
-void handle_print_matrix(const int *size, MatrixRegistry **memory);
+void handle_print_dimension(const int *size, MatrixRegistry **memory);
 
-void handle_resize_matrix(const int *size, MatrixRegistry **memory);
+void handle_print(const int *size, MatrixRegistry **memory);
+
+void handle_resize(const int *size, MatrixRegistry **memory);
+
+void handle_multiply(int *size, MatrixRegistry **memory);
+
+void handle_sort(const int *size, MatrixRegistry **memory);
 
 void handle_state(char state)
 {
@@ -21,37 +27,50 @@ void handle_state(char state)
 
 	switch (state) {
 		case 'L':
-			handle_load_matrix(&matrix_memory_size, &matrix_memory);
+			handle_read(&matrix_memory_size, &matrix_memory);
 			break;
 		case 'D':
-			handle_print_matrix_dimension(&matrix_memory_size, &matrix_memory);
+			handle_print_dimension(&matrix_memory_size, &matrix_memory);
 			break;
 		case 'P':
-			handle_print_matrix(&matrix_memory_size, &matrix_memory);
+			handle_print(&matrix_memory_size, &matrix_memory);
 			break;
 		case 'C':
-			handle_resize_matrix(&matrix_memory_size, &matrix_memory);
+			handle_resize(&matrix_memory_size, &matrix_memory);
+			break;
+		case 'M':
+			handle_multiply(&matrix_memory_size, &matrix_memory);
+			break;
+		case 'O':
+			handle_sort(&matrix_memory_size, &matrix_memory);
 			break;
 		default:
 			return;
 	}
 }
 
-void handle_load_matrix(int *size, MatrixRegistry **memory)
+void handle_read(int *size, MatrixRegistry **memory)
 {
-	(*size)++;
-	*memory = realloc(*memory, (sizeof(MatrixRegistry)) * (*size));
-
 	int rows_count, columns_count;
 
 	scanf("%d %d", &rows_count, &columns_count);
 
-	(*memory)[((*size) - 1)] = *read_matrix_registry(rows_count, columns_count);
+	MatrixRegistry *registry = read_matrix_registry(rows_count, columns_count);
+
+	handle_save(size, memory, registry);
+}
+
+void handle_save(int *size, MatrixRegistry **memory, MatrixRegistry *registry)
+{
+	(*size)++;
+	*memory = realloc(*memory, (sizeof(MatrixRegistry)) * (*size));
+
+	(*memory)[((*size) - 1)] = *registry;
 
 	printf("Successfully saved the matrix to index %d\n", *size - 1); // TODO Delete
 }
 
-void handle_print_matrix_dimension(const int *size, MatrixRegistry **memory)
+void handle_print_dimension(const int *size, MatrixRegistry **memory)
 {
 	int index;
 	scanf("%d", &index);
@@ -66,7 +85,7 @@ void handle_print_matrix_dimension(const int *size, MatrixRegistry **memory)
 	printf("%d %d\n", registry->rows_count, registry->columns_count);
 }
 
-void handle_print_matrix(const int *size, MatrixRegistry **memory)
+void handle_print(const int *size, MatrixRegistry **memory)
 {
 	int index;
 	scanf("%d", &index);
@@ -81,7 +100,7 @@ void handle_print_matrix(const int *size, MatrixRegistry **memory)
 	print_matrix(registry);
 }
 
-void handle_resize_matrix(const int *size, MatrixRegistry **memory)
+void handle_resize(const int *size, MatrixRegistry **memory)
 {
 	int index, new_rows_count, new_columns_count;
 	scanf("%d", &index);
@@ -111,4 +130,36 @@ void handle_resize_matrix(const int *size, MatrixRegistry **memory)
 											   new_columns_count, new_columns);
 
 	(*memory)[index] = *new_registry;
+}
+
+void handle_multiply(int *size, MatrixRegistry **memory)
+{
+	int index1, index2;
+	scanf("%d%d", &index1, &index2);
+
+	if (index1 >= *size || index2 >= *size) {
+		printf("No matrix with the given index\n");
+		return;
+	}
+
+	MatrixRegistry *registry1 = &(*memory)[index1];
+	MatrixRegistry *registry2 = &(*memory)[index2];
+
+	MatrixRegistry *new_registry = multiply(registry1, registry2);
+
+	handle_save(size, memory, new_registry);
+}
+
+void handle_sort(const int *size, MatrixRegistry **memory)
+{
+	for (int i =0;i<*size;i++){
+		for (int j = i+1;j<*size;j++){
+			if (compare(&(*memory)[i],&(*memory)[j]) == 1){
+				MatrixRegistry *aux = malloc(sizeof(MatrixRegistry));
+				*aux = (*memory)[i];
+				(*memory)[i] = (*memory)[j];
+				(*memory)[j] = *aux;
+			}
+		}
+	}
 }
