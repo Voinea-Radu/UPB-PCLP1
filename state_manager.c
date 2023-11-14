@@ -7,7 +7,9 @@
 #include "state_manager.h"
 
 void handle_load_matrix(int *size, MatrixRegistry **memory);
+
 void handle_print_matrix_dimension(int *size, MatrixRegistry **memory);
+
 void handle_print_matrix(int *size, MatrixRegistry **memory);
 
 void handle_state(char state)
@@ -17,13 +19,13 @@ void handle_state(char state)
 
 	switch (state) {
 		case 'L':
-			handle_load_matrix(&matrix_memory_size,&matrix_memory);
+			handle_load_matrix(&matrix_memory_size, &matrix_memory);
 			break;
 		case 'D':
-			handle_print_matrix_dimension(&matrix_memory_size,&matrix_memory);
+			handle_print_matrix_dimension(&matrix_memory_size, &matrix_memory);
 			break;
 		case 'P':
-			handle_print_matrix(&matrix_memory_size,&matrix_memory);
+			handle_print_matrix(&matrix_memory_size, &matrix_memory);
 			break;
 		default:
 			return;
@@ -44,6 +46,11 @@ void handle_print_matrix_dimension(int *size, MatrixRegistry **memory)
 	int index;
 	scanf("%d", &index);
 
+	if (index >= *size) {
+		printf("No matrix with the given index\n");
+		return;
+	}
+
 	MatrixRegistry *registry = &(*memory)[index];
 
 	printf("%d %d\n", registry->rows_count, registry->columns_count);
@@ -53,6 +60,11 @@ void handle_print_matrix(int *size, MatrixRegistry **memory)
 {
 	int index;
 	scanf("%d", &index);
+
+	if (index >= *size) {
+		printf("No matrix with the given index\n");
+		return;
+	}
 
 	MatrixRegistry *registry = &(*memory)[index];
 
