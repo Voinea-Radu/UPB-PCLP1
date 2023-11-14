@@ -121,3 +121,23 @@ int compare(MatrixRegistry *registry1, MatrixRegistry *registry2)
 
 	return sum1 > sum2 ? 1 : -1;
 }
+
+MatrixRegistry* transpose(MatrixRegistry *registry)
+{
+	MatrixRegistry *output_registry = malloc(sizeof(MatrixRegistry));
+
+	output_registry->rows_count = registry->columns_count;
+	output_registry->columns_count = registry->rows_count;
+
+	double **matrix = malloc(sizeof(double *) * output_registry->rows_count);
+	for (int i = 0; i < output_registry->rows_count; i++) {
+		matrix[i] = malloc(sizeof(double) * output_registry->columns_count);
+		for (int j = 0; j < output_registry->columns_count; j++) {
+			matrix[i][j] = registry->matrix[j][i];
+		}
+	}
+
+	output_registry->matrix = matrix;
+
+	return output_registry;
+}

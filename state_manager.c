@@ -10,6 +10,8 @@ void handle_read(int *size, MatrixRegistry **memory);
 
 void handle_save(int *size, MatrixRegistry **memory, MatrixRegistry *registry);
 
+void handle_save_at(int index, MatrixRegistry **memory, MatrixRegistry *registry);
+
 void handle_print_dimension(const int *size, MatrixRegistry **memory);
 
 void handle_print(const int *size, MatrixRegistry **memory);
@@ -19,6 +21,8 @@ void handle_resize(const int *size, MatrixRegistry **memory);
 void handle_multiply(int *size, MatrixRegistry **memory);
 
 void handle_sort(const int *size, MatrixRegistry **memory);
+
+void handle_transpose(const int *size, MatrixRegistry **memory);
 
 void handle_state(char state)
 {
@@ -44,6 +48,9 @@ void handle_state(char state)
 		case 'O':
 			handle_sort(&matrix_memory_size, &matrix_memory);
 			break;
+		case 'T':
+			handle_transpose(&matrix_memory_size, &matrix_memory);
+			break;
 		default:
 			return;
 	}
@@ -65,9 +72,7 @@ void handle_save(int *size, MatrixRegistry **memory, MatrixRegistry *registry)
 	(*size)++;
 	*memory = realloc(*memory, (sizeof(MatrixRegistry)) * (*size));
 
-	(*memory)[((*size) - 1)] = *registry;
-
-	printf("Successfully saved the matrix to index %d\n", *size - 1); // TODO Delete
+	handle_save_at(*size - 1, memory, registry);
 }
 
 void handle_print_dimension(const int *size, MatrixRegistry **memory)
@@ -129,7 +134,7 @@ void handle_resize(const int *size, MatrixRegistry **memory)
 	MatrixRegistry *new_registry = create_from(registry, new_rows_count, new_rows,
 											   new_columns_count, new_columns);
 
-	(*memory)[index] = *new_registry;
+	handle_save_at(index, memory, new_registry);
 }
 
 void handle_multiply(int *size, MatrixRegistry **memory)
@@ -152,9 +157,9 @@ void handle_multiply(int *size, MatrixRegistry **memory)
 
 void handle_sort(const int *size, MatrixRegistry **memory)
 {
-	for (int i =0;i<*size;i++){
-		for (int j = i+1;j<*size;j++){
-			if (compare(&(*memory)[i],&(*memory)[j]) == 1){
+	for (int i = 0; i < *size; i++) {
+		for (int j = i + 1; j < *size; j++) {
+			if (compare(&(*memory)[i], &(*memory)[j]) == 1) {
 				MatrixRegistry *aux = malloc(sizeof(MatrixRegistry));
 				*aux = (*memory)[i];
 				(*memory)[i] = (*memory)[j];
@@ -162,4 +167,28 @@ void handle_sort(const int *size, MatrixRegistry **memory)
 			}
 		}
 	}
+}
+
+void handle_transpose(const int *size, MatrixRegistry **memory)
+{
+	int index;
+	scanf("%d", &index);
+
+	if (index >= *size) {
+		printf("No matrix with the given index\n");
+		return;
+	}
+
+	MatrixRegistry *registry = &(*memory)[index];
+
+	MatrixRegistry *new_registry = transpose(registry);
+
+	handle_save_at(index, memory, new_registry);
+}
+
+void handle_save_at(int index, MatrixRegistry **memory, MatrixRegistry *registry)
+{
+	(*memory)[index] = *registry;
+
+	printf("Successfully saved the matrix to index %d\n", index); // TODO Delete
 }
