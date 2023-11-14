@@ -33,12 +33,10 @@ void handle_state(char state)
 void handle_load_matrix(int *size, MatrixRegistry **memory)
 {
 	(*size)++;
-	*memory = realloc(memory, (sizeof(MatrixRegistry)) * (*size));
-
-	*memory[((*size) - 1)] = *read_matrix_registry();
+	*memory = realloc(*memory, (sizeof(MatrixRegistry)) * (*size));
+	(*memory)[((*size) - 1)] = *read_matrix_registry();
 
 	printf("Successfully saved the matrix to index %d\n", *size - 1);
-
 }
 
 void handle_print_matrix_dimension(int *size, MatrixRegistry **memory)
@@ -46,7 +44,7 @@ void handle_print_matrix_dimension(int *size, MatrixRegistry **memory)
 	int index;
 	scanf("%d", &index);
 
-	MatrixRegistry *registry = memory[index];
+	MatrixRegistry *registry = &(*memory)[index];
 
 	printf("%d %d\n", registry->rows_count, registry->columns_count);
 }
@@ -56,7 +54,7 @@ void handle_print_matrix(int *size, MatrixRegistry **memory)
 	int index;
 	scanf("%d", &index);
 
-	MatrixRegistry *registry = memory[index];
+	MatrixRegistry *registry = &(*memory)[index];
 
 	print_matrix(registry);
 }
