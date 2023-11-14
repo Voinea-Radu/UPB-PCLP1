@@ -74,6 +74,7 @@ MatrixRegistry *create_from(MatrixRegistry *registry, int new_rows_count, const 
 MatrixRegistry *multiply(MatrixRegistry *registry1, MatrixRegistry *registry2)
 {
 	if (registry1->columns_count != registry2->rows_count) {
+		printf("Cannot perform matrix multiplication");
 		return NULL;
 	}
 
@@ -121,7 +122,7 @@ int compare(MatrixRegistry *registry1, MatrixRegistry *registry2)
 	return sum1 > sum2 ? 1 : -1;
 }
 
-MatrixRegistry* transpose(MatrixRegistry *registry)
+MatrixRegistry *transpose(MatrixRegistry *registry)
 {
 	MatrixRegistry *output_registry = malloc(sizeof(MatrixRegistry));
 
@@ -143,6 +144,16 @@ MatrixRegistry* transpose(MatrixRegistry *registry)
 
 MatrixRegistry *raise_to_power(MatrixRegistry *registry, int power)
 {
+	if (power < 0) {
+		printf("Power should be positive");
+		return NULL;
+	}
+
+	if (registry->columns_count != registry->rows_count) {
+		printf("Cannot perform matrix multiplication");
+		return NULL;
+	}
+
 	MatrixRegistry *output_registry = malloc(sizeof(MatrixRegistry));
 
 	output_registry->rows_count = registry->rows_count;

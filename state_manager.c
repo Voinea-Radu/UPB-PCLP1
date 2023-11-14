@@ -65,7 +65,7 @@ void handle_print_dimension(const int *size, MatrixRegistry **memory)
 	int index;
 	scanf("%d", &index);
 
-	if (index >= *size) {
+	if (index < 0 || index >= *size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
@@ -95,7 +95,7 @@ void handle_resize(const int *size, MatrixRegistry **memory)
 	int index, new_rows_count, new_columns_count;
 	scanf("%d", &index);
 
-	if (index >= *size) {
+	if (index < 0 || index >= *size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
@@ -127,7 +127,7 @@ void handle_multiply(int *size, MatrixRegistry **memory)
 	int index1, index2;
 	scanf("%d%d", &index1, &index2);
 
-	if (index1 >= *size || index2 >= *size) {
+	if (index1 < 0 || index2 < 0 || index1 >= *size || index2 >= *size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
@@ -138,7 +138,6 @@ void handle_multiply(int *size, MatrixRegistry **memory)
 	MatrixRegistry *new_registry = multiply(registry1, registry2);
 
 	if (new_registry == NULL) {
-		printf("Cannot perform matrix multiplication");
 		return;
 	}
 
@@ -164,7 +163,7 @@ void handle_transpose(const int *size, MatrixRegistry **memory)
 	int index;
 	scanf("%d", &index);
 
-	if (index >= *size) {
+	if (index < 0 || index >= *size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
@@ -188,7 +187,7 @@ void handle_raise_to_power(const int *size, MatrixRegistry **memory)
 	int index, power;
 	scanf("%d%d", &index, &power);
 
-	if (index >= *size) {
+	if (index < 0 || index >= *size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
@@ -196,6 +195,10 @@ void handle_raise_to_power(const int *size, MatrixRegistry **memory)
 	MatrixRegistry *registry = &(*memory)[index];
 
 	MatrixRegistry *new_registry = raise_to_power(registry, power);
+
+	if (new_registry == NULL) {
+		return;
+	}
 
 	handle_save_at(index, memory, new_registry);
 }
