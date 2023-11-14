@@ -7,16 +7,12 @@
 #include <malloc.h>
 #include "registry_manager.h"
 
-MatrixRegistry *read_matrix_registry()
+MatrixRegistry *read_matrix_registry(int rows_count, int columns_count)
 {
-	int n, m;
-
-	scanf("%d %d", &n, &m);
-
-	double **matrix = malloc(sizeof(double *) * n);
-	for (int i = 0; i < n; i++) {
-		matrix[i] = malloc(sizeof(double) * m);
-		for (int j = 0; j < m; j++) {
+	double **matrix = malloc(sizeof(double *) * rows_count);
+	for (int i = 0; i < rows_count; i++) {
+		matrix[i] = malloc(sizeof(double) * columns_count);
+		for (int j = 0; j < columns_count; j++) {
 			scanf("%lf", &matrix[i][j]);
 		}
 	}
@@ -24,8 +20,8 @@ MatrixRegistry *read_matrix_registry()
 	MatrixRegistry *output_registry = malloc(sizeof(MatrixRegistry));
 
 	output_registry->matrix = matrix;
-	output_registry->rows_count = n;
-	output_registry->columns_count = m;
+	output_registry->rows_count = rows_count;
+	output_registry->columns_count = columns_count;
 
 	return output_registry;
 }
@@ -38,4 +34,39 @@ void print_matrix(MatrixRegistry *registry)
 		}
 		printf("\n");
 	}
+}
+
+MatrixRegistry *create_from(MatrixRegistry *registry, int new_rows_count, const int *new_rows,
+							int new_columns_count, const int *new_columns)
+{
+
+	printf("Creating new matrix from rows(%d): ", new_rows_count);
+	for (int i = 0; i < new_rows_count; i++) {
+		printf("%d ", new_rows[i]);
+	}
+	printf("\n");
+	printf("Creating new matrix from columns(%d): ", new_columns_count);
+	for (int i = 0; i < new_columns_count; i++) {
+		printf("%d ", new_columns[i]);
+	}
+	printf("\n");
+
+	MatrixRegistry *output_registry = malloc(sizeof(MatrixRegistry));
+
+	output_registry->rows_count = new_rows_count;
+	output_registry->columns_count = new_columns_count;
+
+	double **matrix = malloc(sizeof(double *) * new_rows_count);
+	for (int i = 0; i < new_rows_count; i++) {
+		matrix[i] = malloc(sizeof(double) * new_columns_count);
+		for (int j = 0; j < new_columns_count; j++) {
+			matrix[i][j] = registry->matrix[new_rows[i]][new_columns[j]];
+			printf("%f ", registry->matrix[new_rows[i]][new_columns[j]]);
+		}
+		printf("\n");
+	}
+
+	output_registry->matrix = matrix;
+
+	return output_registry;
 }
