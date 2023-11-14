@@ -26,3 +26,5 @@ void handle_sort(MatrixRegistry *registry);
 void handle_transpose(MatrixRegistry *registry);
 
 void handle_raise_to_power(MatrixRegistry *registry);
+
+void handle_free(MatrixRegistry *registry);

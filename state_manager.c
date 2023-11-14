@@ -42,6 +42,9 @@ void handle_state(char state)
 		case 'R':
 			handle_raise_to_power(registry);
 			break;
+		case 'F':
+			handle_free(registry);
+			break;
 		default:
 			return;
 	}
@@ -211,4 +214,30 @@ void handle_raise_to_power(MatrixRegistry *registry)
 	}
 
 	handle_save_at(registry, index, new_matrix);
+}
+
+void handle_free(MatrixRegistry *registry)
+{
+	int index;
+
+	scanf("%d", &index);
+
+	if (index >= registry->size) {
+		printf("No matrix with the given index\n");
+		return;
+	}
+
+	Matrix *matrix = &registry->matrices[index];
+
+	for (int i = 0; i < matrix->rows_count; i++) {
+		free(matrix->matrix[i]);
+	}
+
+	free(matrix->matrix);
+
+	for (int i = index; i < registry->size - 1; i++) {
+		registry->matrices[i] = registry->matrices[i + 1];
+	}
+
+	registry->size--;
 }
