@@ -7,19 +7,25 @@ typedef struct{
 	double **matrix;
 	unsigned int rows_count;
 	unsigned int columns_count;
+} Matrix;
+
+typedef struct{
+	Matrix *matrices;
+	unsigned int size;
+	unsigned int capacity;
 } MatrixRegistry;
 
-MatrixRegistry *read_matrix_registry(int rows_count, int columns_count);
+Matrix *read_matrix_registry(int rows_count, int columns_count);
 
-void print_matrix(MatrixRegistry *registry);
+void print_matrix(Matrix *registry);
 
-MatrixRegistry *create_from(MatrixRegistry *registry, int new_rows_count, const int *new_rows,
-							int new_columns_count, const int *new_columns);
+Matrix *create_from(Matrix *registry, int new_rows_count, const int *new_rows,
+					int new_columns_count, const int *new_columns);
 
-MatrixRegistry *multiply(MatrixRegistry *registry1, MatrixRegistry *registry2);
+Matrix *multiply(Matrix *registry1, Matrix *registry2);
 
-int compare(MatrixRegistry *registry1, MatrixRegistry *registry2);
+int compare(Matrix *registry1, Matrix *registry2);
 
-MatrixRegistry *transpose(MatrixRegistry *registry);
+Matrix *transpose(Matrix *registry);
 
-MatrixRegistry *raise_to_power(MatrixRegistry *registry, int power);
+Matrix *raise_to_power(Matrix *registry, int power);

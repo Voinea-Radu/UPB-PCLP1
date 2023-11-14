@@ -7,22 +7,22 @@
 
 void handle_state(char state);
 
-void handle_read(int *size, MatrixRegistry **memory);
+void handle_read(MatrixRegistry *registry);
 
-void handle_save(int *size, MatrixRegistry **memory, MatrixRegistry *registry);
+void handle_save(MatrixRegistry *registry, Matrix *matrix);
 
-void handle_save_at(int index, MatrixRegistry **memory, MatrixRegistry *registry);
+void handle_save_at(MatrixRegistry *registry, unsigned int index, Matrix *matrix);
 
-void handle_print_dimension(const int *size, MatrixRegistry **memory);
+void handle_print_dimension(MatrixRegistry *registry);
 
-void handle_print(const int *size, MatrixRegistry **memory);
+void handle_print(MatrixRegistry *registry);
 
-void handle_resize(const int *size, MatrixRegistry **memory);
+void handle_resize(MatrixRegistry *registry);
 
-void handle_multiply(int *size, MatrixRegistry **memory);
+void handle_multiply(MatrixRegistry *registry);
 
-void handle_sort(const int *size, MatrixRegistry **memory);
+void handle_sort(MatrixRegistry *registry);
 
-void handle_transpose(const int *size, MatrixRegistry **memory);
+void handle_transpose(MatrixRegistry *registry);
 
-void handle_raise_to_power(const int *size, MatrixRegistry **memory);
+void handle_raise_to_power(MatrixRegistry *registry);

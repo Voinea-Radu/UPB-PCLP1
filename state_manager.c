@@ -8,197 +8,206 @@
 
 void handle_state(char state)
 {
-	static int matrix_memory_size = 0;
-	static MatrixRegistry *matrix_memory;
+	static MatrixRegistry *registry = NULL;
+
+	if (registry == NULL) {
+		registry = malloc(sizeof(MatrixRegistry));
+		registry->size = 0;
+		registry->capacity = 1;
+		registry->matrices = malloc(sizeof(Matrix));
+	}
 
 	switch (state) {
 		case 'L':
-			handle_read(&matrix_memory_size, &matrix_memory);
+			handle_read(registry);
 			break;
 		case 'D':
-			handle_print_dimension(&matrix_memory_size, &matrix_memory);
+			handle_print_dimension(registry);
 			break;
 		case 'P':
-			handle_print(&matrix_memory_size, &matrix_memory);
+			handle_print(registry);
 			break;
 		case 'C':
-			handle_resize(&matrix_memory_size, &matrix_memory);
+			handle_resize(registry);
 			break;
 		case 'M':
-			handle_multiply(&matrix_memory_size, &matrix_memory);
+			handle_multiply(registry);
 			break;
 		case 'O':
-			handle_sort(&matrix_memory_size, &matrix_memory);
+			handle_sort(registry);
 			break;
 		case 'T':
-			handle_transpose(&matrix_memory_size, &matrix_memory);
+			handle_transpose(registry);
 			break;
 		case 'R':
-			handle_raise_to_power(&matrix_memory_size, &matrix_memory);
+			handle_raise_to_power(registry);
 			break;
 		default:
 			return;
 	}
 }
 
-void handle_read(int *size, MatrixRegistry **memory)
+void handle_read(MatrixRegistry *registry)
 {
 	int rows_count, columns_count;
 
 	scanf("%d %d", &rows_count, &columns_count);
 
-	MatrixRegistry *registry = read_matrix_registry(rows_count, columns_count);
+	Matrix *matrix = read_matrix_registry(rows_count, columns_count);
 
-	handle_save(size, memory, registry);
+	handle_save(registry, matrix);
 }
 
-void handle_save(int *size, MatrixRegistry **memory, MatrixRegistry *registry)
+void handle_save(MatrixRegistry *registry, Matrix *matrix)
 {
-	(*size)++;
-	*memory = realloc(*memory, (sizeof(MatrixRegistry)) * (*size));
+	registry->size++;
 
-	handle_save_at(*size - 1, memory, registry);
+	if (registry->size > registry->capacity) {
+		registry->capacity *= 2;
+		registry->matrices = realloc(registry->matrices, (sizeof(Matrix)) * registry->capacity);
+	}
+
+	handle_save_at(registry, registry->size - 1, matrix);
 }
 
-void handle_print_dimension(const int *size, MatrixRegistry **memory)
+void handle_print_dimension(MatrixRegistry *registry)
 {
-	int index;
-	scanf("%d", &index);
+	unsigned int index;
+	scanf("%ud", &index);
 
-	if (index < 0 || index >= *size) {
+	if (index >= registry->size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
 
-	MatrixRegistry *registry = &(*memory)[index];
+	Matrix *matrix = &registry->matrices[index];
 
-	printf("%d %d\n", registry->rows_count, registry->columns_count);
+	printf("%d %d\n", matrix->rows_count, matrix->columns_count);
 }
 
-void handle_print(const int *size, MatrixRegistry **memory)
+void handle_print(MatrixRegistry *registry)
 {
-	int index;
-	scanf("%d", &index);
+	unsigned int index;
+	scanf("%ud", &index);
 
-	if (index >= *size) {
+	if (index >= registry->size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
 
-	MatrixRegistry *registry = &(*memory)[index];
+	Matrix *matrix = &registry->matrices[index];
 
-	print_matrix(registry);
+	print_matrix(matrix);
 }
 
-void handle_resize(const int *size, MatrixRegistry **memory)
+void handle_resize(MatrixRegistry *registry)
 {
-	int index, new_rows_count, new_columns_count;
-	scanf("%d", &index);
+	unsigned int index, new_rows_count, new_columns_count;
+	scanf("%ud", &index);
 
-	if (index < 0 || index >= *size) {
+	if (index >= registry->size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
 
-	scanf("%d", &new_rows_count);
+	scanf("%ud", &new_rows_count);
 	int *new_rows = malloc(sizeof(int) * new_rows_count);
 
 	for (int i = 0; i < new_rows_count; i++) {
-		scanf("%d", &new_rows[i]);
+		scanf("%ud", &new_rows[i]);
 	}
 
-	scanf("%d", &new_columns_count);
+	scanf("%ud", &new_columns_count);
 	int *new_columns = malloc(sizeof(int) * new_columns_count);
 
 	for (int i = 0; i < new_columns_count; i++) {
-		scanf("%d", &new_columns[i]);
+		scanf("%ud", &new_columns[i]);
 	}
 
-	MatrixRegistry *registry = &(*memory)[index];
+	Matrix *matrix = &registry->matrices[index];
 
-	MatrixRegistry *new_registry = create_from(registry, new_rows_count, new_rows,
-											   new_columns_count, new_columns);
+	Matrix *new_matrix = create_from(matrix, new_rows_count, new_rows,
+									 new_columns_count, new_columns);
 
-	handle_save_at(index, memory, new_registry);
+	handle_save_at(registry, index, new_matrix);
 }
 
-void handle_multiply(int *size, MatrixRegistry **memory)
+void handle_multiply(MatrixRegistry *registry)
 {
 	int index1, index2;
-	scanf("%d%d", &index1, &index2);
+	scanf("%ud%ud", &index1, &index2);
 
-	if (index1 < 0 || index2 < 0 || index1 >= *size || index2 >= *size) {
+	if (index1 >= registry->size || index2 >= registry->size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
 
-	MatrixRegistry *registry1 = &(*memory)[index1];
-	MatrixRegistry *registry2 = &(*memory)[index2];
+	Matrix *matrix1 = &registry->matrices[index1];
+	Matrix *matrix2 = &registry->matrices[index2];
 
-	MatrixRegistry *new_registry = multiply(registry1, registry2);
+	Matrix *matrix = multiply(matrix1, matrix2);
 
-	if (new_registry == NULL) {
+	if (matrix == NULL) {
 		return;
 	}
 
-	handle_save(size, memory, new_registry);
+	handle_save(registry, matrix);
 }
 
-void handle_sort(const int *size, MatrixRegistry **memory)
+void handle_sort(MatrixRegistry *registry)
 {
-	for (int i = 0; i < *size; i++) {
-		for (int j = i + 1; j < *size; j++) {
-			if (compare(&(*memory)[i], &(*memory)[j]) == 1) {
-				MatrixRegistry *aux = malloc(sizeof(MatrixRegistry));
-				*aux = (*memory)[i];
-				(*memory)[i] = (*memory)[j];
-				(*memory)[j] = *aux;
+	for (int i = 0; i < registry->size; i++) {
+		for (int j = i + 1; j < registry->size; j++) {
+			if (compare(&registry->matrices[i], &registry->matrices[j]) == 1) {
+				Matrix *aux = &registry->matrices[i];
+				registry->matrices[i] = registry->matrices[j];
+				registry->matrices[j] = *aux;
 			}
 		}
 	}
 }
 
-void handle_transpose(const int *size, MatrixRegistry **memory)
+void handle_transpose(MatrixRegistry *registry)
 {
-	int index;
-	scanf("%d", &index);
+	unsigned int index;
+	scanf("%ud", &index);
 
-	if (index < 0 || index >= *size) {
+	if (index >= registry->size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
 
-	MatrixRegistry *registry = &(*memory)[index];
+	Matrix *matrix = &registry->matrices[index];
+	Matrix *new_matrix = transpose(matrix);
 
-	MatrixRegistry *new_registry = transpose(registry);
-
-	handle_save_at(index, memory, new_registry);
+	handle_save_at(registry, index, new_matrix);
 }
 
-void handle_save_at(int index, MatrixRegistry **memory, MatrixRegistry *registry)
+void handle_save_at(MatrixRegistry *registry, unsigned int index, Matrix *matrix)
 {
-	(*memory)[index] = *registry;
+	registry->matrices[index] = *matrix;
 
 	printf("Successfully saved the matrix to index %d\n", index); // TODO Delete
 }
 
-void handle_raise_to_power(const int *size, MatrixRegistry **memory)
+void handle_raise_to_power(MatrixRegistry *registry)
 {
-	int index, power;
-	scanf("%d%d", &index, &power);
+	unsigned int index;
+	int power;
+	scanf("%ud%d", &index, &power);
 
-	if (index < 0 || index >= *size) {
+	if (index >= registry->size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
 
-	MatrixRegistry *registry = &(*memory)[index];
+	Matrix *matrix = &registry->matrices[index];
 
-	MatrixRegistry *new_registry = raise_to_power(registry, power);
+	Matrix *new_matrix = raise_to_power(matrix, power);
 
-	if (new_registry == NULL) {
+	if (new_matrix == NULL) {
 		return;
 	}
 
-	handle_save_at(index, memory, new_registry);
+	handle_save_at(registry	, index, new_matrix);
 }

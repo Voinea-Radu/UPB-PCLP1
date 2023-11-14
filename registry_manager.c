@@ -7,7 +7,7 @@
 #include <malloc.h>
 #include "registry_manager.h"
 
-MatrixRegistry *read_matrix_registry(int rows_count, int columns_count)
+Matrix *read_matrix_registry(int rows_count, int columns_count)
 {
 	double **matrix = malloc(sizeof(double *) * rows_count);
 	for (int i = 0; i < rows_count; i++) {
@@ -17,7 +17,7 @@ MatrixRegistry *read_matrix_registry(int rows_count, int columns_count)
 		}
 	}
 
-	MatrixRegistry *output_registry = malloc(sizeof(MatrixRegistry));
+	Matrix *output_registry = malloc(sizeof(Matrix));
 
 	output_registry->matrix = matrix;
 	output_registry->rows_count = rows_count;
@@ -26,7 +26,7 @@ MatrixRegistry *read_matrix_registry(int rows_count, int columns_count)
 	return output_registry;
 }
 
-void print_matrix(MatrixRegistry *registry)
+void print_matrix(Matrix *registry)
 {
 	for (int i = 0; i < registry->rows_count; i++) {
 		for (int j = 0; j < registry->columns_count; j++) {
@@ -36,8 +36,8 @@ void print_matrix(MatrixRegistry *registry)
 	}
 }
 
-MatrixRegistry *create_from(MatrixRegistry *registry, int new_rows_count, const int *new_rows,
-							int new_columns_count, const int *new_columns)
+Matrix *create_from(Matrix *registry, int new_rows_count, const int *new_rows,
+					int new_columns_count, const int *new_columns)
 {
 
 	printf("Creating new matrix from rows(%d): ", new_rows_count);
@@ -51,7 +51,7 @@ MatrixRegistry *create_from(MatrixRegistry *registry, int new_rows_count, const 
 	}
 	printf("\n");
 
-	MatrixRegistry *output_registry = malloc(sizeof(MatrixRegistry));
+	Matrix *output_registry = malloc(sizeof(Matrix));
 
 	output_registry->rows_count = new_rows_count;
 	output_registry->columns_count = new_columns_count;
@@ -71,14 +71,14 @@ MatrixRegistry *create_from(MatrixRegistry *registry, int new_rows_count, const 
 	return output_registry;
 }
 
-MatrixRegistry *multiply(MatrixRegistry *registry1, MatrixRegistry *registry2)
+Matrix *multiply(Matrix *registry1, Matrix *registry2)
 {
 	if (registry1->columns_count != registry2->rows_count) {
 		printf("Cannot perform matrix multiplication");
 		return NULL;
 	}
 
-	MatrixRegistry *output_registry = malloc(sizeof(MatrixRegistry));
+	Matrix *output_registry = malloc(sizeof(Matrix));
 
 	output_registry->rows_count = registry1->rows_count;
 	output_registry->columns_count = registry2->columns_count;
@@ -99,7 +99,7 @@ MatrixRegistry *multiply(MatrixRegistry *registry1, MatrixRegistry *registry2)
 	return output_registry;
 }
 
-int compare(MatrixRegistry *registry1, MatrixRegistry *registry2)
+int compare(Matrix *registry1, Matrix *registry2)
 {
 	// compare the sum of elements
 	double sum1 = 0, sum2 = 0;
@@ -122,9 +122,9 @@ int compare(MatrixRegistry *registry1, MatrixRegistry *registry2)
 	return sum1 > sum2 ? 1 : -1;
 }
 
-MatrixRegistry *transpose(MatrixRegistry *registry)
+Matrix *transpose(Matrix *registry)
 {
-	MatrixRegistry *output_registry = malloc(sizeof(MatrixRegistry));
+	Matrix *output_registry = malloc(sizeof(Matrix));
 
 	output_registry->rows_count = registry->columns_count;
 	output_registry->columns_count = registry->rows_count;
@@ -142,7 +142,7 @@ MatrixRegistry *transpose(MatrixRegistry *registry)
 	return output_registry;
 }
 
-MatrixRegistry *raise_to_power(MatrixRegistry *registry, int power)
+Matrix *raise_to_power(Matrix *registry, int power)
 {
 	if (power < 0) {
 		printf("Power should be positive");
@@ -154,7 +154,7 @@ MatrixRegistry *raise_to_power(MatrixRegistry *registry, int power)
 		return NULL;
 	}
 
-	MatrixRegistry *output_registry = malloc(sizeof(MatrixRegistry));
+	Matrix *output_registry = malloc(sizeof(Matrix));
 
 	output_registry->rows_count = registry->rows_count;
 	output_registry->columns_count = registry->columns_count;
@@ -186,14 +186,14 @@ MatrixRegistry *raise_to_power(MatrixRegistry *registry, int power)
 		return output_registry;
 	}
 
-	MatrixRegistry *aux_registry = raise_to_power(registry, power / 2);
-	MatrixRegistry *aux_registry2 = multiply(aux_registry, aux_registry);
+	Matrix *aux_registry = raise_to_power(registry, power / 2);
+	Matrix *aux_registry2 = multiply(aux_registry, aux_registry);
 
 	if (power % 2 == 0) {
 		return aux_registry2;
 	}
 
-	MatrixRegistry *aux_registry3 = multiply(aux_registry2, registry);
+	Matrix *aux_registry3 = multiply(aux_registry2, registry);
 
 	return aux_registry3;
 }
