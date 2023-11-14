@@ -73,7 +73,7 @@ void handle_save(MatrixRegistry *registry, Matrix *matrix)
 void handle_print_dimension(MatrixRegistry *registry)
 {
 	unsigned int index;
-	scanf("%ud", &index);
+	scanf("%u", &index);
 
 	if (index >= registry->size) {
 		printf("No matrix with the given index\n");
@@ -88,7 +88,7 @@ void handle_print_dimension(MatrixRegistry *registry)
 void handle_print(MatrixRegistry *registry)
 {
 	unsigned int index;
-	scanf("%ud", &index);
+	scanf("%u", &index);
 
 	if (index >= registry->size) {
 		printf("No matrix with the given index\n");
@@ -103,25 +103,25 @@ void handle_print(MatrixRegistry *registry)
 void handle_resize(MatrixRegistry *registry)
 {
 	unsigned int index, new_rows_count, new_columns_count;
-	scanf("%ud", &index);
+	scanf("%u", &index);
 
 	if (index >= registry->size) {
 		printf("No matrix with the given index\n");
 		return;
 	}
 
-	scanf("%ud", &new_rows_count);
+	scanf("%u", &new_rows_count);
 	int *new_rows = malloc(sizeof(int) * new_rows_count);
 
 	for (int i = 0; i < new_rows_count; i++) {
-		scanf("%ud", &new_rows[i]);
+		scanf("%u", &new_rows[i]);
 	}
 
-	scanf("%ud", &new_columns_count);
+	scanf("%u", &new_columns_count);
 	int *new_columns = malloc(sizeof(int) * new_columns_count);
 
 	for (int i = 0; i < new_columns_count; i++) {
-		scanf("%ud", &new_columns[i]);
+		scanf("%u", &new_columns[i]);
 	}
 
 	Matrix *matrix = &registry->matrices[index];
@@ -134,11 +134,12 @@ void handle_resize(MatrixRegistry *registry)
 
 void handle_multiply(MatrixRegistry *registry)
 {
-	int index1, index2;
-	scanf("%ud%ud", &index1, &index2);
+	unsigned int index1, index2;
+	scanf("%u %u", &index1, &index2);
 
 	if (index1 >= registry->size || index2 >= registry->size) {
 		printf("No matrix with the given index\n");
+		printf("Index1: %u\nIndex2: %u\nSize: %u\n", index1, index2, registry->size);
 		return;
 	}
 
@@ -159,9 +160,9 @@ void handle_sort(MatrixRegistry *registry)
 	for (int i = 0; i < registry->size; i++) {
 		for (int j = i + 1; j < registry->size; j++) {
 			if (compare(&registry->matrices[i], &registry->matrices[j]) == 1) {
-				Matrix *aux = &registry->matrices[i];
+				Matrix temp = registry->matrices[i];
 				registry->matrices[i] = registry->matrices[j];
-				registry->matrices[j] = *aux;
+				registry->matrices[j] = temp;
 			}
 		}
 	}
@@ -170,7 +171,7 @@ void handle_sort(MatrixRegistry *registry)
 void handle_transpose(MatrixRegistry *registry)
 {
 	unsigned int index;
-	scanf("%ud", &index);
+	scanf("%u", &index);
 
 	if (index >= registry->size) {
 		printf("No matrix with the given index\n");
@@ -194,7 +195,7 @@ void handle_raise_to_power(MatrixRegistry *registry)
 {
 	unsigned int index;
 	int power;
-	scanf("%ud%d", &index, &power);
+	scanf("%u%d", &index, &power);
 
 	if (index >= registry->size) {
 		printf("No matrix with the given index\n");
@@ -209,5 +210,5 @@ void handle_raise_to_power(MatrixRegistry *registry)
 		return;
 	}
 
-	handle_save_at(registry	, index, new_matrix);
+	handle_save_at(registry, index, new_matrix);
 }
