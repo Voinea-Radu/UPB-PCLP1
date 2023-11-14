@@ -21,3 +21,5 @@ MatrixRegistry *multiply(MatrixRegistry *registry1, MatrixRegistry *registry2);
 int compare(MatrixRegistry *registry1, MatrixRegistry *registry2);
 
 MatrixRegistry *transpose(MatrixRegistry *registry);
+
+MatrixRegistry *raise_to_power(MatrixRegistry *registry, int power);

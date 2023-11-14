@@ -24,3 +24,5 @@ void handle_multiply(int *size, MatrixRegistry **memory);
 void handle_sort(const int *size, MatrixRegistry **memory);
 
 void handle_transpose(const int *size, MatrixRegistry **memory);
+
+void handle_raise_to_power(const int *size, MatrixRegistry **memory);

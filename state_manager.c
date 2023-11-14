@@ -33,6 +33,9 @@ void handle_state(char state)
 		case 'T':
 			handle_transpose(&matrix_memory_size, &matrix_memory);
 			break;
+		case 'R':
+			handle_raise_to_power(&matrix_memory_size, &matrix_memory);
+			break;
 		default:
 			return;
 	}
@@ -134,6 +137,11 @@ void handle_multiply(int *size, MatrixRegistry **memory)
 
 	MatrixRegistry *new_registry = multiply(registry1, registry2);
 
+	if (new_registry == NULL) {
+		printf("Cannot perform matrix multiplication");
+		return;
+	}
+
 	handle_save(size, memory, new_registry);
 }
 
@@ -173,4 +181,21 @@ void handle_save_at(int index, MatrixRegistry **memory, MatrixRegistry *registry
 	(*memory)[index] = *registry;
 
 	printf("Successfully saved the matrix to index %d\n", index); // TODO Delete
+}
+
+void handle_raise_to_power(const int *size, MatrixRegistry **memory)
+{
+	int index, power;
+	scanf("%d%d", &index, &power);
+
+	if (index >= *size) {
+		printf("No matrix with the given index\n");
+		return;
+	}
+
+	MatrixRegistry *registry = &(*memory)[index];
+
+	MatrixRegistry *new_registry = raise_to_power(registry, power);
+
+	handle_save_at(index, memory, new_registry);
 }
