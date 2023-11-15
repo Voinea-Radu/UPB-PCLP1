@@ -279,6 +279,7 @@ Matrix *sum_matrix(Matrix *matrix1, Matrix *matrix2)
 		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
 		for (int j = 0; j < output_registry->columns_count; j++) {
 			matrix[i][j] = matrix1->data[i][j] + matrix2->data[i][j];
+			matrix[i][j] %= MOD;
 		}
 	}
 
@@ -299,6 +300,9 @@ Matrix *substract_matrix(Matrix *matrix1, Matrix *matrix2)
 		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
 		for (int j = 0; j < output_registry->columns_count; j++) {
 			matrix[i][j] = matrix1->data[i][j] - matrix2->data[i][j];
+			matrix[i][j] %= MOD;
+			if (matrix[i][j] < 0)
+				matrix[i][j] += MOD;
 		}
 	}
 
