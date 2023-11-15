@@ -9,11 +9,11 @@
 
 Matrix *read_matrix_registry(int rows_count, int columns_count)
 {
-	double **matrix = malloc(sizeof(double *) * rows_count);
+	int **matrix = malloc(sizeof(int *) * rows_count);
 	for (int i = 0; i < rows_count; i++) {
-		matrix[i] = malloc(sizeof(double) * columns_count);
+		matrix[i] = malloc(sizeof(int) * columns_count);
 		for (int j = 0; j < columns_count; j++) {
-			scanf("%lf", &matrix[i][j]);
+			scanf("%d", &matrix[i][j]);
 		}
 	}
 
@@ -30,7 +30,7 @@ void print_matrix(Matrix *matrix)
 {
 	for (int i = 0; i < matrix->rows_count; i++) {
 		for (int j = 0; j < matrix->columns_count; j++) {
-			printf("%lf ", matrix->data[i][j]);
+			printf("%d ", matrix->data[i][j]);
 		}
 		printf("\n");
 	}
@@ -45,9 +45,9 @@ Matrix *create_from(Matrix *matrix, unsigned int new_rows_count, const unsigned 
 	output_registry->rows_count = new_rows_count;
 	output_registry->columns_count = new_columns_count;
 
-	double **matrix_data = malloc(sizeof(double *) * new_rows_count);
+	int **matrix_data = malloc(sizeof(int *) * new_rows_count);
 	for (int i = 0; i < new_rows_count; i++) {
-		matrix_data[i] = malloc(sizeof(double) * new_columns_count);
+		matrix_data[i] = malloc(sizeof(int) * new_columns_count);
 		for (int j = 0; j < new_columns_count; j++) {
 			matrix_data[i][j] = matrix->data[new_rows[i]][new_columns[j]];
 		}
@@ -61,7 +61,7 @@ Matrix *create_from(Matrix *matrix, unsigned int new_rows_count, const unsigned 
 Matrix *multiply(Matrix *matrix1, Matrix *matrix2)
 {
 	if (matrix1->columns_count != matrix2->rows_count) {
-		printf("Cannot perform data multiplication");
+		printf("Cannot perform data multiplication\n");
 		return NULL;
 	}
 
@@ -70,13 +70,14 @@ Matrix *multiply(Matrix *matrix1, Matrix *matrix2)
 	output_registry->rows_count = matrix1->rows_count;
 	output_registry->columns_count = matrix2->columns_count;
 
-	double **matrix = malloc(sizeof(double *) * output_registry->rows_count);
+	int **matrix = malloc(sizeof(int *) * output_registry->rows_count);
 	for (int i = 0; i < output_registry->rows_count; i++) {
-		matrix[i] = malloc(sizeof(double) * output_registry->columns_count);
+		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
 		for (int j = 0; j < output_registry->columns_count; j++) {
 			matrix[i][j] = 0;
 			for (int k = 0; k < matrix1->columns_count; k++) {
 				matrix[i][j] += matrix1->data[i][k] * matrix2->data[k][j];
+				matrix[i][j] %= MOD;
 			}
 		}
 	}
@@ -88,56 +89,54 @@ Matrix *multiply(Matrix *matrix1, Matrix *matrix2)
 
 int compare(Matrix *matrix1, Matrix *matrix2)
 {
-	// compare the sum of elements
-	double sum1 = 0, sum2 = 0;
+	int sum1 = 0, sum2 = 0;
+
 	for (int i = 0; i < matrix1->rows_count; i++) {
 		for (int j = 0; j < matrix1->columns_count; j++) {
 			sum1 += matrix1->data[i][j];
+			sum1 %= MOD;
 		}
 	}
 
 	for (int i = 0; i < matrix2->rows_count; i++) {
 		for (int j = 0; j < matrix2->columns_count; j++) {
 			sum2 += matrix2->data[i][j];
+			sum2 %= MOD;
 		}
 	}
 
-	if (sum1 == sum2) {
-		return 0;
-	}
-
-	return sum1 > sum2 ? 1 : -1;
+	return sum1 > sum2;
 }
 
 Matrix *transpose(Matrix *matrix)
 {
-	Matrix *output_registry = malloc(sizeof(Matrix));
+	Matrix *output_matrix = malloc(sizeof(Matrix));
 
-	output_registry->rows_count = matrix->columns_count;
-	output_registry->columns_count = matrix->rows_count;
+	output_matrix->rows_count = matrix->columns_count;
+	output_matrix->columns_count = matrix->rows_count;
 
-	double **matrix_data = malloc(sizeof(double *) * output_registry->rows_count);
-	for (int i = 0; i < output_registry->rows_count; i++) {
-		matrix_data[i] = malloc(sizeof(double) * output_registry->columns_count);
-		for (int j = 0; j < output_registry->columns_count; j++) {
+	int **matrix_data = malloc(sizeof(int *) * output_matrix->rows_count);
+	for (int i = 0; i < output_matrix->rows_count; i++) {
+		matrix_data[i] = malloc(sizeof(int) * output_matrix->columns_count);
+		for (int j = 0; j < output_matrix->columns_count; j++) {
 			matrix_data[i][j] = matrix->data[j][i];
 		}
 	}
 
-	output_registry->data = matrix_data;
+	output_matrix->data = matrix_data;
 
-	return output_registry;
+	return output_matrix;
 }
 
 Matrix *raise_to_power(Matrix *matrix, int power)
 {
 	if (power < 0) {
-		printf("Power should be positive");
+		printf("Power should be positive\n");
 		return NULL;
 	}
 
 	if (matrix->columns_count != matrix->rows_count) {
-		printf("Cannot perform matrix_data multiplication");
+		printf("Cannot perform matrix_data multiplication\n");
 		return NULL;
 	}
 
@@ -146,9 +145,9 @@ Matrix *raise_to_power(Matrix *matrix, int power)
 	output_matrix->rows_count = matrix->rows_count;
 	output_matrix->columns_count = matrix->columns_count;
 
-	double **matrix_data = malloc(sizeof(double *) * output_matrix->rows_count);
+	int **matrix_data = malloc(sizeof(int *) * output_matrix->rows_count);
 	for (int i = 0; i < output_matrix->rows_count; i++) {
-		matrix_data[i] = malloc(sizeof(double) * output_matrix->columns_count);
+		matrix_data[i] = malloc(sizeof(int) * output_matrix->columns_count);
 		for (int j = 0; j < output_matrix->columns_count; j++) {
 			matrix_data[i][j] = matrix->data[i][j];
 		}
@@ -190,7 +189,7 @@ Matrix *multiply_strassen(Matrix *matrix1, Matrix *matrix2)
 {
 	if (matrix1->columns_count != matrix2->rows_count || matrix1->columns_count != matrix1->rows_count ||
 		matrix2->columns_count != matrix2->rows_count) {
-		printf("Cannot perform data multiplication");
+		printf("Cannot perform data multiplication\n");
 		return NULL;
 	}
 
@@ -198,8 +197,8 @@ Matrix *multiply_strassen(Matrix *matrix1, Matrix *matrix2)
 		Matrix *output_registry = malloc(sizeof(Matrix));
 		output_registry->rows_count = 1;
 		output_registry->columns_count = 1;
-		double **matrix = malloc(sizeof(double *) * output_registry->rows_count);
-		matrix[0] = malloc(sizeof(double) * output_registry->columns_count);
+		int **matrix = malloc(sizeof(int *) * output_registry->rows_count);
+		matrix[0] = malloc(sizeof(int) * output_registry->columns_count);
 		matrix[0][0] = matrix1->data[0][0] * matrix2->data[0][0];
 		output_registry->data = matrix;
 		return output_registry;
@@ -248,10 +247,10 @@ Matrix *multiply_strassen(Matrix *matrix1, Matrix *matrix2)
 	output_registry->rows_count = matrix1->rows_count;
 	output_registry->columns_count = matrix2->columns_count;
 
-	double **matrix = malloc(sizeof(double *) * output_registry->rows_count);
+	int **matrix = malloc(sizeof(int *) * output_registry->rows_count);
 
 	for (int i = 0; i < output_registry->rows_count; i++) {
-		matrix[i] = malloc(sizeof(double) * output_registry->columns_count);
+		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
 	}
 
 	for (int i = 0; i < output_registry->rows_count / 2; i++) {
@@ -275,9 +274,9 @@ Matrix *sum_matrix(Matrix *matrix1, Matrix *matrix2)
 	output_registry->rows_count = matrix1->rows_count;
 	output_registry->columns_count = matrix1->columns_count;
 
-	double **matrix = malloc(sizeof(double *) * output_registry->rows_count);
+	int **matrix = malloc(sizeof(int *) * output_registry->rows_count);
 	for (int i = 0; i < output_registry->rows_count; i++) {
-		matrix[i] = malloc(sizeof(double) * output_registry->columns_count);
+		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
 		for (int j = 0; j < output_registry->columns_count; j++) {
 			matrix[i][j] = matrix1->data[i][j] + matrix2->data[i][j];
 		}
@@ -295,9 +294,9 @@ Matrix *substract_matrix(Matrix *matrix1, Matrix *matrix2)
 	output_registry->rows_count = matrix1->rows_count;
 	output_registry->columns_count = matrix1->columns_count;
 
-	double **matrix = malloc(sizeof(double *) * output_registry->rows_count);
+	int **matrix = malloc(sizeof(int *) * output_registry->rows_count);
 	for (int i = 0; i < output_registry->rows_count; i++) {
-		matrix[i] = malloc(sizeof(double) * output_registry->columns_count);
+		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
 		for (int j = 0; j < output_registry->columns_count; j++) {
 			matrix[i][j] = matrix1->data[i][j] - matrix2->data[i][j];
 		}

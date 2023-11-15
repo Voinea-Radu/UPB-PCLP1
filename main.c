@@ -11,7 +11,6 @@ int main(void)
 	char c = '0';
 
 	do {
-		printf("> "); // TODO Delete
 		scanf("%s", &c);
 
 		handle_state(c);

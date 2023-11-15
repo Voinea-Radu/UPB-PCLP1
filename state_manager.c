@@ -48,7 +48,11 @@ void handle_state(char state)
 		case 'S':
 			handle_multiply_strassen(registry);
 			break;
+		case 'Q':
+			//TODO Free memory
+			break;
 		default:
+			printf("Unrecognized command\n");
 			return;
 	}
 }
@@ -145,7 +149,6 @@ void handle_multiply(MatrixRegistry *registry)
 
 	if (index1 >= registry->size || index2 >= registry->size) {
 		printf("No data with the given index\n");
-		printf("Index1: %u\nIndex2: %u\nSize: %u\n", index1, index2, registry->size);
 		return;
 	}
 
@@ -165,7 +168,7 @@ void handle_sort(MatrixRegistry *registry)
 {
 	for (int i = 0; i < registry->size; i++) {
 		for (int j = i + 1; j < registry->size; j++) {
-			if (compare(&registry->matrices[i], &registry->matrices[j]) == 1) {
+			if (compare(&registry->matrices[i], &registry->matrices[j])) {
 				Matrix temp = registry->matrices[i];
 				registry->matrices[i] = registry->matrices[j];
 				registry->matrices[j] = temp;
@@ -193,8 +196,6 @@ void handle_transpose(MatrixRegistry *registry)
 void handle_save_at(MatrixRegistry *registry, unsigned int index, Matrix *matrix)
 {
 	registry->matrices[index] = *matrix;
-
-	printf("Successfully saved the data to index %d\n", index); // TODO Delete
 }
 
 void handle_raise_to_power(MatrixRegistry *registry)

@@ -3,8 +3,10 @@
 // Grupa: 315 CA
 //
 
+#define MOD 10007
+
 typedef struct{
-	double **data;
+	int **data;
 	unsigned int rows_count;
 	unsigned int columns_count;
 } Matrix;
