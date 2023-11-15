@@ -45,6 +45,9 @@ void handle_state(char state)
 		case 'F':
 			handle_free(registry);
 			break;
+		case 'S':
+			handle_multiply_strassen(registry);
+			break;
 		default:
 			return;
 	}
@@ -79,7 +82,7 @@ void handle_print_dimension(MatrixRegistry *registry)
 	scanf("%u", &index);
 
 	if (index >= registry->size) {
-		printf("No matrix with the given index\n");
+		printf("No data with the given index\n");
 		return;
 	}
 
@@ -94,7 +97,7 @@ void handle_print(MatrixRegistry *registry)
 	scanf("%u", &index);
 
 	if (index >= registry->size) {
-		printf("No matrix with the given index\n");
+		printf("No data with the given index\n");
 		return;
 	}
 
@@ -109,7 +112,7 @@ void handle_resize(MatrixRegistry *registry)
 	scanf("%u", &index);
 
 	if (index >= registry->size) {
-		printf("No matrix with the given index\n");
+		printf("No data with the given index\n");
 		return;
 	}
 
@@ -141,7 +144,7 @@ void handle_multiply(MatrixRegistry *registry)
 	scanf("%u %u", &index1, &index2);
 
 	if (index1 >= registry->size || index2 >= registry->size) {
-		printf("No matrix with the given index\n");
+		printf("No data with the given index\n");
 		printf("Index1: %u\nIndex2: %u\nSize: %u\n", index1, index2, registry->size);
 		return;
 	}
@@ -177,7 +180,7 @@ void handle_transpose(MatrixRegistry *registry)
 	scanf("%u", &index);
 
 	if (index >= registry->size) {
-		printf("No matrix with the given index\n");
+		printf("No data with the given index\n");
 		return;
 	}
 
@@ -191,7 +194,7 @@ void handle_save_at(MatrixRegistry *registry, unsigned int index, Matrix *matrix
 {
 	registry->matrices[index] = *matrix;
 
-	printf("Successfully saved the matrix to index %d\n", index); // TODO Delete
+	printf("Successfully saved the data to index %d\n", index); // TODO Delete
 }
 
 void handle_raise_to_power(MatrixRegistry *registry)
@@ -201,7 +204,7 @@ void handle_raise_to_power(MatrixRegistry *registry)
 	scanf("%u%d", &index, &power);
 
 	if (index >= registry->size) {
-		printf("No matrix with the given index\n");
+		printf("No data with the given index\n");
 		return;
 	}
 
@@ -223,21 +226,43 @@ void handle_free(MatrixRegistry *registry)
 	scanf("%d", &index);
 
 	if (index >= registry->size) {
-		printf("No matrix with the given index\n");
+		printf("No data with the given index\n");
 		return;
 	}
 
 	Matrix *matrix = &registry->matrices[index];
 
 	for (int i = 0; i < matrix->rows_count; i++) {
-		free(matrix->matrix[i]);
+		free(matrix->data[i]);
 	}
 
-	free(matrix->matrix);
+	free(matrix->data);
 
 	for (int i = index; i < registry->size - 1; i++) {
 		registry->matrices[i] = registry->matrices[i + 1];
 	}
 
 	registry->size--;
+}
+
+void handle_multiply_strassen(MatrixRegistry *registry)
+{
+	unsigned int index1, index2;
+	scanf("%u %u", &index1, &index2);
+
+	if (index1 >= registry->size || index2 >= registry->size) {
+		printf("No data with the given index\n");
+		return;
+	}
+
+	Matrix *matrix1 = &registry->matrices[index1];
+	Matrix *matrix2 = &registry->matrices[index2];
+
+	Matrix *matrix = multiply_strassen(matrix1, matrix2);
+
+	if (matrix == NULL) {
+		return;
+	}
+
+	handle_save(registry, matrix);
 }

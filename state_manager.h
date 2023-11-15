@@ -28,3 +28,5 @@ void handle_transpose(MatrixRegistry *registry);
 void handle_raise_to_power(MatrixRegistry *registry);
 
 void handle_free(MatrixRegistry *registry);
+
+void handle_multiply_strassen(MatrixRegistry *registry);
