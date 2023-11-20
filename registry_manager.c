@@ -13,9 +13,12 @@ Matrix *read_matrix_registry(unsigned int rows_count, unsigned int columns_count
 	for (unsigned int i = 0; i < rows_count; i++) {
 		matrix[i] = malloc(sizeof(int) * columns_count);
 		for (unsigned int j = 0; j < columns_count; j++) {
-			scanf("%d", &matrix[i][j]);
+			int tmp;
+			scanf("%d", &tmp);
+			matrix[i][j] = (tmp);
 		}
 	}
+
 
 	Matrix *output_registry = malloc(sizeof(Matrix));
 
@@ -61,7 +64,7 @@ Matrix *create_from(Matrix *matrix, unsigned int new_rows_count, const unsigned 
 Matrix *multiply(Matrix *matrix1, Matrix *matrix2)
 {
 	if (matrix1->columns_count != matrix2->rows_count) {
-		printf("Cannot perform data multiplication\n");
+		printf("Cannot perform matrix multiplication\n");
 		return NULL;
 	}
 
@@ -77,7 +80,7 @@ Matrix *multiply(Matrix *matrix1, Matrix *matrix2)
 			matrix[i][j] = 0;
 			for (unsigned int k = 0; k < matrix1->columns_count; k++) {
 				matrix[i][j] += matrix1->data[i][k] * matrix2->data[k][j];
-				matrix[i][j] %= MOD;
+				matrix[i][j] = mod(matrix[i][j]);
 			}
 		}
 	}
@@ -94,14 +97,14 @@ int compare(Matrix *matrix1, Matrix *matrix2)
 	for (unsigned int i = 0; i < matrix1->rows_count; i++) {
 		for (unsigned int j = 0; j < matrix1->columns_count; j++) {
 			sum1 += matrix1->data[i][j];
-			sum1 %= MOD;
+			sum1 = mod(sum1);
 		}
 	}
 
 	for (unsigned int i = 0; i < matrix2->rows_count; i++) {
 		for (unsigned int j = 0; j < matrix2->columns_count; j++) {
 			sum2 += matrix2->data[i][j];
-			sum2 %= MOD;
+			sum2 = mod(sum2);
 		}
 	}
 
@@ -279,7 +282,7 @@ Matrix *sum_matrix(Matrix *matrix1, Matrix *matrix2)
 		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
 		for (unsigned int j = 0; j < output_registry->columns_count; j++) {
 			matrix[i][j] = matrix1->data[i][j] + matrix2->data[i][j];
-			matrix[i][j] %= MOD;
+			matrix[i][j] = mod(matrix[i][j]);
 		}
 	}
 
@@ -300,13 +303,20 @@ Matrix *substract_matrix(Matrix *matrix1, Matrix *matrix2)
 		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
 		for (unsigned int j = 0; j < output_registry->columns_count; j++) {
 			matrix[i][j] = matrix1->data[i][j] - matrix2->data[i][j];
-			matrix[i][j] %= MOD;
-			if (matrix[i][j] < 0)
-				matrix[i][j] += MOD;
+			matrix[i][j] = mod(matrix[i][j]);
 		}
 	}
 
 	output_registry->data = matrix;
 
 	return output_registry;
+}
+
+int mod(int number)
+{
+	number = number % MOD;
+	if (number < 0) {
+		number += MOD;
+	}
+	return number;
 }

@@ -35,4 +35,7 @@ Matrix *raise_to_power(Matrix *matrix, int power);
 Matrix *multiply_strassen(Matrix *matrix1, Matrix *matrix2);
 
 Matrix *sum_matrix(Matrix *matrix1, Matrix *matrix2);
+
 Matrix * substract_matrix(Matrix *matrix1, Matrix *matrix2);
+
+int mod(int number);

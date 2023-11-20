@@ -86,7 +86,7 @@ void handle_print_dimension(MatrixRegistry *registry)
 	scanf("%u", &index);
 
 	if (index >= registry->size) {
-		printf("No data with the given index\n");
+		printf("No matrix with the given index\n");
 		return;
 	}
 
@@ -101,7 +101,7 @@ void handle_print(MatrixRegistry *registry)
 	scanf("%u", &index);
 
 	if (index >= registry->size) {
-		printf("No data with the given index\n");
+		printf("No matrix with the given index\n");
 		return;
 	}
 
@@ -148,7 +148,7 @@ void handle_multiply(MatrixRegistry *registry)
 	scanf("%u %u", &index1, &index2);
 
 	if (index1 >= registry->size || index2 >= registry->size) {
-		printf("No data with the given index\n");
+		printf("No matrix with the given index\n");
 		return;
 	}
 
@@ -227,7 +227,7 @@ void handle_free(MatrixRegistry *registry)
 	scanf("%ud", &index);
 
 	if (index >= registry->size) {
-		printf("No data with the given index\n");
+		printf("No matrix with the given index\n");
 		return;
 	}
 
