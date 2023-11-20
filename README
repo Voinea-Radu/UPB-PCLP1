@@ -1,3 +1,4 @@
+
 Copyright Voinea Radu-Mihai 315CAa 2023-2024
 
 Programul citeste de la utilizator comenzi formata dintr-o litera majuscula
@@ -6,14 +7,48 @@ fiecarei litere. In cazul in care comanda citita de la utilizator nu este una
 definita utilizatorul va fi anuntat de acest lucru iar programul va continua
 
 Comenzile sunt urmatoarele:
-1. [Load (L) - Incarcare](#load)
-2. [Dimensions (D) - Afisare Dimensiuni](#dimensions)
-3. [Print (P) - Afisare](#print)
-4. [Concatenate (C) - Concatenare a liniitor si coloanelor (redimensionare)](#concatenate)
-5. [Multiply (M) - Inmultire](#multiply)
-6. [Order (O) - Sortare](#order)
-7. [Transpose (O) - Transpunere](#transpose)
-8. [Raise to Power (R) - Ridicare la putere](#raise-to-power)
-9. [Free (F) - Stergere matrice](#free)
-10. [Multiply Strassen (S) - Inmultire Strassen](#multiply-strassen)
-11. [Quit (Q) - Iesire din program](#quit)
+1. [[L]oad - Incarcare](#load)
+2. [[D]imensions - Afisare Dimensiuni](#dimensions)
+3. [[P]rint - Afisare](#print)
+4. [[C]oncatenate - Concatenare a liniitor si coloanelor (redimensionare)](#concatenate)
+5. [[M]ultiply - Inmultire](#multiply)
+6. [[O]rder - Sortare](#order)
+7. [[T]ranspose - Transpunere](#transpose)
+8. [[R]aise to Power - Ridicare la putere](#raise-to-power)
+9. [[F]ree - Stergere matrice](#free)
+10. [[S]trassen Multiply  - Inmultire Strassen](#multiply-strassen)
+11. [[Q]uit - Iesire din program](#quit)
+
+## Load
+Citim si adaugam in vectorul de matrici. In cazul in care vectorul nu are marimea necesara, ii dublam capacitatea si adaugam matricea.
+Matricea este stocata sub forma de structura de date care contine elementele matricii, numarul de linii si numarul de coloane
+
+## Dimensions
+Din vectoru de matrici accesam matricea cu index-ul dat de utilizator, si printam din structura matricii numarul de linii si numarul de coloane.
+
+## Print
+Din vectoru de matrici accesam matricea cu index-ul dat de utilizator, si printam din structura matricii elementele acesteia.
+
+## Concatenate
+Primim de la utlizator numarul de linii si de coloane pe care noua matrice o va avea, precum si index-urile liniilor si coloane din matricea curenta care vor fi utilizate.
+
+## Multiply
+Primim de la utilizator index-urile matricelor ce trebuiesc inmultite. Inmultim matricile cu algoritmul clasic si salvam matricea in vectorul de matrici.
+
+## Order
+Calculam suma elementelor matricelor si sortam conform rezultatului folosind algoritmul de sortare [Bubble sort](https://en.wikipedia.org/wiki/Bubble_sort)
+
+## Transpose
+Primim de la utilizator index-ul matricei pe care o sa o transpunem. Transpunem matricea si o salvam in-place
+
+## Raise To Power
+Primim de la utilizator index-ul matricei pe care o vom ridica la putere, precum si puterea la care vom ridica matricea. Ridicam la putere matricea folosind un algoritm de ridicare la putere cu o complexitate logaritmica
+
+## Free
+Primim de la utilizator index-ul matricei pe care sa o eliminam. Eliberam memoria asociata matricei si mutam toate elementele aflate la dreapta acesteia cu o pozitie spre stanga.
+
+## Multiply Strassen
+Primim de la utilizator index-ul matricelor pe care sa le inmultim. Folosim algorimul lui Strassen detaliat in acest [document](https://docs.google.com/document/d/13f1nWnX2NhBt1VxyeUUxH01XMvRV3JwKgkhxWMBIByc/edit)
+
+## Quit
+Eliberam toata memoria folosita de program si iesim din bucla infinita a programului.
