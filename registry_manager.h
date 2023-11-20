@@ -17,7 +17,7 @@ typedef struct{
 	unsigned int capacity;
 } MatrixRegistry;
 
-Matrix *read_matrix_registry(int rows_count, int columns_count);
+Matrix *read_matrix_registry(unsigned int rows_count, unsigned int columns_count);
 
 void print_matrix(Matrix *matrix);
 

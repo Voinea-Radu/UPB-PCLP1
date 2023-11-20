@@ -121,16 +121,16 @@ void handle_resize(MatrixRegistry *registry)
 	}
 
 	scanf("%u", &new_rows_count);
-	int *new_rows = malloc(sizeof(int) * new_rows_count);
+	unsigned int *new_rows = malloc(sizeof(int) * new_rows_count);
 
-	for (int i = 0; i < new_rows_count; i++) {
+	for (unsigned int i = 0; i < new_rows_count; i++) {
 		scanf("%u", &new_rows[i]);
 	}
 
 	scanf("%u", &new_columns_count);
-	int *new_columns = malloc(sizeof(int) * new_columns_count);
+	unsigned int *new_columns = malloc(sizeof(int) * new_columns_count);
 
-	for (int i = 0; i < new_columns_count; i++) {
+	for (unsigned int i = 0; i < new_columns_count; i++) {
 		scanf("%u", &new_columns[i]);
 	}
 
@@ -166,8 +166,8 @@ void handle_multiply(MatrixRegistry *registry)
 
 void handle_sort(MatrixRegistry *registry)
 {
-	for (int i = 0; i < registry->size; i++) {
-		for (int j = i + 1; j < registry->size; j++) {
+	for (unsigned int i = 0; i < registry->size; i++) {
+		for (unsigned int j = i + 1; j < registry->size; j++) {
 			if (compare(&registry->matrices[i], &registry->matrices[j])) {
 				Matrix temp = registry->matrices[i];
 				registry->matrices[i] = registry->matrices[j];
@@ -222,9 +222,9 @@ void handle_raise_to_power(MatrixRegistry *registry)
 
 void handle_free(MatrixRegistry *registry)
 {
-	int index;
+	unsigned int index;
 
-	scanf("%d", &index);
+	scanf("%ud", &index);
 
 	if (index >= registry->size) {
 		printf("No data with the given index\n");
@@ -233,13 +233,13 @@ void handle_free(MatrixRegistry *registry)
 
 	Matrix *matrix = &registry->matrices[index];
 
-	for (int i = 0; i < matrix->rows_count; i++) {
+	for (unsigned int i = 0; i < matrix->rows_count; i++) {
 		free(matrix->data[i]);
 	}
 
 	free(matrix->data);
 
-	for (int i = index; i < registry->size - 1; i++) {
+	for (unsigned int i = index; i < registry->size - 1; i++) {
 		registry->matrices[i] = registry->matrices[i + 1];
 	}
 
