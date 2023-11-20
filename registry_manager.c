@@ -1,7 +1,6 @@
-//
-// Nume: Voinea Radu-Mihai
-// Grupa: 315 CA
-//
+// ********************************************
+// Copyright Voinea Radu-Mihai 315CAa 2023-2024
+// ********************************************
 
 #include <stdio.h>
 #include <malloc.h>

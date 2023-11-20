@@ -1,0 +1,19 @@
+Copyright Voinea Radu-Mihai 315CAa 2023-2024
+
+Programul citeste de la utilizator comenzi formata dintr-o litera majuscula
+L, D, P, C, M, O, T, R, F, S, Q, urmand sa execute o anumita actiune asociata
+fiecarei litere. In cazul in care comanda citita de la utilizator nu este una
+definita utilizatorul va fi anuntat de acest lucru iar programul va continua
+
+Comenzile sunt urmatoarele:
+1. [Load (L) - Incarcare](#load)
+2. [Dimensions (D) - Afisare Dimensiuni](#dimensions)
+3. [Print (P) - Afisare](#print)
+4. [Concatenate (C) - Concatenare a liniitor si coloanelor (redimensionare)](#concatenate)
+5. [Multiply (M) - Inmultire](#multiply)
+6. [Order (O) - Sortare](#order)
+7. [Transpose (O) - Transpunere](#transpose)
+8. [Raise to Power (R) - Ridicare la putere](#raise-to-power)
+9. [Free (F) - Stergere matrice](#free)
+10. [Multiply Strassen (S) - Inmultire Strassen](#multiply-strassen)
+11. [Quit (Q) - Iesire din program](#quit)
