@@ -41,7 +41,7 @@ void print_matrix(Matrix *matrix)
 }
 
 Matrix *create_from(Matrix *matrix, unsigned int new_rows_count,
-					const unsigned int *new_rows,unsigned int new_columns_count,
+					const unsigned int *new_rows, unsigned int new_columns_count,
 					const unsigned int *new_columns)
 {
 
@@ -195,7 +195,7 @@ Matrix *raise_to_power(Matrix *matrix, int power)
 Matrix *multiply_strassen(Matrix *matrix1, Matrix *matrix2)
 {
 	if (matrix1->columns_count != matrix2->rows_count ||
-	matrix1->columns_count != matrix1->rows_count ||
+		matrix1->columns_count != matrix1->rows_count ||
 		matrix2->columns_count != matrix2->rows_count) {
 		printf("Cannot perform matrix multiplication\n");
 		return NULL;
