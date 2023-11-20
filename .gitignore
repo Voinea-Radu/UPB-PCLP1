@@ -2,3 +2,4 @@
 cmake-build-debug
 my_octave
 *.out
+*.zip
