@@ -52,7 +52,6 @@ void handle_state(char command)
 		break;
 	default:
 		printf("Unrecognized command\n");
-		//printf("Unrecognized command '%c'\n", command);
 		return;
 	}
 }
