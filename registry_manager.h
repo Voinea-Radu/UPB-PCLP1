@@ -17,12 +17,15 @@ typedef struct{
 	unsigned int capacity;
 } MatrixRegistry;
 
-Matrix *read_matrix_registry(unsigned int rows_count, unsigned int columns_count);
+Matrix *read_matrix_registry(unsigned int rows_count,
+							 unsigned int columns_count);
 
 void print_matrix(Matrix *matrix);
 
-Matrix *create_from(Matrix *matrix, unsigned int new_rows_count, const  unsigned int *new_rows,
-					unsigned int new_columns_count, const unsigned int *new_columns);
+Matrix *create_from(Matrix *matrix, unsigned int new_rows_count,
+					const  unsigned int *new_rows,
+					unsigned int new_columns_count,
+					const unsigned int *new_columns);
 
 Matrix *multiply(Matrix *matrix1, Matrix *matrix2);
 

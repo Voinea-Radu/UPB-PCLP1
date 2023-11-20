@@ -75,7 +75,9 @@ void handle_save(MatrixRegistry *registry, Matrix *matrix)
 
 	if (registry->size > registry->capacity) {
 		registry->capacity *= 2;
-		registry->matrices = realloc(registry->matrices, (sizeof(Matrix)) * registry->capacity);
+		registry->matrices =
+				realloc(registry->matrices,
+						(sizeof(Matrix)) * registry->capacity);
 	}
 
 	handle_save_at(registry, registry->size - 1, matrix);
@@ -169,7 +171,8 @@ void handle_sort(MatrixRegistry *registry)
 {
 	for (unsigned int i = 0; i < registry->size; i++) {
 		for (unsigned int j = i + 1; j < registry->size; j++) {
-			if (compare(&registry->matrices[i], &registry->matrices[j])) {
+			if (compare(&registry->matrices[i],
+						&registry->matrices[j])) {
 				Matrix temp = registry->matrices[i];
 				registry->matrices[i] = registry->matrices[j];
 				registry->matrices[j] = temp;
@@ -194,7 +197,8 @@ void handle_transpose(MatrixRegistry *registry)
 	handle_save_at(registry, index, new_matrix);
 }
 
-void handle_save_at(MatrixRegistry *registry, unsigned int index, Matrix *matrix)
+void handle_save_at(MatrixRegistry *registry,
+					unsigned int index, Matrix *matrix)
 {
 	registry->matrices[index] = *matrix;
 }

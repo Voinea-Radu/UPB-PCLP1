@@ -7,7 +7,8 @@
 #include <malloc.h>
 #include "registry_manager.h"
 
-Matrix *read_matrix_registry(unsigned int rows_count, unsigned int columns_count)
+Matrix *read_matrix_registry(unsigned int rows_count,
+							 unsigned int columns_count)
 {
 	int **matrix = malloc(sizeof(int *) * rows_count);
 	for (unsigned int i = 0; i < rows_count; i++) {
@@ -39,8 +40,9 @@ void print_matrix(Matrix *matrix)
 	}
 }
 
-Matrix *create_from(Matrix *matrix, unsigned int new_rows_count, const unsigned int *new_rows,
-					unsigned int new_columns_count, const unsigned int *new_columns)
+Matrix *create_from(Matrix *matrix, unsigned int new_rows_count,
+					const unsigned int *new_rows,unsigned int new_columns_count,
+					const unsigned int *new_columns)
 {
 
 	Matrix *output_registry = malloc(sizeof(Matrix));
@@ -120,7 +122,8 @@ Matrix *transpose(Matrix *matrix)
 
 	int **matrix_data = malloc(sizeof(int *) * output_matrix->rows_count);
 	for (unsigned int i = 0; i < output_matrix->rows_count; i++) {
-		matrix_data[i] = malloc(sizeof(int) * output_matrix->columns_count);
+		matrix_data[i] =
+				malloc(sizeof(int) * output_matrix->columns_count);
 		for (unsigned int j = 0; j < output_matrix->columns_count; j++) {
 			matrix_data[i][j] = matrix->data[j][i];
 		}
@@ -150,7 +153,8 @@ Matrix *raise_to_power(Matrix *matrix, int power)
 
 	int **matrix_data = malloc(sizeof(int *) * output_matrix->rows_count);
 	for (unsigned int i = 0; i < output_matrix->rows_count; i++) {
-		matrix_data[i] = malloc(sizeof(int) * output_matrix->columns_count);
+		matrix_data[i] =
+				malloc(sizeof(int) * output_matrix->columns_count);
 		for (unsigned int j = 0; j < output_matrix->columns_count; j++) {
 			matrix_data[i][j] = matrix->data[i][j];
 		}
@@ -190,7 +194,8 @@ Matrix *raise_to_power(Matrix *matrix, int power)
 //Implement the Strassen algorithm for data multiplication
 Matrix *multiply_strassen(Matrix *matrix1, Matrix *matrix2)
 {
-	if (matrix1->columns_count != matrix2->rows_count || matrix1->columns_count != matrix1->rows_count ||
+	if (matrix1->columns_count != matrix2->rows_count ||
+	matrix1->columns_count != matrix1->rows_count ||
 		matrix2->columns_count != matrix2->rows_count) {
 		printf("Cannot perform matrix multiplication\n");
 		return NULL;
@@ -207,44 +212,81 @@ Matrix *multiply_strassen(Matrix *matrix1, Matrix *matrix2)
 		return output_registry;
 	}
 
-	unsigned int *matrix_v1 = malloc(sizeof(int) * matrix1->rows_count / 2);
-	unsigned int *matrix_v2 = malloc(sizeof(int) * matrix1->rows_count / 2);
+	unsigned int *matrix_v1 =
+			malloc(sizeof(int) * matrix1->rows_count / 2);
+	unsigned int *matrix_v2 =
+			malloc(sizeof(int) * matrix1->rows_count / 2);
 
 	for (unsigned int i = 0; i < matrix1->rows_count / 2; i++) {
 		matrix_v1[i] = i;
 		matrix_v2[i] = i + matrix1->rows_count / 2;
 	}
 
-	Matrix *A1 = create_from(matrix1, matrix1->rows_count / 2, matrix_v1,
-							 matrix1->columns_count / 2, matrix_v1);
-	Matrix *A2 = create_from(matrix1, matrix1->rows_count / 2, matrix_v1,
-							 matrix1->columns_count / 2, matrix_v2);
-	Matrix *A3 = create_from(matrix1, matrix1->rows_count / 2, matrix_v2,
-							 matrix1->columns_count / 2, matrix_v1);
-	Matrix *A4 = create_from(matrix1, matrix1->rows_count / 2, matrix_v2,
-							 matrix1->columns_count / 2, matrix_v2);
+	Matrix *A1 = create_from(matrix1,
+							 matrix1->rows_count / 2,
+							 matrix_v1,
+							 matrix1->columns_count / 2,
+							 matrix_v1);
+	Matrix *A2 = create_from(matrix1,
+							 matrix1->rows_count / 2,
+							 matrix_v1,
+							 matrix1->columns_count / 2,
+							 matrix_v2);
+	Matrix *A3 = create_from(matrix1,
+							 matrix1->rows_count / 2,
+							 matrix_v2,
+							 matrix1->columns_count / 2,
+							 matrix_v1);
+	Matrix *A4 = create_from(matrix1,
+							 matrix1->rows_count / 2,
+							 matrix_v2,
+							 matrix1->columns_count / 2,
+							 matrix_v2);
 
-	Matrix *B1 = create_from(matrix2, matrix2->rows_count / 2, matrix_v1,
-							 matrix2->columns_count / 2, matrix_v1);
-	Matrix *B2 = create_from(matrix2, matrix2->rows_count / 2, matrix_v1,
-							 matrix2->columns_count / 2, matrix_v2);
-	Matrix *B3 = create_from(matrix2, matrix2->rows_count / 2, matrix_v2,
-							 matrix2->columns_count / 2, matrix_v1);
-	Matrix *B4 = create_from(matrix2, matrix2->rows_count / 2, matrix_v2,
-							 matrix2->columns_count / 2, matrix_v2);
+	Matrix *B1 = create_from(matrix2,
+							 matrix2->rows_count / 2,
+							 matrix_v1,
+							 matrix2->columns_count / 2,
+							 matrix_v1);
+	Matrix *B2 = create_from(matrix2,
+							 matrix2->rows_count / 2,
+							 matrix_v1,
+							 matrix2->columns_count / 2,
+							 matrix_v2);
+	Matrix *B3 = create_from(matrix2,
+							 matrix2->rows_count / 2,
+							 matrix_v2,
+							 matrix2->columns_count / 2,
+							 matrix_v1);
+	Matrix *B4 = create_from(matrix2,
+							 matrix2->rows_count / 2,
+							 matrix_v2,
+							 matrix2->columns_count / 2,
+							 matrix_v2);
 
-	Matrix *M1 = multiply_strassen(sum_matrix(A1, A4), sum_matrix(B1, B4));
-	Matrix *M2 = multiply_strassen(sum_matrix(A3, A4), B1);
-	Matrix *M3 = multiply_strassen(A1, substract_matrix(B2, B4));
-	Matrix *M4 = multiply_strassen(A4, substract_matrix(B3, B1));
-	Matrix *M5 = multiply_strassen(sum_matrix(A1, A2), B4);
-	Matrix *M6 = multiply_strassen(substract_matrix(A3, A1), sum_matrix(B1, B2));
-	Matrix *M7 = multiply_strassen(substract_matrix(A2, A4), sum_matrix(B3, B4));
+	Matrix *M1 = multiply_strassen(sum_matrix(A1, A4),
+								   sum_matrix(B1, B4));
+	Matrix *M2 = multiply_strassen(sum_matrix(A3, A4),
+								   B1);
+	Matrix *M3 = multiply_strassen(A1,
+								   substract_matrix(B2, B4));
+	Matrix *M4 = multiply_strassen(A4,
+								   substract_matrix(B3, B1));
+	Matrix *M5 = multiply_strassen(sum_matrix(A1, A2),
+								   B4);
+	Matrix *M6 = multiply_strassen(substract_matrix(A3, A1),
+								   sum_matrix(B1, B2));
+	Matrix *M7 = multiply_strassen(substract_matrix(A2, A4),
+								   sum_matrix(B3, B4));
 
-	Matrix *C1 = sum_matrix(substract_matrix(sum_matrix(M1, M4), M5), M7);
+	Matrix *C1 = sum_matrix(substract_matrix(sum_matrix(M1,
+														M4), M5),
+							M7);
 	Matrix *C2 = sum_matrix(M3, M5);
 	Matrix *C3 = sum_matrix(M2, M4);
-	Matrix *C4 = sum_matrix(substract_matrix(sum_matrix(M1, M3), M2), M6);
+	Matrix *C4 = sum_matrix(substract_matrix(sum_matrix(M1,
+														M3), M2),
+							M6);
 
 	Matrix *output_registry = malloc(sizeof(Matrix));
 	output_registry->rows_count = matrix1->rows_count;
@@ -258,10 +300,12 @@ Matrix *multiply_strassen(Matrix *matrix1, Matrix *matrix2)
 
 	for (unsigned int i = 0; i < output_registry->rows_count / 2; i++) {
 		for (unsigned int j = 0; j < output_registry->columns_count / 2; j++) {
+			unsigned int new_i = i + output_registry->rows_count / 2;
 			matrix[i][j] = C1->data[i][j];
 			matrix[i][j + output_registry->columns_count / 2] = C2->data[i][j];
-			matrix[i + output_registry->rows_count / 2][j] = C3->data[i][j];
-			matrix[i + output_registry->rows_count / 2][j + output_registry->columns_count / 2] = C4->data[i][j];
+			matrix[new_i][j] = C3->data[i][j];
+			matrix[new_i][j + output_registry->columns_count / 2] =
+					C4->data[i][j];
 		}
 	}
 
