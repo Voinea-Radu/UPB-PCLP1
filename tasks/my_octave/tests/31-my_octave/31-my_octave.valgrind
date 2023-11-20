@@ -1,0 +1,15 @@
+==41525== Memcheck, a memory error detector
+==41525== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==41525== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==41525== Command: /home/dominic/Downloads/check_my_octave/my_octave
+==41525== Parent PID: 41524
+==41525== 
+==41525== 
+==41525== HEAP SUMMARY:
+==41525==     in use at exit: 0 bytes in 0 blocks
+==41525==   total heap usage: 299 allocs, 299 frees, 12,740 bytes allocated
+==41525== 
+==41525== All heap blocks were freed -- no leaks are possible
+==41525== 
+==41525== For lists of detected and suppressed errors, rerun with: -s
+==41525== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

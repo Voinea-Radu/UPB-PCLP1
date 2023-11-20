@@ -1,0 +1,15 @@
+==40541== Memcheck, a memory error detector
+==40541== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==40541== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==40541== Command: /home/dominic/Downloads/check_my_octave/my_octave
+==40541== Parent PID: 40540
+==40541== 
+==40541== 
+==40541== HEAP SUMMARY:
+==40541==     in use at exit: 0 bytes in 0 blocks
+==40541==   total heap usage: 3,571 allocs, 3,571 frees, 34,928 bytes allocated
+==40541== 
+==40541== All heap blocks were freed -- no leaks are possible
+==40541== 
+==40541== For lists of detected and suppressed errors, rerun with: -s
+==40541== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

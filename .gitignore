@@ -1,8 +1,2 @@
 .idea
 cmake-build-debug
-check*
-.check.grade
-install.sh
-my_octave*
-cs/
-config.json
