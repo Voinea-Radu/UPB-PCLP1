@@ -5,7 +5,7 @@
 
 #include "registry_manager.h"
 
-void handle_state(char state);
+void handle_state(char command);
 
 void handle_read(MatrixRegistry *registry);
 
@@ -30,3 +30,5 @@ void handle_raise_to_power(MatrixRegistry *registry);
 void handle_free(MatrixRegistry *registry);
 
 void handle_multiply_strassen(MatrixRegistry *registry);
+
+void handle_free_all(MatrixRegistry *registry);

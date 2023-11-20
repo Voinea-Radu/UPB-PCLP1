@@ -139,7 +139,7 @@ Matrix *raise_to_power(Matrix *matrix, int power)
 	}
 
 	if (matrix->columns_count != matrix->rows_count) {
-		printf("Cannot perform matrix_data multiplication\n");
+		printf("Cannot perform matrix multiplication\n");
 		return NULL;
 	}
 
@@ -192,7 +192,7 @@ Matrix *multiply_strassen(Matrix *matrix1, Matrix *matrix2)
 {
 	if (matrix1->columns_count != matrix2->rows_count || matrix1->columns_count != matrix1->rows_count ||
 		matrix2->columns_count != matrix2->rows_count) {
-		printf("Cannot perform data multiplication\n");
+		printf("Cannot perform matrix multiplication\n");
 		return NULL;
 	}
 

@@ -6,7 +6,7 @@
 #include <malloc.h>
 #include "state_manager.h"
 
-void handle_state(char state)
+void handle_state(char command)
 {
 	static MatrixRegistry *registry = NULL;
 
@@ -17,7 +17,7 @@ void handle_state(char state)
 		registry->matrices = malloc(sizeof(Matrix));
 	}
 
-	switch (state) {
+	switch (command) {
 		case 'L':
 			handle_read(registry);
 			break;
@@ -49,10 +49,11 @@ void handle_state(char state)
 			handle_multiply_strassen(registry);
 			break;
 		case 'Q':
-			//TODO Free memory
+			handle_free_all(registry);
 			break;
 		default:
 			printf("Unrecognized command\n");
+			//printf("Unrecognized command '%c'\n", command);
 			return;
 	}
 }
@@ -116,7 +117,7 @@ void handle_resize(MatrixRegistry *registry)
 	scanf("%u", &index);
 
 	if (index >= registry->size) {
-		printf("No data with the given index\n");
+		printf("No matrix with the given index\n");
 		return;
 	}
 
@@ -183,7 +184,7 @@ void handle_transpose(MatrixRegistry *registry)
 	scanf("%u", &index);
 
 	if (index >= registry->size) {
-		printf("No data with the given index\n");
+		printf("No matrix with the given index\n");
 		return;
 	}
 
@@ -205,7 +206,7 @@ void handle_raise_to_power(MatrixRegistry *registry)
 	scanf("%u%d", &index, &power);
 
 	if (index >= registry->size) {
-		printf("No data with the given index\n");
+		printf("No matrix with the given index\n");
 		return;
 	}
 
@@ -252,7 +253,7 @@ void handle_multiply_strassen(MatrixRegistry *registry)
 	scanf("%u %u", &index1, &index2);
 
 	if (index1 >= registry->size || index2 >= registry->size) {
-		printf("No data with the given index\n");
+		printf("No matrix with the given index\n");
 		return;
 	}
 
@@ -266,4 +267,20 @@ void handle_multiply_strassen(MatrixRegistry *registry)
 	}
 
 	handle_save(registry, matrix);
+}
+
+void handle_free_all(MatrixRegistry *registry)
+{
+	for (unsigned int i = 0; i < registry->size; i++) {
+		Matrix *matrix = &registry->matrices[i];
+
+		for (unsigned int j = 0; j < matrix->rows_count; j++) {
+			free(matrix->data[j]);
+		}
+
+		free(matrix->data);
+	}
+
+	free(registry->matrices);
+	free(registry);
 }
