@@ -39,7 +39,6 @@ void handle_save_at(t_matrix_registry *registry, unsigned int index,
  */
 void handle_print_dimension(t_matrix_registry *registry);
 
-
 /**
  * Afiseaza o matrice din registry
  * @param registry Registry-ul din care se afiseaza matricea

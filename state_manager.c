@@ -9,6 +9,7 @@ void handle_state(char command)
 {
 	static t_matrix_registry *registry;
 
+	// Daca registry-ul nu este initializat, il initializam
 	if (!registry) {
 		registry = malloc(sizeof(t_matrix_registry));
 		registry->size = 0;
@@ -71,6 +72,8 @@ void handle_save(t_matrix_registry *registry, t_matrix *matrix)
 {
 	registry->size++;
 
+	// In cazul in care noua marime nu incape in capacitatea curenta,
+	// realocam memorie, dubland capacitatea
 	if (registry->size > registry->capacity) {
 		registry->capacity *= 2;
 		registry->matrices =

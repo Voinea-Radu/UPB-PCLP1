@@ -44,7 +44,7 @@ void print_matrix(t_matrix *matrix);
  * @param new_rows          Vectorul de linii al matricei
  * @param new_columns_count Numarul de coloane al matricei
  * @param new_columns       Vectorul de coloane al matricei
- * @return  			    Noua matrice
+ * @return                  Noua matrice
  */
 t_matrix *create_from(t_matrix *matrix, unsigned int new_rows_count,
 					  const unsigned int *new_rows,
@@ -98,7 +98,7 @@ t_matrix *multiply_strassen(t_matrix *matrix1, t_matrix *matrix2);
  * @param C2      Matricea intermediara 2
  * @param C3      Matricea intermediara 3
  * @param C4      Matricea intermediara 4
- * @return  	  Matricea rezultata
+ * @return        Matricea rezultata
  */
 t_matrix *exec_strassen(t_matrix *matrix1, t_matrix *matrix2,
 						t_matrix *C1, t_matrix *C2, t_matrix *C3, t_matrix *C4
