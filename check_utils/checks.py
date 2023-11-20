@@ -310,7 +310,7 @@ def check_test(task, test):
     stage_name = 'check'
     log('running {:10s} ...'.format(stage_name))
     cmd = '{} {} {} {} {} {}'.format(
-        tasks.my_octave.grader, test.input, test.output, test.ref, test.points, test.id)
+        task.grader, test.input, test.output, test.ref, test.points, test.id)
 
     grade_file = '.check.grade'
     if pathlib.Path(grade_file).is_file():
