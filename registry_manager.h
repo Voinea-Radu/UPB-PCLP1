@@ -128,3 +128,5 @@ t_matrix *substract_matrix(t_matrix *matrix1, t_matrix *matrix2);
  * @return       Numarul modificat
  */
 int mod(int number);
+
+void free_matrix(t_matrix *matrix);

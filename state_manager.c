@@ -79,9 +79,11 @@ void handle_save(t_matrix_registry *registry, t_matrix *matrix)
 	// realocam memorie, dubland capacitatea
 	if (registry->size+1 > registry->capacity) {
 		registry->capacity *= 2;
-		registry->matrices =
+		t_matrix **new_matrices =
 				realloc(registry->matrices, // NOLINT(*-suspicious-realloc-usage)
 						(sizeof(t_matrix*)) * registry->capacity);
+
+		registry->matrices = new_matrices;
 	}
 
 	handle_save_at(registry, registry->size, matrix);
@@ -147,6 +149,9 @@ void handle_resize(t_matrix_registry *registry)
 
 	t_matrix *new_matrix = create_from(matrix, new_rows_count, new_rows,
 									   new_columns_count, new_columns);
+
+	free(new_rows);
+	free(new_columns);
 
 	handle_save_at(registry, index, new_matrix);
 }
@@ -216,6 +221,8 @@ void handle_save_at(t_matrix_registry *registry,
 
 		print_pointer("Freeing %p\n", old_matrix->data);
 		free(old_matrix->data);
+		print_pointer("Freeing %p\n", old_matrix);
+		free(old_matrix);
 	}
 
 	registry->matrices[index] = matrix;
@@ -258,11 +265,12 @@ void handle_free(t_matrix_registry *registry)
 	for (unsigned int i = 0; i < matrix->rows_count; i++){
 		print_pointer("Freeing %p\n", matrix->data[i]);
 		free(matrix->data[i]);
-
 	}
 
 	print_pointer("Freeing %p\n", matrix->data);
 	free(matrix->data);
+	print_pointer("Freeing %p\n", matrix);
+	free(matrix);
 
 	for (unsigned int i = index; i < registry->size - 1; i++)
 		registry->matrices[i] = registry->matrices[i + 1];
@@ -293,7 +301,6 @@ void handle_multiply_strassen(t_matrix_registry *registry)
 
 void handle_free_all(t_matrix_registry *registry)
 {
-	printf("Freeing all memory\n");
 	for (unsigned int i = 0; i < registry->size; i++) {
 		t_matrix *matrix = registry->matrices[i];
 
@@ -313,3 +320,4 @@ void handle_free_all(t_matrix_registry *registry)
 	print_pointer("Freeing %p\n", registry);
 	free(registry);
 }
+
