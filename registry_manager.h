@@ -4,6 +4,8 @@
 
 #define MOD 10007
 
+void print_pointer(char* format, void* pointer);
+
 /**
  * Structura care retine o matrice
  */
@@ -17,7 +19,7 @@ typedef struct{
  * Structura care retine un registry de matrici
  */
 typedef struct{
-	t_matrix *matrices;
+	t_matrix **matrices;
 	unsigned int size;
 	unsigned int capacity;
 } t_matrix_registry;

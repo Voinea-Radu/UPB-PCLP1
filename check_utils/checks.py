@@ -242,6 +242,7 @@ def run_test(task, test, use_valgrind=False, ):
 
         cmd = 'valgrind '              \
             '--leak-check=full '       \
+            '--track-origins=yes '     \
             '--show-reachable=no '     \
             '--show-leak-kinds=all '   \
             '--error-exitcode={} '     \

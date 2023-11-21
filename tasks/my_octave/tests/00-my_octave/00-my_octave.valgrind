@@ -1,15 +1,41 @@
-==41740== Memcheck, a memory error detector
-==41740== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==41740== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==41740== Command: /home/dominic/Downloads/check_my_octave/my_octave
-==41740== Parent PID: 41739
-==41740== 
-==41740== 
-==41740== HEAP SUMMARY:
-==41740==     in use at exit: 0 bytes in 0 blocks
-==41740==   total heap usage: 24 allocs, 24 frees, 8,596 bytes allocated
-==41740== 
-==41740== All heap blocks were freed -- no leaks are possible
-==41740== 
-==41740== For lists of detected and suppressed errors, rerun with: -s
-==41740== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==355920== Memcheck, a memory error detector
+==355920== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==355920== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==355920== Command: /root/CLionProjects/pclp/tema1/my_octave
+==355920== Parent PID: 355919
+==355920== 
+==355920== 
+==355920== HEAP SUMMARY:
+==355920==     in use at exit: 64 bytes in 4 blocks
+==355920==   total heap usage: 27 allocs, 23 frees, 8,616 bytes allocated
+==355920== 
+==355920== 16 bytes in 1 blocks are definitely lost in loss record 1 of 3
+==355920==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==355920==    by 0x10986F: transpose (registry_manager.c:113)
+==355920==    by 0x10AFA0: handle_transpose (state_manager.c:198)
+==355920==    by 0x10A8CA: handle_state (state_manager.c:41)
+==355920==    by 0x109290: main (main.c:24)
+==355920== 
+==355920== 16 bytes in 1 blocks are definitely lost in loss record 2 of 3
+==355920==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==355920==    by 0x109591: multiply (registry_manager.c:68)
+==355920==    by 0x10ADF5: handle_multiply (state_manager.c:165)
+==355920==    by 0x10A8A8: handle_state (state_manager.c:35)
+==355920==    by 0x109290: main (main.c:24)
+==355920== 
+==355920== 32 bytes in 2 blocks are definitely lost in loss record 3 of 3
+==355920==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==355920==    by 0x10936E: read_matrix_registry (registry_manager.c:20)
+==355920==    by 0x10A975: handle_read (state_manager.c:67)
+==355920==    by 0x10A858: handle_state (state_manager.c:23)
+==355920==    by 0x109290: main (main.c:24)
+==355920== 
+==355920== LEAK SUMMARY:
+==355920==    definitely lost: 64 bytes in 4 blocks
+==355920==    indirectly lost: 0 bytes in 0 blocks
+==355920==      possibly lost: 0 bytes in 0 blocks
+==355920==    still reachable: 0 bytes in 0 blocks
+==355920==         suppressed: 0 bytes in 0 blocks
+==355920== 
+==355920== For lists of detected and suppressed errors, rerun with: -s
+==355920== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 0 from 0)

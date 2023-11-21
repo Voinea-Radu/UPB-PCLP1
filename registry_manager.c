@@ -6,26 +6,36 @@
 #include <malloc.h>
 #include "registry_manager.h"
 
+void print_pointer(char* format, void* pointer)
+{
+	static int counter = 0;
+	counter++;
+	printf(format, pointer);
+}
+
 t_matrix *read_matrix_registry(unsigned int rows_count,
 							   unsigned int columns_count)
 {
 	int **matrix = malloc(sizeof(int *) * rows_count);
+	print_pointer("Allocated %p\n", matrix);
+
 	for (unsigned int i = 0; i < rows_count; i++) {
 		matrix[i] = malloc(sizeof(int) * columns_count);
+		print_pointer("Allocated %p\n", matrix[i]);
+
 		for (unsigned int j = 0; j < columns_count; j++) {
-			int tmp;
-			scanf("%d", &tmp);
-			matrix[i][j] = (tmp);
+			scanf("%d", &matrix[i][j]); // NOLINT(*-err34-c)
 		}
 	}
 
-	t_matrix *output_registry = malloc(sizeof(t_matrix));
+	t_matrix *output_matrix = malloc(sizeof(t_matrix));
+	print_pointer("Allocated %p\n", output_matrix);
 
-	output_registry->data = matrix;
-	output_registry->rows_count = rows_count;
-	output_registry->columns_count = columns_count;
+	output_matrix->data = matrix;
+	output_matrix->rows_count = rows_count;
+	output_matrix->columns_count = columns_count;
 
-	return output_registry;
+	return output_matrix;
 }
 
 void print_matrix(t_matrix *matrix)
@@ -44,13 +54,19 @@ t_matrix *create_from(t_matrix *matrix, unsigned int new_rows_count,
 					  const unsigned int *new_columns)
 {
 	t_matrix *output_registry = malloc(sizeof(t_matrix));
+	print_pointer("Allocated %p\n", output_registry);
+
 
 	output_registry->rows_count = new_rows_count;
 	output_registry->columns_count = new_columns_count;
 
 	int **matrix_data = malloc(sizeof(int *) * new_rows_count);
+	print_pointer("Allocated %p\n", matrix_data);
+
 	for (unsigned int i = 0; i < new_rows_count; i++) {
 		matrix_data[i] = malloc(sizeof(int) * new_columns_count);
+		print_pointer("Allocated %p\n", matrix_data[i]);
+
 		for (unsigned int j = 0; j < new_columns_count; j++)
 			matrix_data[i][j] = matrix->data[new_rows[i]][new_columns[j]];
 	}
@@ -63,30 +79,36 @@ t_matrix *create_from(t_matrix *matrix, unsigned int new_rows_count,
 t_matrix *multiply(t_matrix *matrix1, t_matrix *matrix2)
 {
 	if (matrix1->columns_count != matrix2->rows_count) {
-		printf("Cannot perform matrix multiplication\n");
+		printf("Cannot perform data multiplication\n");
 		return NULL;
 	}
 
-	t_matrix *output_registry = malloc(sizeof(t_matrix));
+	t_matrix *output_matrix = malloc(sizeof(t_matrix));
+	print_pointer("Allocated %p\n", output_matrix);
 
-	output_registry->rows_count = matrix1->rows_count;
-	output_registry->columns_count = matrix2->columns_count;
 
-	int **matrix = malloc(sizeof(int *) * output_registry->rows_count);
-	for (unsigned int i = 0; i < output_registry->rows_count; i++) {
-		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
-		for (unsigned int j = 0; j < output_registry->columns_count; j++) {
-			matrix[i][j] = 0;
+	output_matrix->rows_count = matrix1->rows_count;
+	output_matrix->columns_count = matrix2->columns_count;
+
+	int **data = malloc(sizeof(int *) * output_matrix->rows_count);
+	print_pointer("Allocated %p\n", data);
+
+	for (unsigned int i = 0; i < output_matrix->rows_count; i++) {
+		data[i] = malloc(sizeof(int) * output_matrix->columns_count);
+		print_pointer("Allocated %p\n", data[i]);
+
+		for (unsigned int j = 0; j < output_matrix->columns_count; j++) {
+			data[i][j] = 0;
 			for (unsigned int k = 0; k < matrix1->columns_count; k++) {
-				matrix[i][j] += matrix1->data[i][k] * matrix2->data[k][j];
-				matrix[i][j] = mod(matrix[i][j]);
+				data[i][j] += matrix1->data[i][k] * matrix2->data[k][j];
+				data[i][j] = mod(data[i][j]);
 			}
 		}
 	}
 
-	output_registry->data = matrix;
+	output_matrix->data = data;
 
-	return output_registry;
+	return output_matrix;
 }
 
 int compare(t_matrix *matrix1, t_matrix *matrix2)
@@ -113,14 +135,20 @@ int compare(t_matrix *matrix1, t_matrix *matrix2)
 t_matrix *transpose(t_matrix *matrix)
 {
 	t_matrix *output_matrix = malloc(sizeof(t_matrix));
+	print_pointer("Allocated %p\n", output_matrix);
+
 
 	output_matrix->rows_count = matrix->columns_count;
 	output_matrix->columns_count = matrix->rows_count;
 
-	int **matrix_data = malloc(sizeof(int *) * output_matrix->rows_count);
+	int **matrix_data = malloc(sizeof(unsigned int *) * output_matrix->rows_count);
+	print_pointer("Allocated %p\n", matrix_data);
+
 	for (unsigned int i = 0; i < output_matrix->rows_count; i++) {
 		matrix_data[i] =
-				malloc(sizeof(int) * output_matrix->columns_count);
+				malloc(sizeof(unsigned int) * output_matrix->columns_count);
+		print_pointer("Allocated %p\n", matrix_data[i]);
+
 		for (unsigned int j = 0; j < output_matrix->columns_count; j++)
 			matrix_data[i][j] = matrix->data[j][i];
 	}
@@ -130,7 +158,7 @@ t_matrix *transpose(t_matrix *matrix)
 	return output_matrix;
 }
 
-t_matrix *raise_to_power(t_matrix *matrix, int power)
+t_matrix *raise_to_power(t_matrix *matrix, int power) // NOLINT(*-no-recursion)
 {
 	if (power < 0) {
 		printf("Power should be positive\n");
@@ -143,14 +171,20 @@ t_matrix *raise_to_power(t_matrix *matrix, int power)
 	}
 
 	t_matrix *output_matrix = malloc(sizeof(t_matrix));
+	print_pointer("Allocated %p\n", output_matrix);
+
 
 	output_matrix->rows_count = matrix->rows_count;
 	output_matrix->columns_count = matrix->columns_count;
 
-	int **matrix_data = malloc(sizeof(int *) * output_matrix->rows_count);
+	int **matrix_data = malloc(sizeof(unsigned int *) * output_matrix->rows_count);
+	print_pointer("Allocated %p\n", matrix_data);
+
 	for (unsigned int i = 0; i < output_matrix->rows_count; i++) {
 		matrix_data[i] =
-				malloc(sizeof(int) * output_matrix->columns_count);
+				malloc(sizeof(unsigned int) * output_matrix->columns_count);
+		print_pointer("Allocated %p\n", matrix_data[i]);
+
 		for (unsigned int j = 0; j < output_matrix->columns_count; j++)
 			matrix_data[i][j] = matrix->data[i][j];
 	}
@@ -182,8 +216,7 @@ t_matrix *raise_to_power(t_matrix *matrix, int power)
 	return aux_registry3;
 }
 
-//Implement the Strassen algorithm for data multiplication
-t_matrix *multiply_strassen(t_matrix *matrix1, t_matrix *matrix2)
+t_matrix *multiply_strassen(t_matrix *matrix1, t_matrix *matrix2) // NOLINT(*-no-recursion)
 {
 	if (matrix1->columns_count != matrix2->rows_count ||
 		matrix1->columns_count != matrix1->rows_count ||
@@ -194,10 +227,16 @@ t_matrix *multiply_strassen(t_matrix *matrix1, t_matrix *matrix2)
 
 	if (matrix1->rows_count == 1) {
 		t_matrix *output_registry = malloc(sizeof(t_matrix));
+		print_pointer("Allocated %p\n", output_registry);
+
 		output_registry->rows_count = 1;
 		output_registry->columns_count = 1;
 		int **matrix = malloc(sizeof(int *) * output_registry->rows_count);
+		print_pointer("Allocated %p\n", matrix);
+
 		matrix[0] = malloc(sizeof(int) * output_registry->columns_count);
+		print_pointer("Allocated %p\n", matrix[0]);
+
 		matrix[0][0] = matrix1->data[0][0] * matrix2->data[0][0];
 		output_registry->data = matrix;
 		return output_registry;
@@ -205,8 +244,11 @@ t_matrix *multiply_strassen(t_matrix *matrix1, t_matrix *matrix2)
 
 	unsigned int *matrix_v1 =
 			malloc(sizeof(int) * matrix1->rows_count / 2);
+	print_pointer("Allocated %p\n", matrix_v1);
+
 	unsigned int *matrix_v2 =
 			malloc(sizeof(int) * matrix1->rows_count / 2);
+	print_pointer("Allocated %p\n", matrix_v2);
 
 	for (unsigned int i = 0; i < matrix1->rows_count / 2; i++) {
 		matrix_v1[i] = i;
@@ -258,13 +300,17 @@ t_matrix *exec_strassen(t_matrix *matrix1, t_matrix *matrix2,
 						t_matrix *C1, t_matrix *C2, t_matrix *C3, t_matrix *C4)
 {
 	t_matrix *output_registry = malloc(sizeof(t_matrix));
+	print_pointer("Allocated %p\n", output_registry);
 	output_registry->rows_count = matrix1->rows_count;
 	output_registry->columns_count = matrix2->columns_count;
 
 	int **matrix = malloc(sizeof(int *) * output_registry->rows_count);
+	print_pointer("Allocated %p\n", matrix);
 
-	for (unsigned int i = 0; i < output_registry->rows_count; i++)
+	for (unsigned int i = 0; i < output_registry->rows_count; i++){
 		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
+		print_pointer("Allocated %p\n", matrix[i]);
+	}
 
 	for (unsigned int i = 0; i < output_registry->rows_count / 2; i++)
 		for (unsigned int j = 0; j < output_registry->columns_count / 2; j++) {
@@ -284,13 +330,16 @@ t_matrix *exec_strassen(t_matrix *matrix1, t_matrix *matrix2,
 t_matrix *sum_matrix(t_matrix *matrix1, t_matrix *matrix2)
 {
 	t_matrix *output_registry = malloc(sizeof(t_matrix));
+	print_pointer("Allocated %p\n", output_registry);
 
 	output_registry->rows_count = matrix1->rows_count;
 	output_registry->columns_count = matrix1->columns_count;
 
 	int **matrix = malloc(sizeof(int *) * output_registry->rows_count);
+	print_pointer("Allocated %p\n", matrix);
 	for (unsigned int i = 0; i < output_registry->rows_count; i++) {
 		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
+		print_pointer("Allocated %p\n", matrix[i]);
 		for (unsigned int j = 0; j < output_registry->columns_count; j++) {
 			matrix[i][j] = matrix1->data[i][j] + matrix2->data[i][j];
 			matrix[i][j] = mod(matrix[i][j]);
@@ -305,13 +354,16 @@ t_matrix *sum_matrix(t_matrix *matrix1, t_matrix *matrix2)
 t_matrix *substract_matrix(t_matrix *matrix1, t_matrix *matrix2)
 {
 	t_matrix *output_registry = malloc(sizeof(t_matrix));
+	print_pointer("Allocated %p\n", output_registry);
 
 	output_registry->rows_count = matrix1->rows_count;
 	output_registry->columns_count = matrix1->columns_count;
 
 	int **matrix = malloc(sizeof(int *) * output_registry->rows_count);
+	print_pointer("Allocated %p\n", matrix);
 	for (unsigned int i = 0; i < output_registry->rows_count; i++) {
 		matrix[i] = malloc(sizeof(int) * output_registry->columns_count);
+		print_pointer("Allocated %p\n", matrix[i]);
 		for (unsigned int j = 0; j < output_registry->columns_count; j++) {
 			matrix[i][j] = matrix1->data[i][j] - matrix2->data[i][j];
 			matrix[i][j] = mod(matrix[i][j]);

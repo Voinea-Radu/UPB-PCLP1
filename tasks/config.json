@@ -50,7 +50,7 @@
             "memory": 1073741824,
             "stdin": true,
             "stdout": true,
-	        "valgrind": false
+	        "valgrind": true
         }
     ],
     "coding_style": 10,

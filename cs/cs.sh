@@ -26,6 +26,7 @@ check_coding_style()
         MALFORMED_INCLUDE           # DN -> not required for PC: ERROR:MALFORMED_INCLUDE: malformed #include filename
         CONSTANT_COMPARISON         # DN -> not required for PC: WARNING:CONSTANT_COMPARISON: Comparisons should place the constant on the right side of the test
         TYPO_SPELLING               # DN -> not required for PC: CHECK:TYPO_SPELLING: 'alocate' may be misspelled - perhaps 'allocate'?
+        PREFER_KERNEL_TYPES         # requested by students of PC
     )
 
     local ignored_flags_combined=$(printf ",%s" "${IGNORED_FLAGS[@]}")

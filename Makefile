@@ -2,7 +2,7 @@
 
 # compiler setup
 CC=gcc
-CFLAGS=-Wall -Wextra -pedantic -std=c99
+CFLAGS=-Wall -Wextra -pedantic -std=c99 -g3
 
 # define targets
 TARGETS = my_octave
