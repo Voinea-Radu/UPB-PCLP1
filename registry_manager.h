@@ -4,8 +4,6 @@
 
 #define MOD 10007
 
-void print_pointer(char* format, void* pointer);
-
 /**
  * Structura care retine o matrice
  */
@@ -130,3 +128,5 @@ t_matrix *substract_matrix(t_matrix *matrix1, t_matrix *matrix2);
 int mod(int number);
 
 void free_matrix(t_matrix *matrix);
+
+void free_multiple_matrix(int number, ...);
