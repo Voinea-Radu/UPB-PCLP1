@@ -150,19 +150,19 @@ t_matrix *raise_to_power(t_matrix *matrix, int power)
 	}
 
 	if (power == 0) {
-		t_matrix *aux_matrix1 = malloc(sizeof(t_matrix));
+		t_matrix *aux_matrix0 = malloc(sizeof(t_matrix));
 
-		aux_matrix1->rows_count = matrix->rows_count;
-		aux_matrix1->columns_count = matrix->columns_count;
+		aux_matrix0->rows_count = matrix->rows_count;
+		aux_matrix0->columns_count = matrix->columns_count;
 
-		for (unsigned int i = 0; i < aux_matrix1->rows_count; i++)
-			for (unsigned int j = 0; j < aux_matrix1->columns_count; j++)
+		for (unsigned int i = 0; i < aux_matrix0->rows_count; i++)
+			for (unsigned int j = 0; j < aux_matrix0->columns_count; j++)
 				if (i == j)
-					aux_matrix1->data[i][j] = 1;
+					aux_matrix0->data[i][j] = 1;
 				else
-					aux_matrix1->data[i][j] = 0;
+					aux_matrix0->data[i][j] = 0;
 
-		return aux_matrix1;
+		return aux_matrix0;
 	}
 
 	if (power == 1) {
