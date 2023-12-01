@@ -2,7 +2,15 @@
 // Copyright Voinea Radu-Mihai 315CAa 2023-2024
 // ********************************************
 
+#ifndef REGISTRY_MANAGER_H
+#define REGISTRY_MANAGER_H
+
 #define MOD 10007
+
+#include <stdio.h>
+#include <malloc.h>
+#include <stdarg.h>
+#include <stdlib.h>
 
 /**
  * Structura care retine o matrice
@@ -130,3 +138,9 @@ int mod(int number);
 void free_matrix(t_matrix *matrix);
 
 void free_multiple_matrix(int number, ...);
+
+void *malloc_or_exit(unsigned long size);
+
+void *realloc_or_exit(void *pointer, unsigned long size);
+
+#endif // REGISTRY_MANAGER_H

@@ -2,6 +2,9 @@
 // Copyright Voinea Radu-Mihai 315CAa 2023-2024
 // ********************************************
 
+#ifndef STATE_MANAGER_H
+#define STATE_MANAGER_H
+
 #include "registry_manager.h"
 
 /**
@@ -93,3 +96,5 @@ void handle_multiply_strassen(t_matrix_registry *registry);
  * @param registry Registry-ul din care se afiseaza matricea
  */
 void handle_free_all(t_matrix_registry *registry);
+
+#endif // STATE_MANAGER_H

@@ -2,7 +2,6 @@
 // Copyright Voinea Radu-Mihai 315CAa 2023-2024
 // ********************************************
 
-#include <malloc.h>
 #include "state_manager.h"
 
 void handle_state(char command)
@@ -11,10 +10,10 @@ void handle_state(char command)
 
 	// Daca registry-ul nu este initializat, il initializam
 	if (!registry) {
-		registry = malloc(sizeof(t_matrix_registry));
+		registry = malloc_or_exit(sizeof(t_matrix_registry));
 		registry->size = 0;
 		registry->capacity = 1;
-		registry->matrices = malloc(sizeof(t_matrix));
+		registry->matrices = malloc_or_exit(sizeof(t_matrix));
 	}
 
 	switch (command) {
@@ -75,8 +74,8 @@ void handle_save(t_matrix_registry *registry, t_matrix *matrix)
 	if (registry->size + 1 > registry->capacity) {
 		registry->capacity *= 2;
 		t_matrix **new_matrices =
-				realloc(registry->matrices,
-						(sizeof(t_matrix *)) * registry->capacity);
+				realloc_or_exit(registry->matrices,
+								(sizeof(t_matrix *)) * registry->capacity);
 
 		registry->matrices = new_matrices;
 	}
@@ -127,13 +126,13 @@ void handle_resize(t_matrix_registry *registry)
 	}
 
 	scanf("%u", &new_rows_count);
-	unsigned int *new_rows = malloc(sizeof(int) * new_rows_count);
+	unsigned int *new_rows = malloc_or_exit(sizeof(int) * new_rows_count);
 
 	for (unsigned int i = 0; i < new_rows_count; i++)
 		scanf("%u", &new_rows[i]);
 
 	scanf("%u", &new_columns_count);
-	unsigned int *new_columns = malloc(sizeof(int) * new_columns_count);
+	unsigned int *new_columns = malloc_or_exit(sizeof(int) * new_columns_count);
 
 	for (unsigned int i = 0; i < new_columns_count; i++)
 		scanf("%u", &new_columns[i]);
