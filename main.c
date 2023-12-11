@@ -1,26 +1,27 @@
-//
-// Nume: Voinea Radu-Mihai
-// Grupa: 315 CA
-//
+/*
+Nume: Voinea Radu-Mihai
+Grupa: 315 CA
+*/
 
 #include <stdio.h>
+#include <unistd.h>
+#include "string_utils.h"
 #include "state_manager.h"
+#include "image.h"
+
+#define MAX_COMMAND_SIZE 100
 
 int main(void)
 {
-	char c = '0';
+	t_pixel pixel = new_pixel_color(50, 100, 150);
 
-	do {
-		scanf("%c", &c);
+	t_string s;
+	split_string(s,'a',NULL);
 
-		// Daca c este un caracter de whitespace sau new line, il ignoram
-		if (c == 10 || c == ' ')
-			continue;
+	printf("%d %d %d\n", pixel.rgb.red, pixel.rgb.green, pixel.rgb.blue);
 
-		// Daca c este o cifra, il ignoram
-		if (c >= '0' && c <= '9')
-			continue;
-
-		handle_state(c);
-	} while (c != 'Q');
+	while (1) {
+		t_string command = read_string(MAX_COMMAND_SIZE, stdin);
+		process_command(command);
+	}
 }

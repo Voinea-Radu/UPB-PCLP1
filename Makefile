@@ -13,7 +13,7 @@ my_octave: main.c
 	$(CC) $(CFLAGS) main.c registry_manager.c registry_manager.h state_manager.c state_manager.h -lm -o my_octave
 
 pack:
-	zip -FSr 315CA_VoineaRadu_Tema2.zip README Makefile *.c *.h
+	zip -FSr 315CA_VoineaRadu_TEMA3.zip README Makefile *.c *.h
 
 clean:
 	rm -f $(TARGETS)
