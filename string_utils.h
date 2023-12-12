@@ -8,14 +8,12 @@ Grupa: 315 CA
 
 #include <malloc.h>
 
-typedef char* t_string;
+typedef char* string_t;
 
-t_string read_string(int max_size, FILE *stream);
+string_t read_string(int max_size, FILE *stream);
 
-t_string read_line(int max_size, FILE *stream);
+string_t read_line(int max_size, FILE *stream);
 
-t_string* split_string(t_string string, char* separator, int *size);
-
-void *safe_malloc(size_t size);
+string_t* split_string(string_t data, string_t separator, size_t *size);
 
 #endif //TEMA3_STRING_UTILS_H

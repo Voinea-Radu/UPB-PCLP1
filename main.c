@@ -11,17 +11,36 @@ Grupa: 315 CA
 
 #define MAX_COMMAND_SIZE 100
 
+void tests(); // TODO Remove this function
+
 int main(void)
 {
-	t_pixel pixel = new_pixel_color(50, 100, 150);
-
-	t_string s;
-	split_string(s,'a',NULL);
-
-	printf("%d %d %d\n", pixel.rgb.red, pixel.rgb.green, pixel.rgb.blue);
+	//tests();
 
 	while (1) {
-		t_string command = read_string(MAX_COMMAND_SIZE, stdin);
+		string_t command = read_string(MAX_COMMAND_SIZE, stdin);
 		process_command(command);
 	}
+}
+
+// TODO Remove this function
+void tests(){
+	pixel_t pixel = new_pixel_color(50, 100, 150);
+
+	size_t size = 0;
+	string_t *split = split_string("This is just a test string"," ",&size);
+
+	printf("==============================\n");
+	printf("==============================\n");
+
+	printf("%lu\n", size);
+
+	for (int i = 0; i < size; i++) {
+		printf("%s\n", split[i]);
+	}
+
+	printf("==============================\n");
+	printf("==============================\n");
+
+	printf("%d %d %d\n", pixel.rgb.red, pixel.rgb.green, pixel.rgb.blue);
 }

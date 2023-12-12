@@ -9,4 +9,6 @@ add_executable(tema3 main.c
         string_utils.c
         string_utils.h
         image.c
-        image.h)
+        image.h
+        utils.c
+        utils.h)

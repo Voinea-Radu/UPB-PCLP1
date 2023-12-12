@@ -6,16 +6,23 @@ Grupa: 315 CA
 #include <stdlib.h>
 #include <stdbool.h>
 #include "string_utils.h"
+#include "utils.h"
 
-t_string generic_read_string(int max_size, FILE *stream, char *separators)
+string_t generic_read_string(int max_size, FILE *stream, char *separators)
 {
-	char *data = safe_malloc(max_size * sizeof(char));
+	string_t data = safe_malloc(max_size * sizeof(char));
 	int actual_size = 0;
 
 	while (1) {
 		char current_char = (char)fgetc(stream);
 
 		bool is_separator = false;
+
+		if (current_char == EOF) {
+			data[actual_size] = current_char;
+			actual_size++;
+			break;
+		}
 
 		for (int i = 0; i < strlen(separators); i++) {
 			if (current_char == separators[i]) {
@@ -34,64 +41,45 @@ t_string generic_read_string(int max_size, FILE *stream, char *separators)
 
 	data[actual_size] = '\0';
 
-	t_string result;
-	result.data = data;
-
-	return result;
+	return data;
 }
 
-t_string read_string(int max_size, FILE *stream)
+string_t read_string(int max_size, FILE *stream)
 {
 	return generic_read_string(max_size, stream, " \n");
 }
 
-t_string read_line(int max_size, FILE *stream)
+string_t read_line(int max_size, FILE *stream)
 {
 	return generic_read_string(max_size, stream, "\n");
 }
 
-t_string *split_string(t_string string, char *separator, int *size)
+string_t *split_string(string_t data, string_t separator, size_t *size)
 {
-	char *string_data = malloc(strlen(string.data) * sizeof(char));
-	strcpy(string_data, string.data);
+	string_t string_data = malloc(strlen(data) * sizeof(char));
+	strcpy(string_data, data);
 
-	char *split;
-	split = strtok(string_data, separator);
+	string_t split;
 
-	while (split != NULL) {
-		printf("%s\n", split);
-		split = strtok(NULL, separator);
+	// Get the number of elements after the split
+	strtok(string_data, separator);
+	(*size) = 1;
+	while (strtok(NULL, separator) != NULL) {
 		(*size)++;
 	}
 
-	strcpy(string_data, string.data);
-
-	split = strtok(string_data, separator);
-
-	t_string *result = malloc(sizeof(t_string) * (*size));
+	// Create the array of strings
+	string_t *result = malloc(sizeof(string_t) * (*size));
 	int index = 0;
 
+	strcpy(string_data, data);
+	split = strtok(string_data, separator);
 	while (split != NULL) {
-		printf("%s\n", split);
+		result[index++] = split;
 		split = strtok(NULL, separator);
-		result[index].data = split;
-		index++;
-	}
-
-	printf("=======\n");
-	printf("%s\n", string_data);
-
-	return NULL;
-}
-
-void *safe_malloc(size_t size)
-{
-	void *result = malloc(size);
-
-	if (result == NULL) {
-		printf("There was an error while allocating memory!\nExiting...\n");
-		exit(1);
 	}
 
 	return result;
 }
+
+

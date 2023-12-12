@@ -4,85 +4,121 @@ Grupa: 315 CA
 */
 
 #include "image.h"
+#include "utils.h"
 
 #define MAX_PGM_LINE_SIZE 70
 
-t_image load_image(FILE* file){
-	t_image output;
+#define READ_PGM_TYPE 0
+#define READ_WIDTH 1
+#define READ_HEIGHT 2
+#define READ_DATA 3
+#define DONE 4
 
-	// Read the magic number P1 or P6
-	t_string type = read_string(2, file);
-	type.data[0] = type.data[1];
-	type.data[1] = '\0';
+image_t load_image(FILE *file)
+{
+	char data;
 
-	output.type = atoi(type.data);
+	int state = READ_PGM_TYPE;
+	bool is_comment = false;
 
-	// Read the file line by line until the end
-	// Ignore all the lines that start with #
+	image_t image;
+	char *buffer = safe_malloc(MAX_PGM_LINE_SIZE * sizeof(char));
+	int buffer_index = 0;
+
+	int pixel_index = 0;
+
 	while (1) {
-		t_string line = read_line(MAX_PGM_LINE_SIZE, file);
+		data = fgetc(file);
 
-		if (line.data[0] == '#') {
-			continue;
-		}
-
-
-		/*
-
-		// Read the width and height
-		if (output.width == 0) {
-			t_string width = read_string(MAX_PGM_LINE_SIZE, file);
-			t_string height = read_string(MAX_PGM_LINE_SIZE, file);
-
-			output.width = atoi(width.data);
-			output.height = atoi(height.data);
-
-			// Read the max value
-			t_string max_value = read_string(100, file);
-			output.max_value = atoi(max_value.data);
-
-			// Allocate memory for the image
-			output.pixels = safe_malloc(output.width * output.height * sizeof(t_pixel));
-		} else {
-			// Read the pixels
-			for (int i = 0; i < output.width * output.height; i++) {
-				t_string pixel = read_string(100, file);
-
-				if (output.type == 1) {
-					output.pixels[i] = new_pixel_mono_color(atoi(pixel.data));
-				} else {
-					t_string red = read_string(100, file);
-					t_string green = read_string(100, file);
-					t_string blue = read_string(100, file);
-
-					output.pixels[i] = new_pixel_color(atoi(red.data), atoi(green.data), atoi(blue.data));
-				}
-			}
-		}
-
-		if (feof(file)) {
+		if (data == EOF) {
 			break;
 		}
 
-		*/
+		if (data == '#') {
+			is_comment = true;
+		}
+
+		if (data == '\n') {
+			if (is_comment) {
+				is_comment = false;
+				continue;
+			}
+			is_comment = false;
+		}
+
+		if (is_comment) {
+			continue;
+		}
+
+		printf("%c", data);
+		buffer[buffer_index++] = data;
+
+		if (data == '\n' || data == ' ') {
+			switch (state) {
+				case READ_PGM_TYPE:
+					buffer[0] = buffer[1];
+					buffer[1] = '\0';
+					image.type = atoi(buffer);
+
+					state = READ_WIDTH;
+					buffer = safe_malloc(MAX_PGM_LINE_SIZE * sizeof(char));
+					buffer_index = 0;
+
+					break;
+				case READ_WIDTH:
+					image.width = atoi(buffer);
+
+					state = READ_HEIGHT;
+					buffer = safe_malloc(MAX_PGM_LINE_SIZE * sizeof(char));
+					buffer_index = 0;
+
+					break;
+				case READ_HEIGHT:
+					image.height = atoi(buffer);
+
+					image.data = malloc(image.height * sizeof(pixel_t *));
+					for (int i = 0; i < image.height; i++) {
+						image.data[i] = malloc(image.width * sizeof(pixel_t));
+					}
+
+					state = READ_DATA;
+					buffer = safe_malloc(MAX_PGM_LINE_SIZE * sizeof(char));
+					buffer_index = 0;
+
+					break;
+				case READ_DATA:
+
+					image.data[pixel_index / image.width][pixel_index % image.width] = new_pixel_mono_color(atoi(buffer));
+					pixel_index++;
+
+					if (pixel_index == image.width * image.height) {
+						state = DONE;
+					}
+
+					break;
+			}
+		}
+
+		if (state == DONE) {
+			break;
+		}
 	}
 
-	// Mark the image as loaded
-	output.loaded = true;
-
-	return output;
+	return image;
 }
 
-t_pixel new_pixel_mono_color(uint8_t color){
-	t_pixel output;
+pixel_t new_pixel_mono_color(uint8_t color)
+{
+	pixel_t output;
 
 	output.value = color;
 
 	return output;
 }
 
-t_pixel new_pixel_color(uint8_t red, uint8_t green, uint8_t blue){
-	t_pixel output;
+pixel_t new_pixel_color(uint8_t red, uint8_t green, uint8_t blue)
+{
+	pixel_t output;
 
 	output.rgb.red = red;
 	output.rgb.green = green;

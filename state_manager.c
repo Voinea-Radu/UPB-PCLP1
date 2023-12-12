@@ -33,11 +33,11 @@ int get_command_id(char *key)
 	return UNKNOWN_COMMAND;
 }
 
-void process_command(t_string command)
+void process_command(string_t command)
 {
-	static t_image image;
+	static image_t image;
 
-	switch (get_command_id(command.data)) {
+	switch (get_command_id(command)) {
 		case LOAD:
 			handle_load(&image);
 			break;
@@ -51,19 +51,21 @@ void process_command(t_string command)
 	}
 }
 
-void handle_load(t_image *image)
+void handle_load(image_t *image)
 {
-	t_string file_name = read_string(MAX_ARGUMENT_SIZE, stdin);
+	string_t file_name = read_string(MAX_ARGUMENT_SIZE, stdin);
 
-	printf("Loading '%s'...\n", file_name.data);
+	printf("Loading %s...\n", file_name);
 
-	FILE* file = fopen(file_name.data, "r");
+	FILE* file = fopen(file_name, "r");
 
 	if (NULL == file) {
-		printf("Failed to load '%s'\n", file_name.data);
+		printf("Failed to load %s\n", file_name);
 		image->loaded = 0;
 		return;
 	}
 
 	*image = load_image(file);
+
+	fclose(file);
 }
