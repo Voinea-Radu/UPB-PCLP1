@@ -13,10 +13,15 @@ Grupa: 315 CA
 #define UNKNOWN_COMMAND (-1)
 #define LOAD 1
 #define SELECT 2
+#define QUIT 100
 
 static string_pair command_table[] = {
 		{"LOAD",   LOAD},
-		{"SELECT", SELECT}
+		{"load",   LOAD}, // TODO Remove
+		{"SELECT", SELECT},
+		{"select", SELECT}, // TODO Remove
+		{"QUIT", QUIT},
+		{"quit", QUIT} // TODO Remove
 };
 
 #define COMMAND_TABLE_SIZE (sizeof(command_table)/sizeof(string_pair))
@@ -32,22 +37,39 @@ int get_command_id(char *key)
 	return UNKNOWN_COMMAND;
 }
 
-void process_command(string_t command)
+int process_command(string_t command)
 {
 	static image_t image;
 
 	switch (get_command_id(command)) {
 		case LOAD:
 			handle_load(&image);
+
+			printf("\n\n");
+
+			for(size_t i = 0; i < image.height; i++){
+				for(size_t j = 0; j < image.width; j++){
+					printf("%d ", image.data[i][j].value);
+				}
+				printf("\n");
+			}
+
 			break;
 		case SELECT:
 			printf("SELECT\n");
+			break;
+		case QUIT:
+			printf("QUIT\n");
+			free_image(image);
+			return EXIT;
 			break;
 		case UNKNOWN_COMMAND:
 		default:
 			printf("UNKNOWN COMMAND\n");
 
 	}
+
+	return CONTINUE;
 }
 
 void handle_load(image_t *image)
@@ -64,6 +86,7 @@ void handle_load(image_t *image)
 		return;
 	}
 
+	free(file_name);
 	*image = load_image(file);
 
 	fclose(file);

@@ -46,10 +46,13 @@ typedef struct{
 } image_t;
 
 
-image_t load_image(FILE* file);
+image_t load_image(FILE *file);
 
 pixel_t new_pixel_mono_color(uint8_t color);
 
 pixel_t new_pixel_color(uint8_t red, uint8_t green, uint8_t blue);
+
+void free_image_pointer(image_t *image);
+void free_image(image_t image);
 
 #endif //TEMA3_IMAGE_H

@@ -9,9 +9,12 @@ Grupa: 315 CA
 #include "string_utils.h"
 #include "image.h"
 
+#define EXIT 0
+#define CONTINUE 1
+
 typedef struct { char *key; int value; } string_pair;
 
-void process_command(string_t command);
+int process_command(string_t command);
 
 void handle_load(image_t *image);
 
