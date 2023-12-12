@@ -29,8 +29,17 @@ typedef union{
 	} rgb;
 } pixel_t;
 
+// Image loading states
+#define IMAGE_NOT_LOADED 0
+
+#define IMAGE_READ_PGM_TYPE 1
+#define IMAGE_READ_WIDTH 2
+#define IMAGE_READ_HEIGHT 3
+#define IMAGE_READ_DATA 4
+
+#define IMAGE_LOADED 100
+
 typedef struct{
-	bool loaded;
 	/**
 	 * (P)1 ASCII black and white
 	 * (P)2 Binary black and white
@@ -43,8 +52,14 @@ typedef struct{
 	size_t width;
 	size_t height;
 	pixel_t **data;
+
+	// Used for reading the image
+	size_t read_x;
+	size_t read_y;
+	int state;
 } image_t;
 
+image_t new_image();
 
 image_t load_image(FILE *file);
 
@@ -53,6 +68,9 @@ pixel_t new_pixel_mono_color(uint8_t color);
 pixel_t new_pixel_color(uint8_t red, uint8_t green, uint8_t blue);
 
 void free_image_pointer(image_t *image);
+
 void free_image(image_t image);
+
+void read_p1_format(image_t *image, string_t *buffer, size_t *buffer_size);
 
 #endif //TEMA3_IMAGE_H

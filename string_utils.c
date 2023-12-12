@@ -2,11 +2,14 @@
 Nume: Voinea Radu-Mihai
 Grupa: 315 CA
 */
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "string_utils.h"
 #include "utils.h"
+
+#define MAX_PGM_LINE_SIZE 70
 
 string_t generic_read_string(int max_size, FILE *stream, char *separators)
 {
@@ -80,6 +83,16 @@ string_t *split_string(string_t data, string_t separator, size_t *size)
 	}
 
 	return result;
+}
+
+void reset_buffer(string_t *buffer, size_t *buffer_size)
+{
+	*buffer_size = 0;
+
+	if (buffer != NULL)
+		free(*buffer);
+
+	*buffer = safe_malloc(MAX_PGM_LINE_SIZE * sizeof(char));
 }
 
 
