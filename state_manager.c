@@ -23,8 +23,7 @@ static string_pair command_table[] = {
 
 int get_command_id(char *key)
 {
-
-	for (int i = 0; i < COMMAND_TABLE_SIZE; i++) {
+	for (size_t i = 0; i < COMMAND_TABLE_SIZE; i++) {
 		string_pair pair = command_table[i];
 		if (strcmp(pair.key, key) == 0)
 			return pair.value;

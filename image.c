@@ -8,6 +8,7 @@ Grupa: 315 CA
 
 #define MAX_PGM_LINE_SIZE 70
 
+// Image loading states
 #define READ_PGM_TYPE 0
 #define READ_WIDTH 1
 #define READ_HEIGHT 2
@@ -16,21 +17,20 @@ Grupa: 315 CA
 
 image_t load_image(FILE *file)
 {
-	char data;
-
 	int state = READ_PGM_TYPE;
 	bool is_comment = false;
 
 	image_t image;
-	char *buffer = safe_malloc(MAX_PGM_LINE_SIZE * sizeof(char));
+	string_t buffer = safe_malloc(MAX_PGM_LINE_SIZE * sizeof(char));
 	int buffer_index = 0;
 
-	int pixel_index = 0;
+	size_t pixel_index = 0;
 
-	while (1) {
+	char data;
+	while (1){
 		data = fgetc(file);
 
-		if (data == EOF) {
+		if(data == EOF){
 			break;
 		}
 
@@ -63,7 +63,6 @@ image_t load_image(FILE *file)
 					state = READ_WIDTH;
 					buffer = safe_malloc(MAX_PGM_LINE_SIZE * sizeof(char));
 					buffer_index = 0;
-
 					break;
 				case READ_WIDTH:
 					image.width = atoi(buffer);
@@ -71,20 +70,18 @@ image_t load_image(FILE *file)
 					state = READ_HEIGHT;
 					buffer = safe_malloc(MAX_PGM_LINE_SIZE * sizeof(char));
 					buffer_index = 0;
-
 					break;
 				case READ_HEIGHT:
 					image.height = atoi(buffer);
 
 					image.data = malloc(image.height * sizeof(pixel_t *));
-					for (int i = 0; i < image.height; i++) {
+					for (size_t i = 0; i < image.height; i++) {
 						image.data[i] = malloc(image.width * sizeof(pixel_t));
 					}
 
 					state = READ_DATA;
 					buffer = safe_malloc(MAX_PGM_LINE_SIZE * sizeof(char));
 					buffer_index = 0;
-
 					break;
 				case READ_DATA:
 
@@ -94,7 +91,6 @@ image_t load_image(FILE *file)
 					if (pixel_index == image.width * image.height) {
 						state = DONE;
 					}
-
 					break;
 			}
 		}

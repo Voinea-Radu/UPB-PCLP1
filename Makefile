@@ -5,12 +5,12 @@ CC=gcc
 CFLAGS=-Wall -Wextra -pedantic -std=c99 -g3
 
 # define targets
-TARGETS = my_octave
+TARGETS = pgm
 
 build: $(TARGETS)
 
-my_octave: main.c
-	$(CC) $(CFLAGS) main.c registry_manager.c registry_manager.h state_manager.c state_manager.h -lm -o my_octave
+pgm: main.c
+	$(CC) $(CFLAGS) main.c state_manager.c state_manager.h string_utils.c string_utils.h image.c image.h utils.c utils.h -lm -o pgm
 
 pack:
 	zip -FSr 315CA_VoineaRadu_TEMA3.zip README Makefile *.c *.h

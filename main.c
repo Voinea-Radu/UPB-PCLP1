@@ -35,7 +35,7 @@ void tests(){
 
 	printf("%lu\n", size);
 
-	for (int i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; i++) {
 		printf("%s\n", split[i]);
 	}
 

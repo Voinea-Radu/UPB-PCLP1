@@ -24,7 +24,7 @@ string_t generic_read_string(int max_size, FILE *stream, char *separators)
 			break;
 		}
 
-		for (int i = 0; i < strlen(separators); i++) {
+		for (size_t i = 0; i < strlen(separators); i++) {
 			if (current_char == separators[i]) {
 				is_separator = true;
 				break;

@@ -4,9 +4,7 @@ Grupa: 315 CA
 */
 
 
-#include <stddef.h>
-#include <malloc.h>
-#include <stdlib.h>
+
 #include "utils.h"
 
 void *safe_malloc(size_t size)
