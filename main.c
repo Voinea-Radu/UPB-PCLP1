@@ -4,8 +4,6 @@ Grupa: 315 CA
 */
 
 #include <stdio.h>
-#include <unistd.h>
-#include <string.h>
 #include "string_utils.h"
 #include "state_manager.h"
 #include "image.h"

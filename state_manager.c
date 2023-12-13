@@ -52,9 +52,10 @@ int process_command(string_t command)
 
 			printf("\n\n");
 
+			printf("Max value: %zu\nSize: %zux%zu\nData:\n", image->max_data_value, image->width, image->height);
 			for(size_t i = 0; i < image->height; i++){
 				for(size_t j = 0; j < image->width; j++){
-					printf("%d ", image->data[i][j].value);
+					printf("(%d %d %d) ", image->data[i][j].rgb.red, image->data[i][j].rgb.green, image->data[i][j].rgb.blue);
 				}
 				printf("\n");
 			}

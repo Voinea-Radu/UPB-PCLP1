@@ -4,7 +4,6 @@ Grupa: 315 CA
 */
 
 #include <string.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include "string_utils.h"
 #include "utils.h"
