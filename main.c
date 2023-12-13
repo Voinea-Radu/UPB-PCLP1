@@ -49,5 +49,5 @@ void tests()
 	printf("==============================\n");
 	printf("==============================\n");
 
-	printf("%d %d %d\n", pixel.rgb.red, pixel.rgb.green, pixel.rgb.blue);
+	printf("%d %d %d\n", pixel.red, pixel.green, pixel.blue);
 }

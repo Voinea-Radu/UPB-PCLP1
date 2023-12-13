@@ -24,7 +24,7 @@ image_t load_image(FILE *file)
 
 	char data;
 	while (1) {
-		data = (char) fgetc(file);
+		data = (char)fgetc(file);
 
 		if (data == EOF) {
 			break;
@@ -157,17 +157,17 @@ void read_rgb_ascii_image(image_t *image, string_t *buffer, size_t *buffer_size)
 		case IMAGE_READ_DATA:
 			switch (image->sub_state) {
 				case IMAGE_READ_DATA_RED:
-					image->data[image->read_y][image->read_x].rgb.red =
+					image->data[image->read_y][image->read_x].red =
 							strtol(*buffer, NULL, 10);
 					image->sub_state = IMAGE_READ_DATA_GREEN;
 					break;
 				case IMAGE_READ_DATA_GREEN:
-					image->data[image->read_y][image->read_x].rgb.green =
+					image->data[image->read_y][image->read_x].green =
 							strtol(*buffer, NULL, 10);
 					image->sub_state = IMAGE_READ_DATA_BLUE;
 					break;
 				case IMAGE_READ_DATA_BLUE:
-					image->data[image->read_y][image->read_x].rgb.blue =
+					image->data[image->read_y][image->read_x].blue =
 							strtol(*buffer, NULL, 10);
 					image->sub_state = IMAGE_READ_DATA_RED;
 					break;
@@ -203,7 +203,9 @@ pixel_t new_pixel_mono_color(uint8_t color)
 {
 	pixel_t output;
 
-	output.value = color;
+	output.red = color;
+	output.green = color;
+	output.blue = color;
 
 	return output;
 }
@@ -212,9 +214,9 @@ pixel_t new_pixel_color(uint8_t red, uint8_t green, uint8_t blue)
 {
 	pixel_t output;
 
-	output.rgb.red = red;
-	output.rgb.green = green;
-	output.rgb.blue = blue;
+	output.red = red;
+	output.green = green;
+	output.blue = blue;
 
 	return output;
 }

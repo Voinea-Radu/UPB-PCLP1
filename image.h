@@ -14,19 +14,10 @@ Grupa: 315 CA
 
 #include "string_utils.h"
 
-typedef union{
-	/**
-	 * RED Is stored as bits 0-7
-	 * GREEN Is stored as bits 8-15
-	 * BLUE Is stored as bits 16-23
-	 * Bits 24-31 are unused
-	 */
-	uint32_t value;
-	struct{
-		uint8_t red;
-		uint8_t green;
-		uint8_t blue;
-	} rgb;
+typedef struct{
+	uint8_t red;
+	uint8_t green;
+	uint8_t blue;
 } pixel_t;
 
 // Image loading states
