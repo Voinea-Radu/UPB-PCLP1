@@ -14,21 +14,15 @@ Grupa: 315 CA
 
 #include "string_utils.h"
 
-typedef struct{
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
-} pixel_t;
+typedef struct image_t_prototype image_t;
+typedef struct pixel_t_prototype pixel_t;
+
+
 
 // Image loading states
 #define IMAGE_NOT_LOADED 0
-
 #define IMAGE_READ_PGM_TYPE 1
-
-#define IMAGE_READ_WIDTH 2
-#define IMAGE_READ_HEIGHT 3
-#define IMAGE_READ_DATA 4
-#define IMAGE_READ_MAX_VALUE 5
+#define IMAGE_LOADING 2
 
 // For RGB images
 #define IMAGE_READ_DATA_RED 11
@@ -37,7 +31,13 @@ typedef struct{
 
 #define IMAGE_LOADED 100
 
-typedef struct{
+struct pixel_t_prototype{
+	uint8_t red;
+	uint8_t green;
+	uint8_t blue;
+};
+
+struct image_t_prototype{
 	/**
 	 * (P)1 ASCII black and white
 	 * (P)2 Binary black and white
@@ -58,8 +58,10 @@ typedef struct{
 	size_t read_x;
 	size_t read_y;
 	int state;
-	int sub_state;
-} image_t;
+
+	// Precessing functions
+	void (*load)(image_t*, string_t);
+};
 
 image_t new_image();
 
@@ -73,10 +75,16 @@ void free_image_pointer(image_t *image);
 
 void free_image(image_t image);
 
-void read_one_value_ascii_image(image_t *image, string_t *buffer);
+void image_read_width(image_t *image, string_t buffer);
 
-void read_rgb_ascii_image(image_t *image, string_t *buffer, size_t *buffer_size);
+void image_read_height(image_t *image, string_t buffer);
 
-void init_image_data(image_t *image);
+void image_read_max_value(image_t *image, string_t buffer);
+
+void image_read_mono_data(image_t* image, string_t buffer);
+
+void image_read_rgb_data(image_t *image, string_t buffer);
+
+bool is_mono(image_t* image);
 
 #endif //TEMA3_IMAGE_H

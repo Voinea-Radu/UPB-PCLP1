@@ -52,8 +52,10 @@ image_t load_image(FILE *file)
 				buffer[1] = '\0';
 				image.type = (int)strtol(buffer, NULL, 10);
 
-				image.state = IMAGE_READ_WIDTH;
+				image.state = IMAGE_LOADING;
 				reset_buffer(&buffer, &buffer_size);
+
+				image.load = image_read_width;
 				continue;
 			}
 
@@ -61,23 +63,7 @@ image_t load_image(FILE *file)
 				continue;
 			}
 
-			switch (image.type) {
-				case 1:
-				case 2:
-					read_one_value_ascii_image(&image, &buffer);
-					break;
-				case 3:
-					read_rgb_ascii_image(&image, &buffer, &buffer_size);
-					break;
-				case 4:
-				case 5:
-				case 6:
-				default:
-					printf("Unknown format\n");
-					image.state = IMAGE_NOT_LOADED;
-					break;
-			}
-
+			image.load(&image, buffer);
 			reset_buffer(&buffer, &buffer_size);
 		} else {
 			buffer[buffer_size++] = data;
@@ -93,103 +79,18 @@ image_t load_image(FILE *file)
 	return image;
 }
 
-void read_one_value_ascii_image(image_t *image, string_t *buffer)
+void image_read_width(image_t *image, string_t buffer)
 {
-	switch (image->state) {
-		case IMAGE_READ_WIDTH:
-			image->width = strtol(*buffer, NULL, 10);
-			image->state = IMAGE_READ_HEIGHT;
-			break;
-		case IMAGE_READ_HEIGHT:
-			image->height = strtol(*buffer, NULL, 10);
+	image->width = strtol(buffer, NULL, 10);
 
-			init_image_data(image);
-
-			image->state = IMAGE_READ_MAX_VALUE;
-			break;
-		case IMAGE_READ_MAX_VALUE:
-			image->state = IMAGE_READ_DATA;
-
-			if (image->type == 1) {
-				image->max_data_value = 1;
-			} else {
-				image->max_data_value = strtol(*buffer, NULL, 10);
-				break;
-			}
-		case IMAGE_READ_DATA:
-			image->data[image->read_y][image->read_x] =
-					new_pixel_mono_color(strtol(*buffer, NULL, 10));
-
-			image->read_x++;
-			if (image->read_x == image->width) {
-				image->read_x = 0;
-				image->read_y++;
-			}
-
-			if (image->read_y == image->height) {
-				image->state = IMAGE_LOADED;
-			}
-			break;
-	}
+	image->load = image_read_height;
 }
 
-void read_rgb_ascii_image(image_t *image, string_t *buffer, size_t *buffer_size)
+void image_read_height(image_t* image, string_t buffer)
 {
-	switch (image->state) {
-		case IMAGE_READ_WIDTH:
-			image->width = strtol(*buffer, NULL, 10);
-			image->state = IMAGE_READ_HEIGHT;
-			reset_buffer(buffer, buffer_size);
-			break;
-		case IMAGE_READ_HEIGHT:
-			image->height = strtol(*buffer, NULL, 10);
+	image->height = strtol(buffer, NULL, 10);
 
-			init_image_data(image);
-
-			image->state = IMAGE_READ_MAX_VALUE;
-			reset_buffer(buffer, buffer_size);
-			break;
-		case IMAGE_READ_MAX_VALUE:
-			image->state = IMAGE_READ_DATA;
-			image->sub_state = IMAGE_READ_DATA_RED;
-			image->max_data_value = strtol(*buffer, NULL, 10);
-			break;
-		case IMAGE_READ_DATA:
-			switch (image->sub_state) {
-				case IMAGE_READ_DATA_RED:
-					image->data[image->read_y][image->read_x].red =
-							strtol(*buffer, NULL, 10);
-					image->sub_state = IMAGE_READ_DATA_GREEN;
-					break;
-				case IMAGE_READ_DATA_GREEN:
-					image->data[image->read_y][image->read_x].green =
-							strtol(*buffer, NULL, 10);
-					image->sub_state = IMAGE_READ_DATA_BLUE;
-					break;
-				case IMAGE_READ_DATA_BLUE:
-					image->data[image->read_y][image->read_x].blue =
-							strtol(*buffer, NULL, 10);
-					image->sub_state = IMAGE_READ_DATA_RED;
-					break;
-			}
-
-			reset_buffer(buffer, buffer_size);
-
-			image->read_x++;
-			if (image->read_x == image->width) {
-				image->read_x = 0;
-				image->read_y++;
-			}
-
-			if (image->read_y == image->height) {
-				image->state = IMAGE_LOADED;
-			}
-			break;
-	}
-}
-
-void init_image_data(image_t *image)
-{
+	// Create the data matrix
 	image->data = malloc(image->height * sizeof(pixel_t *));
 	for (size_t i = 0; i < image->height; i++) {
 		image->data[i] = malloc(image->width * sizeof(pixel_t));
@@ -197,6 +98,81 @@ void init_image_data(image_t *image)
 			image->data[i][j] = new_pixel_color(0, 0, 0);
 		}
 	}
+
+	image->load = image_read_max_value;
+}
+
+void image_read_max_value(image_t *image, string_t buffer)
+{
+	if (image->type == 1) {
+		image->max_data_value = 1;
+		if (is_mono(image)) {
+			image_read_mono_data(image, buffer);
+		} else {
+			image_read_rgb_data(image, buffer);
+		}
+		return;
+	}
+
+	image->max_data_value = strtol(buffer, NULL, 10);
+	if (is_mono(image)) {
+		image_read_mono_data(image, buffer);
+	} else {
+		image_read_rgb_data(image, buffer);
+	}
+}
+
+void image_read_mono_data(image_t *image, string_t buffer)
+{
+	image->data[image->read_y][image->read_x] =
+			new_pixel_mono_color(strtol(buffer, NULL, 10));
+
+	image->read_x++;
+	if (image->read_x == image->width) {
+		image->read_x = 0;
+		image->read_y++;
+	}
+
+	if (image->read_y == image->height) {
+		image->state = IMAGE_LOADED;
+	}
+}
+
+void image_read_rgb_data(image_t* image, string_t buffer)
+{
+	switch (image->state) {
+		case IMAGE_READ_DATA_RED:
+		case IMAGE_LOADING: // If the image is on its first pixel
+			image->data[image->read_y][image->read_x].red =
+					strtol(buffer, NULL, 10);
+			image->state = IMAGE_READ_DATA_GREEN;
+			break;
+		case IMAGE_READ_DATA_GREEN:
+			image->data[image->read_y][image->read_x].green =
+					strtol(buffer, NULL, 10);
+			image->state = IMAGE_READ_DATA_BLUE;
+			break;
+		case IMAGE_READ_DATA_BLUE:
+			image->data[image->read_y][image->read_x].blue =
+					strtol(buffer, NULL, 10);
+			image->state = IMAGE_READ_DATA_RED;
+			break;
+	}
+
+	image->read_x++;
+	if (image->read_x == image->width) {
+		image->read_x = 0;
+		image->read_y++;
+	}
+
+	if (image->read_y == image->height) {
+		image->state = IMAGE_LOADED;
+	}
+}
+
+bool is_mono(image_t *image)
+{
+	return image->type == 1 || image->type == 2 || image->type == 4 || image->type == 5;
 }
 
 pixel_t new_pixel_mono_color(uint8_t color)
@@ -249,7 +225,8 @@ image_t new_image()
 	image.read_x = 0;
 	image.read_y = 0;
 	image.state = IMAGE_NOT_LOADED;
-	image.sub_state = IMAGE_NOT_LOADED;
+
+	image.load = NULL;
 
 	return image;
 }
