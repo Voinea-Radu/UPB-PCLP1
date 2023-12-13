@@ -40,10 +40,10 @@ struct pixel_t_prototype{
 struct image_t_prototype{
 	/**
 	 * (P)1 ASCII black and white
-	 * (P)2 Binary black and white
-	 * (P)3 ASCII grayscale
-	 * (P)4 Binary grayscale
-	 * (P)5 ASCII color
+	 * (P)2 ASCII grayscale
+	 * (P)3 ASCII color
+	 * (P)4 Binary black and white
+	 * (P)5 Binary grayscale
 	 * (P)6 Binary color
 	 */
 	int type;
