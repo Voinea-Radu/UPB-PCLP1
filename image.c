@@ -362,3 +362,21 @@ void print_histogram(image_t *image, uint32_t max_stars, uint32_t bins)
 	free(histogram);
 	free(binned_histogram);
 }
+
+void equalize(image_t *image)
+{
+	if (image->state == IMAGE_NOT_LOADED) {
+		printf("No image loaded\n");
+		return;
+	}
+
+	if (!is_mono(image)) {
+		printf("Black and white image needed\n");
+		return;
+	}
+
+
+
+
+	printf("Equalize done\n");
+}

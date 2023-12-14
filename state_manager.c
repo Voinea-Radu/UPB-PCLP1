@@ -15,6 +15,7 @@ static string_to_handle command_table[] = {
 		{"print",     handle_print},
 		{"load",      handle_load},
 		{"histogram", handle_histogram},
+		{"equalize", handle_equalize},
 		{"select",    handle_select},
 		{"exit",      handle_exit},
 		{"quit",      handle_exit}
@@ -156,6 +157,11 @@ int handle_histogram(image_t *image)
 
 	print_histogram(image, max_stars, bins);
 
+	return CONTINUE;
+}
 
+int handle_equalize(image_t *image)
+{
+	equalize(image);
 	return CONTINUE;
 }
