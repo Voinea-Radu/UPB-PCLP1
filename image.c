@@ -13,14 +13,15 @@ image_t load_image(FILE *file)
 {
 	bool is_comment = false;
 
-	string_t buffer = NULL;
+	string_t buffer = safe_malloc(MAX_PGM_LINE_SIZE * sizeof(char));
 	size_t buffer_size = 0;
 
-	reset_buffer(&buffer, &buffer_size);
+	reset_buffer(buffer, &buffer_size);
 
 	image_t image = new_image();
 
 	image.state = IMAGE_READ_PGM_TYPE;
+	image.load = image_read_type;
 
 	char data;
 	while (1) {
@@ -48,24 +49,12 @@ image_t load_image(FILE *file)
 		}
 
 		if (data == '\n' || data == ' ' || is_reading_binary(&image)) {
-			if (image.state == IMAGE_READ_PGM_TYPE) {
-				buffer[0] = buffer[1];
-				buffer[1] = '\0';
-				image.type = (int)strtol(buffer, NULL, 10);
-
-				image.state = IMAGE_LOADING;
-				reset_buffer(&buffer, &buffer_size);
-
-				image.load = image_read_width;
-				continue;
-			}
-
 			if (buffer_size == 0) {
 				continue;
 			}
 
 			image.load(&image, buffer);
-			reset_buffer(&buffer, &buffer_size);
+			reset_buffer(buffer, &buffer_size);
 		} else {
 			buffer[buffer_size++] = data;
 			buffer[buffer_size] = '\0';
@@ -78,6 +67,14 @@ image_t load_image(FILE *file)
 
 	free(buffer);
 	return image;
+}
+
+void image_read_type(image_t *image, string_t buffer)
+{
+	image->type = buffer[1] - '0';
+
+	image->state = IMAGE_LOADING;
+	image->load = image_read_width;
 }
 
 void image_read_width(image_t *image, string_t buffer)

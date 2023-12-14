@@ -17,7 +17,7 @@ Grupa: 315 CA
 typedef struct image_t_prototype image_t;
 typedef struct pixel_t_prototype pixel_t;
 
-
+#define MAX_PGM_LINE_SIZE 70
 
 // Image loading states
 #define IMAGE_NOT_LOADED 0
@@ -90,5 +90,6 @@ bool is_mono(image_t* image);
 
 bool is_reading_binary(image_t *image);
 bool is_binary(image_t *image);
+void image_read_type(image_t *image, string_t buffer);
 
 #endif //TEMA3_IMAGE_H
