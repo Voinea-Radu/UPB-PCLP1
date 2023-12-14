@@ -11,4 +11,5 @@ add_executable(tema3 main.c
         image.c
         image.h
         utils.c
-        utils.h)
+        utils.h
+        statics.h)

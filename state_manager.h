@@ -32,5 +32,6 @@ int handle_print(image_t *image);
 
 int handle_exit(image_t *image);
 int handle_select(image_t *image);
+int handle_histogram(image_t *image);
 
 #endif //TEMA3_STATE_MANAGER_H

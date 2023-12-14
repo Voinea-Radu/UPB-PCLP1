@@ -12,11 +12,12 @@ Grupa: 315 CA
 
 
 static string_to_handle command_table[] = {
-		{"print",  handle_print},
-		{"load",   handle_load},
-		{"select", handle_select},
-		{"exit",   handle_exit},
-		{"quit",   handle_exit}
+		{"print",     handle_print},
+		{"load",      handle_load},
+		{"histogram", handle_histogram},
+		{"select",    handle_select},
+		{"exit",      handle_exit},
+		{"quit",      handle_exit}
 };
 
 int process_command(string_t command)
@@ -125,7 +126,7 @@ int handle_select(image_t *image)
 
 	switch (result) {
 		case 0:
-			if(select_all){
+			if (select_all) {
 				printf("Selected all\n");
 				break;
 			}
@@ -138,6 +139,23 @@ int handle_select(image_t *image)
 			printf("No image loaded\n");
 			break;
 	}
+
+	return CONTINUE;
+}
+
+int handle_histogram(image_t *image)
+{
+	uint32_t max_stars, bins;
+
+	scanf("%u %u", &max_stars, &bins);
+
+	if (bins < 2 || !is_power_of_two(bins)) {
+		printf("Invalid number of bins\n");
+		return CONTINUE;
+	}
+
+	print_histogram(image, max_stars, bins);
+
 
 	return CONTINUE;
 }

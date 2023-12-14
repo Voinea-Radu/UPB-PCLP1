@@ -41,3 +41,8 @@ void *safe_realloc(void *ptr, size_t size)
 
 	return result;
 }
+
+bool is_power_of_two(uint32_t number)
+{
+	return (number & (number - 1)) == 0;
+}

@@ -6,6 +6,7 @@ Grupa: 315 CA
 #include <string.h>
 #include "image.h"
 #include "utils.h"
+#include "statics.h"
 
 // Image loading states
 
@@ -307,6 +308,57 @@ int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2, uint32_
 	image->selection_start = new_position(real_x1, real_y1);
 	image->selection_end = new_position(real_x2, real_y2);
 
-
 	return 0;
+}
+
+void print_histogram(image_t *image, uint32_t max_stars, uint32_t bins)
+{
+	if (image->state == IMAGE_NOT_LOADED) {
+		printf("No image loaded\n");
+		return;
+	}
+
+	if (!is_mono(image)) {
+		printf("Black and white image needed\n");
+		return;
+	}
+
+	uint32_t *histogram = calloc(image->max_data_value + 1, sizeof(uint32_t));
+
+	for (size_t i = image->selection_start.y; i <= image->selection_end.y; i++) {
+		for (size_t j = image->selection_start.x; j <= image->selection_end.x; j++) {
+			histogram[image->data[i][j].red]++;
+		}
+	}
+
+	uint32_t *binned_histogram = calloc(bins, sizeof(uint32_t));
+
+	uint32_t elements_per_bin = (image->max_data_value + 1) / bins;
+
+	uint32_t max_value = 0;
+
+	for (int bin_index = 0; bin_index < bins; bin_index++) {
+		for (int element_index = 0; element_index < elements_per_bin; element_index++) {
+			binned_histogram[bin_index] += histogram[bin_index * elements_per_bin + element_index];
+
+			if (binned_histogram[bin_index] > max_value) {
+				max_value = binned_histogram[bin_index];
+			}
+		}
+	}
+
+	for (int i = 0; i < bins; i++) {
+		int stars = (int)(1.0 * binned_histogram[i] * max_stars / max_value);
+
+		// printf("%d [%3d, %3d): ", stars, i * elements_per_bin, (i + 1) * elements_per_bin);
+		printf("%d\t|\t", stars);
+
+		for (int j = 0; j < stars; j++) {
+			printf("*");
+		}
+		printf("\n");
+	}
+
+	free(histogram);
+	free(binned_histogram);
 }

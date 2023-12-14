@@ -6,6 +6,8 @@ Grupa: 315 CA
 #include <stddef.h>
 #include <malloc.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <bits/stdint-uintn.h>
 
 #ifndef TEMA3_UTILS_H
 #define TEMA3_UTILS_H
@@ -13,6 +15,10 @@ Grupa: 315 CA
 // Math macros
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define min(a, b) ((a) < (b) ? (a) : (b))
+
+// Math utils
+
+bool is_power_of_two(uint32_t number);
 
 // Memory utils
 void *safe_malloc(size_t size);

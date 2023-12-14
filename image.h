@@ -118,6 +118,8 @@ bool is_reading_binary(image_t *image);
 
 bool is_binary(image_t *image);
 
+void print_histogram(image_t *image, uint32_t x, uint32_t bins);
+
 // Setters
 
 int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2);
