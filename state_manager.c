@@ -8,35 +8,20 @@ Grupa: 315 CA
 #include "string_utils.h"
 #include "image.h"
 #include "utils.h"
+#include <ctype.h>
 
 #define MAX_ARGUMENT_SIZE 100
 
 #define UNKNOWN_COMMAND (-1)
 #define LOAD 1
 #define SELECT 2
-#define QUIT 100
+#define EXIT 100
 
-static string_pair command_table[] = {
-		{"LOAD",   LOAD},
-		{"load",   LOAD}, // TODO Remove
-		{"SELECT", SELECT},
-		{"select", SELECT}, // TODO Remove
-		{"QUIT",   QUIT},
-		{"quit",   QUIT} // TODO Remove
+static string_to_handle command_table[] = {
+		{"print", handle_print},
+		{"load",  handle_load},
+		{"exit",  handle_exit}
 };
-
-#define COMMAND_TABLE_SIZE (sizeof(command_table)/sizeof(string_pair))
-
-int get_command_id(char *key)
-{
-	for (size_t i = 0; i < COMMAND_TABLE_SIZE; i++) {
-		string_pair pair = command_table[i];
-		if (strcmp(pair.key, key) == 0)
-			return pair.value;
-	}
-
-	return UNKNOWN_COMMAND;
-}
 
 int process_command(string_t command)
 {
@@ -46,39 +31,23 @@ int process_command(string_t command)
 		image = safe_calloc(sizeof(image_t));
 	}
 
-	switch (get_command_id(command)) {
-		case LOAD:
-			handle_load(image);
+	static const size_t size = sizeof(command_table) / sizeof(string_to_handle);
 
-			printf("\n\n");
+	for (size_t i = 0; i < size; i++) {
+		string_to_handle pair = command_table[i];
 
-			printf("Type: %d\nMax value: %zu\nSize: %zux%zu\nData:\n", image->type, image->max_data_value, image->width,
-				   image->height);
-			for (size_t i = 0; i < image->height; i++) {
-				for (size_t j = 0; j < image->width; j++) {
-					printf("(%3d %3d %3d) ", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
-				}
-				printf("\n");
-			}
+		to_lower(command);
 
-			break;
-		case SELECT:
-			printf("SELECT\n");
-			break;
-		case QUIT:
-			printf("QUIT\n");
-			free_image_pointer(image);
-			return EXIT;
-		case UNKNOWN_COMMAND:
-		default:
-			printf("UNKNOWN COMMAND\n");
-
+		if (strcmp(pair.key, command) == 0)
+			return pair.handle(image);
 	}
 
-	return CONTINUE;
+	printf("Unknown command: %s\n", command);
+
+	return UNKNOWN_COMMAND;
 }
 
-void handle_load(image_t *image)
+int handle_load(image_t *image)
 {
 	string_t file_name = read_string(MAX_ARGUMENT_SIZE, stdin);
 
@@ -89,12 +58,41 @@ void handle_load(image_t *image)
 	if (NULL == file) {
 		printf("Failed to load %s\n", file_name);
 		image->state = IMAGE_NOT_LOADED;
-		return;
+		return CONTINUE;
 	}
 
-	free(file_name);
 	free_image(*image);
 	*image = load_image(file);
 
+
+	if(image->state == IMAGE_LOADED)
+		printf("Loaded %s\n", file_name);
+	else
+		printf("Failed to load %s\n", file_name);
+
+	free(file_name);
 	fclose(file);
+
+	return CONTINUE;
+}
+
+int handle_print(image_t *image)
+{
+	printf("\n\n");
+
+	printf("Type: %d\nMax value: %zu\nSize: %zux%zu\nData:\n", image->type, image->max_data_value, image->width,
+		   image->height);
+	for (size_t i = 0; i < image->height; i++) {
+		for (size_t j = 0; j < image->width; j++) {
+			printf("(%3d %3d %3d) ", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
+		}
+		printf("\n");
+	}
+	return CONTINUE;
+}
+
+int handle_exit(image_t *image)
+{
+	free_image_pointer(image);
+	return EXIT;
 }

@@ -5,6 +5,7 @@ Grupa: 315 CA
 
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include "string_utils.h"
 #include "utils.h"
 
@@ -87,6 +88,16 @@ void reset_buffer(string_t buffer, size_t *buffer_size)
 {
 	*buffer_size = 0;
 	buffer[0] = '\0';
+}
+
+void to_lower(string_t string)
+{
+	size_t size = strlen(string);
+
+	for (size_t i = 0; i< size; i++) {
+		string[i] = string[i];
+		string[i] = (char)tolower(string[i]);
+	}
 }
 
 

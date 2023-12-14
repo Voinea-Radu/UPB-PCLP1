@@ -18,4 +18,7 @@ string_t* split_string(string_t data, string_t separator, size_t *size);
 
 void reset_buffer(string_t buffer, size_t *buffer_index);
 
+void to_lower(string_t string);
+
+
 #endif //TEMA3_STRING_UTILS_H
