@@ -25,6 +25,7 @@ typedef struct pixel_t_prototype pixel_t;
 #define IMAGE_LOADING 2
 
 // For RGB images
+#define IMAGE_READ_DATA 10
 #define IMAGE_READ_DATA_RED 11
 #define IMAGE_READ_DATA_GREEN 12
 #define IMAGE_READ_DATA_BLUE 13
@@ -86,5 +87,8 @@ void image_read_mono_data(image_t* image, string_t buffer);
 void image_read_rgb_data(image_t *image, string_t buffer);
 
 bool is_mono(image_t* image);
+
+bool is_reading_binary(image_t *image);
+bool is_binary(image_t *image);
 
 #endif //TEMA3_IMAGE_H

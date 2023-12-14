@@ -26,10 +26,6 @@ image_t load_image(FILE *file)
 	while (1) {
 		data = (char)fgetc(file);
 
-		if (data == EOF) {
-			break;
-		}
-
 		if (data == '#') {
 			is_comment = true;
 		}
@@ -46,7 +42,12 @@ image_t load_image(FILE *file)
 			continue;
 		}
 
-		if (data == '\n' || data == ' ') {
+		if (is_reading_binary(&image)) {
+			buffer[buffer_size++] = data;
+			buffer[buffer_size] = '\0';
+		}
+
+		if (data == '\n' || data == ' ' || is_reading_binary(&image)) {
 			if (image.state == IMAGE_READ_PGM_TYPE) {
 				buffer[0] = buffer[1];
 				buffer[1] = '\0';
@@ -86,7 +87,7 @@ void image_read_width(image_t *image, string_t buffer)
 	image->load = image_read_height;
 }
 
-void image_read_height(image_t* image, string_t buffer)
+void image_read_height(image_t *image, string_t buffer)
 {
 	image->height = strtol(buffer, NULL, 10);
 
@@ -104,6 +105,8 @@ void image_read_height(image_t* image, string_t buffer)
 
 void image_read_max_value(image_t *image, string_t buffer)
 {
+	image->state = IMAGE_READ_DATA;
+
 	if (image->type == 1) {
 		image->max_data_value = 1;
 		if (is_mono(image)) {
@@ -115,17 +118,20 @@ void image_read_max_value(image_t *image, string_t buffer)
 	}
 
 	image->max_data_value = strtol(buffer, NULL, 10);
+
 	if (is_mono(image)) {
-		image_read_mono_data(image, buffer);
+		image->load = image_read_mono_data;
 	} else {
-		image_read_rgb_data(image, buffer);
+		image->load = image_read_rgb_data;
 	}
 }
 
 void image_read_mono_data(image_t *image, string_t buffer)
 {
 	image->data[image->read_y][image->read_x] =
-			new_pixel_mono_color(strtol(buffer, NULL, 10));
+			new_pixel_mono_color(is_binary(image) ?
+								 (int)buffer[0] :
+								 strtol(buffer, NULL, 10));
 
 	image->read_x++;
 	if (image->read_x == image->width) {
@@ -138,35 +144,38 @@ void image_read_mono_data(image_t *image, string_t buffer)
 	}
 }
 
-void image_read_rgb_data(image_t* image, string_t buffer)
+void image_read_rgb_data(image_t *image, string_t buffer)
 {
 	switch (image->state) {
+		case IMAGE_READ_DATA:
 		case IMAGE_READ_DATA_RED:
-		case IMAGE_LOADING: // If the image is on its first pixel
-			image->data[image->read_y][image->read_x].red =
-					strtol(buffer, NULL, 10);
+			image->data[image->read_y][image->read_x].red = is_binary(image) ?
+															(int)buffer[0] :
+															strtol(buffer, NULL, 10);
 			image->state = IMAGE_READ_DATA_GREEN;
 			break;
 		case IMAGE_READ_DATA_GREEN:
-			image->data[image->read_y][image->read_x].green =
-					strtol(buffer, NULL, 10);
+			image->data[image->read_y][image->read_x].green = is_binary(image) ?
+															  (int)buffer[0] :
+															  strtol(buffer, NULL, 10);
 			image->state = IMAGE_READ_DATA_BLUE;
 			break;
 		case IMAGE_READ_DATA_BLUE:
-			image->data[image->read_y][image->read_x].blue =
-					strtol(buffer, NULL, 10);
+			image->data[image->read_y][image->read_x].blue = is_binary(image) ?
+															 (int)buffer[0] :
+															 strtol(buffer, NULL, 10);
 			image->state = IMAGE_READ_DATA_RED;
+
+			image->read_x++;
+			if (image->read_x == image->width) {
+				image->read_x = 0;
+				image->read_y++;
+			}
+
+			if (image->read_y == image->height) {
+				image->state = IMAGE_LOADED;
+			}
 			break;
-	}
-
-	image->read_x++;
-	if (image->read_x == image->width) {
-		image->read_x = 0;
-		image->read_y++;
-	}
-
-	if (image->read_y == image->height) {
-		image->state = IMAGE_LOADED;
 	}
 }
 
@@ -229,4 +238,20 @@ image_t new_image()
 	image.load = NULL;
 
 	return image;
+}
+
+bool is_reading_binary(image_t *image)
+{
+	bool flag1 = is_binary(image);
+	bool flag2 = image->state == IMAGE_READ_DATA ||
+				 image->state == IMAGE_READ_DATA_RED ||
+				 image->state == IMAGE_READ_DATA_GREEN ||
+				 image->state == IMAGE_READ_DATA_BLUE;
+
+	return flag1 && flag2;
+}
+
+bool is_binary(image_t *image)
+{
+	return image->type == 4 || image->type == 5 || image->type == 6;
 }
