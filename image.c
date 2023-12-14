@@ -113,18 +113,19 @@ void image_read_max_value(image_t *image, string_t buffer)
 {
 	image->state = IMAGE_READ_DATA;
 
-	if (image->type == 1) {
-		image->max_data_value = 1;
+	if (image->type == 1 || image->type == 4) {
+		// TODO Maybe remove at some point
+		// image->max_data_value = 1;
 		if (is_mono(image)) {
 			image_read_mono_data(image, buffer);
-		} else {
-			image_read_rgb_data(image, buffer);
 		}
 		return;
 	}
 
-	image->max_data_value = strtol(buffer, NULL, 10);
+	// TODO Maybe Remove at some point
+	// image->max_data_value = strtol(buffer, NULL, 10);
 
+	// Format 2 3 5 6
 	if (is_mono(image)) {
 		image->load = image_read_mono_data;
 	} else {
@@ -134,10 +135,16 @@ void image_read_max_value(image_t *image, string_t buffer)
 
 void image_read_mono_data(image_t *image, string_t buffer)
 {
+	int scalar = 1;
+
+	if (image->type == 1 || image->type == 4) {
+		scalar = 255;
+	}
+
 	image->data[image->read_y][image->read_x] =
 			new_pixel_mono_color(is_binary(image) ?
 								 (int)buffer[0] :
-								 strtol(buffer, NULL, 10));
+								 strtol(buffer, NULL, 10) * scalar);
 
 	image->read_x++;
 	if (image->read_x == image->width) {
@@ -241,7 +248,8 @@ image_t new_empty_image()
 	image.selection_start = new_position(0, 0);
 	image.selection_end = new_position(0, 0);
 
-	image.max_data_value = 0;
+	// TODO Maybe remove at some point
+	// image.max_data_value = 0;
 
 	image.read_x = 0;
 	image.read_y = 0;
@@ -323,7 +331,7 @@ void print_histogram(image_t *image, uint32_t max_stars, uint32_t bins)
 		return;
 	}
 
-	uint32_t *histogram = calloc(image->max_data_value + 1, sizeof(uint32_t));
+	uint32_t *histogram = calloc(255, sizeof(uint32_t));
 
 	for (size_t i = image->selection_start.y; i <= image->selection_end.y; i++) {
 		for (size_t j = image->selection_start.x; j <= image->selection_end.x; j++) {
@@ -333,7 +341,7 @@ void print_histogram(image_t *image, uint32_t max_stars, uint32_t bins)
 
 	uint32_t *binned_histogram = calloc(bins, sizeof(uint32_t));
 
-	uint32_t elements_per_bin = (image->max_data_value + 1) / bins;
+	uint32_t elements_per_bin = 256 / bins;
 
 	uint32_t max_value = 0;
 
@@ -374,8 +382,6 @@ void equalize(image_t *image)
 		printf("Black and white image needed\n");
 		return;
 	}
-
-
 
 
 	printf("Equalize done\n");

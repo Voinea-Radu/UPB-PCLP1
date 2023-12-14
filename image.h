@@ -58,8 +58,9 @@ struct image_t_prototype{
 	size_t width;
 	size_t height;
 
+	// TODO Maybe remove at some point
 	// Don't yet know why this is here
-	size_t max_data_value;
+	// size_t max_data_value;
 
 	// Actual data
 	pixel_t **data;
