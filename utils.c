@@ -5,6 +5,7 @@ Grupa: 315 CA
 
 #include "utils.h"
 
+
 void *safe_malloc(size_t size)
 {
 	void *result = malloc(size);

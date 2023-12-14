@@ -16,6 +16,7 @@ Grupa: 315 CA
 
 typedef struct image_t_prototype image_t;
 typedef struct pixel_t_prototype pixel_t;
+typedef struct position_t_prototype position_t;
 
 #define MAX_PGM_LINE_SIZE 70
 
@@ -38,6 +39,11 @@ struct pixel_t_prototype{
 	uint8_t blue;
 };
 
+struct position_t_prototype{
+	uint32_t x;
+	uint32_t y;
+};
+
 struct image_t_prototype{
 	/**
 	 * (P)1 ASCII black and white
@@ -48,12 +54,19 @@ struct image_t_prototype{
 	 * (P)6 Binary color
 	 */
 	int type;
+
 	size_t width;
 	size_t height;
 
+	// Don't yet know why this is here
 	size_t max_data_value;
 
+	// Actual data
 	pixel_t **data;
+
+	// Selection data
+	position_t selection_start;
+	position_t selection_end;
 
 	// Used for reading the image
 	size_t read_x;
@@ -61,20 +74,24 @@ struct image_t_prototype{
 	int state;
 
 	// Precessing functions
-	void (*load)(image_t*, string_t);
+	void (*load)(image_t *, string_t);
 };
 
-image_t new_image();
 
-image_t load_image(FILE *file);
+// Constructors
+image_t new_empty_image();
+
+image_t new_image(FILE *file);
 
 pixel_t new_pixel_mono_color(uint8_t color);
 
 pixel_t new_pixel_color(uint8_t red, uint8_t green, uint8_t blue);
 
-void free_image_pointer(image_t *image);
+position_t new_position(uint32_t x, uint32_t y);
 
-void free_image(image_t image);
+// Constructor helpers
+
+void image_read_type(image_t *image, string_t buffer);
 
 void image_read_width(image_t *image, string_t buffer);
 
@@ -82,14 +99,28 @@ void image_read_height(image_t *image, string_t buffer);
 
 void image_read_max_value(image_t *image, string_t buffer);
 
-void image_read_mono_data(image_t* image, string_t buffer);
+void image_read_mono_data(image_t *image, string_t buffer);
 
 void image_read_rgb_data(image_t *image, string_t buffer);
 
-bool is_mono(image_t* image);
+// Destructor
+
+void free_image_pointer(image_t *image);
+
+void free_image(image_t image);
+
+// Image processing
+
+// Getters
+bool is_mono(image_t *image);
 
 bool is_reading_binary(image_t *image);
+
 bool is_binary(image_t *image);
-void image_read_type(image_t *image, string_t buffer);
+
+// Setters
+
+int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2);
+
 
 #endif //TEMA3_IMAGE_H

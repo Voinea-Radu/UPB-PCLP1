@@ -10,21 +10,20 @@ Grupa: 315 CA
 #include "utils.h"
 #include <ctype.h>
 
-#define MAX_ARGUMENT_SIZE 100
-
-#define UNKNOWN_COMMAND (-1)
-#define LOAD 1
-#define SELECT 2
-#define EXIT 100
 
 static string_to_handle command_table[] = {
-		{"print", handle_print},
-		{"load",  handle_load},
-		{"exit",  handle_exit}
+		{"print",  handle_print},
+		{"load",   handle_load},
+		{"select", handle_select},
+		{"exit",   handle_exit},
+		{"quit",   handle_exit}
 };
 
 int process_command(string_t command)
 {
+	if (strcmp(command, " ") == 0 || strcmp(command, "\n") == 0 || strcmp(command, "") == 0)
+		return CONTINUE;
+
 	static image_t *image = NULL;
 
 	if (image == NULL) {
@@ -42,7 +41,7 @@ int process_command(string_t command)
 			return pair.handle(image);
 	}
 
-	printf("Unknown command: %s\n", command);
+	printf("Unknown command: '%s'\n", command);
 
 	return UNKNOWN_COMMAND;
 }
@@ -51,7 +50,7 @@ int handle_load(image_t *image)
 {
 	string_t file_name = read_string(MAX_ARGUMENT_SIZE, stdin);
 
-	printf("Loading %s...\n", file_name);
+	//printf("Loading %s...\n", file_name);
 
 	FILE *file = fopen(file_name, "r");
 
@@ -62,13 +61,14 @@ int handle_load(image_t *image)
 	}
 
 	free_image(*image);
-	*image = load_image(file);
+	*image = new_image(file);
 
-
-	if(image->state == IMAGE_LOADED)
+	if (image->state == IMAGE_LOADED)
 		printf("Loaded %s\n", file_name);
-	else
+	else {
 		printf("Failed to load %s\n", file_name);
+		image->state = IMAGE_NOT_LOADED;
+	}
 
 	free(file_name);
 	fclose(file);
@@ -80,8 +80,12 @@ int handle_print(image_t *image)
 {
 	printf("\n\n");
 
-	printf("Type: %d\nMax value: %zu\nSize: %zux%zu\nData:\n", image->type, image->max_data_value, image->width,
-		   image->height);
+	printf("Type: %d\n", image->type);
+	printf("Max value: %zu\n", image->max_data_value);
+	printf("Size: %zux%zu\n", image->width, image->height);
+	printf("Selected: [%u %u] -> [%u %u]\n", image->selection_start.x, image->selection_start.y, image->selection_end.x,
+		   image->selection_end.y);
+	printf("Data:\n");
 	for (size_t i = 0; i < image->height; i++) {
 		for (size_t j = 0; j < image->width; j++) {
 			printf("(%3d %3d %3d) ", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
@@ -95,4 +99,26 @@ int handle_exit(image_t *image)
 {
 	free_image_pointer(image);
 	return EXIT;
+}
+
+int handle_select(image_t *image)
+{
+	uint32_t x1, y1, x2, y2;
+	scanf("%u %u %u %u", &x1, &y1, &x2, &y2);
+
+	int result = set_selection(image, x1, y1, x2, y2);
+
+	switch (result) {
+		case 0:
+			printf("Selected %u %u %u %u\n", x1, y1, x2, y2);
+			break;
+		case 1:
+			printf("Invalid set of coordinates\n");
+			break;
+		case 2:
+			printf("No image loaded\n");
+			break;
+	}
+
+	return CONTINUE;
 }

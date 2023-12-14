@@ -9,7 +9,7 @@ Grupa: 315 CA
 
 // Image loading states
 
-image_t load_image(FILE *file)
+image_t new_image(FILE *file)
 {
 	bool is_comment = false;
 
@@ -18,7 +18,7 @@ image_t load_image(FILE *file)
 
 	reset_buffer(buffer, &buffer_size);
 
-	image_t image = new_image();
+	image_t image = new_empty_image();
 
 	image.state = IMAGE_READ_PGM_TYPE;
 	image.load = image_read_type;
@@ -101,6 +101,9 @@ void image_read_height(image_t *image, string_t buffer)
 			image->data[i][j] = new_pixel_color(0, 0, 0);
 		}
 	}
+
+	// Set the selection to the full image
+	set_selection(image, 0, 0, image->width, image->height);
 
 	image->load = image_read_max_value;
 }
@@ -223,14 +226,20 @@ void free_image(image_t image)
 	free(image.data);
 }
 
-image_t new_image()
+image_t new_empty_image()
 {
 	image_t image;
 
 	image.type = 0;
+
 	image.width = 0;
 	image.height = 0;
+
 	image.data = NULL;
+
+	image.selection_start = new_position(0, 0);
+	image.selection_end = new_position(0, 0);
+
 	image.max_data_value = 0;
 
 	image.read_x = 0;
@@ -256,4 +265,48 @@ bool is_reading_binary(image_t *image)
 bool is_binary(image_t *image)
 {
 	return image->type == 4 || image->type == 5 || image->type == 6;
+}
+
+position_t new_position(uint32_t x, uint32_t y)
+{
+	position_t position;
+
+	position.x = x;
+	position.y = y;
+
+	return position;
+}
+
+/**
+ * @return 0 - if the selection was successful
+ * 		   1 - if the selection failed because one of the coordinates was out of bounds
+ * 		   2 -  if the selection failed because the image was not loaded
+ */
+int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2)
+{
+	if (image->state == IMAGE_NOT_LOADED) {
+		return 2;
+	}
+
+	// The (-1)s are because the specification stats that the selection is
+	// inclusive to the left and top and exclusive to the right
+	// [x1, x2) [y1, y2)
+
+	x2--;
+	y2--;
+
+	uint32_t real_x1 = min(x1, x2);
+	uint32_t real_x2 = max(x1, x2);
+	uint32_t real_y1 = min(y1, y2);
+	uint32_t real_y2 = max(y1, y2);
+
+	if (x1 >= image->width || x2 > image->width || y1 >= image->height || y2 > image->height) {
+		return 1;
+	}
+
+	image->selection_start = new_position(real_x1, real_y1);
+	image->selection_end = new_position(real_x2, real_y2);
+
+
+	return 0;
 }
