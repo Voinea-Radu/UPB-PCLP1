@@ -104,12 +104,31 @@ int handle_exit(image_t *image)
 int handle_select(image_t *image)
 {
 	uint32_t x1, y1, x2, y2;
-	scanf("%u %u %u %u", &x1, &y1, &x2, &y2);
+
+	string_t sub_command = read_string(MAX_ARGUMENT_SIZE, stdin);
+	bool select_all;
+
+	to_lower(sub_command);
+
+	if (strcmp(sub_command, "all") == 0) {
+		x1 = 0;
+		y1 = 0;
+		x2 = image->width;
+		y2 = image->height;
+		select_all = true;
+	} else {
+		x1 = strtol(sub_command, NULL, 10);
+		scanf("%u %u %u", &y1, &x2, &y2);
+	}
 
 	int result = set_selection(image, x1, y1, x2, y2);
 
 	switch (result) {
 		case 0:
+			if(select_all){
+				printf("Selected all\n");
+				break;
+			}
 			printf("Selected %u %u %u %u\n", x1, y1, x2, y2);
 			break;
 		case 1:
