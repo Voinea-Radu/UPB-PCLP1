@@ -21,8 +21,8 @@ static string_pair command_table[] = {
 		{"load",   LOAD}, // TODO Remove
 		{"SELECT", SELECT},
 		{"select", SELECT}, // TODO Remove
-		{"QUIT", QUIT},
-		{"quit", QUIT} // TODO Remove
+		{"QUIT",   QUIT},
+		{"quit",   QUIT} // TODO Remove
 };
 
 #define COMMAND_TABLE_SIZE (sizeof(command_table)/sizeof(string_pair))
@@ -52,9 +52,10 @@ int process_command(string_t command)
 
 			printf("\n\n");
 
-			printf("Type: %d\nMax value: %zu\nSize: %zux%zu\nData:\n",image->type, image->max_data_value, image->width, image->height);
-			for(size_t i = 0; i < image->height; i++){
-				for(size_t j = 0; j < image->width; j++){
+			printf("Type: %d\nMax value: %zu\nSize: %zux%zu\nData:\n", image->type, image->max_data_value, image->width,
+				   image->height);
+			for (size_t i = 0; i < image->height; i++) {
+				for (size_t j = 0; j < image->width; j++) {
 					printf("(%3d %3d %3d) ", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
 				}
 				printf("\n");
@@ -83,7 +84,7 @@ void handle_load(image_t *image)
 
 	printf("Loading %s...\n", file_name);
 
-	FILE* file = fopen(file_name, "r");
+	FILE *file = fopen(file_name, "r");
 
 	if (NULL == file) {
 		printf("Failed to load %s\n", file_name);
