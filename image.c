@@ -43,21 +43,26 @@ image_t load_image(FILE *file)
 			continue;
 		}
 
+		// Binary file format
 		if (is_reading_binary(&image)) {
 			buffer[buffer_size++] = data;
 			buffer[buffer_size] = '\0';
-		}
-
-		if (data == '\n' || data == ' ' || is_reading_binary(&image)) {
-			if (buffer_size == 0) {
-				continue;
-			}
 
 			image.load(&image, buffer);
 			reset_buffer(buffer, &buffer_size);
 		} else {
-			buffer[buffer_size++] = data;
-			buffer[buffer_size] = '\0';
+			// ASCII file format
+			if (data == '\n' || data == ' ') {
+				if (buffer_size == 0) {
+					continue;
+				}
+
+				image.load(&image, buffer);
+				reset_buffer(buffer, &buffer_size);
+			} else {
+				buffer[buffer_size++] = data;
+				buffer[buffer_size] = '\0';
+			}
 		}
 
 		if (image.state == IMAGE_LOADED) {
