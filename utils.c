@@ -46,3 +46,14 @@ bool is_power_of_two(uint32_t number)
 {
 	return (number & (number - 1)) == 0;
 }
+
+int clamp(int value, int min, int max)
+{
+	if (value < min)
+		return min;
+
+	if (value > max)
+		return max;
+
+	return value;
+}

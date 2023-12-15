@@ -13,3 +13,5 @@ add_executable(tema3 main.c
         utils.c
         utils.h
         statics.h)
+
+target_link_libraries(tema3 -lm)

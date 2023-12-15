@@ -7,6 +7,7 @@ Grupa: 315 CA
 #include "image.h"
 #include "utils.h"
 #include "statics.h"
+#include <math.h>
 
 // Image loading states
 
@@ -319,6 +320,19 @@ int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2, uint32_
 	return 0;
 }
 
+uint32_t *generate_histogram(image_t *image)
+{
+	uint32_t *histogram = calloc(255, sizeof(uint32_t));
+
+	for (size_t i = image->selection_start.y; i <= image->selection_end.y; i++) {
+		for (size_t j = image->selection_start.x; j <= image->selection_end.x; j++) {
+			histogram[image->data[i][j].red]++;
+		}
+	}
+
+	return histogram;
+}
+
 void print_histogram(image_t *image, uint32_t max_stars, uint32_t bins)
 {
 	if (image->state == IMAGE_NOT_LOADED) {
@@ -331,13 +345,7 @@ void print_histogram(image_t *image, uint32_t max_stars, uint32_t bins)
 		return;
 	}
 
-	uint32_t *histogram = calloc(255, sizeof(uint32_t));
-
-	for (size_t i = image->selection_start.y; i <= image->selection_end.y; i++) {
-		for (size_t j = image->selection_start.x; j <= image->selection_end.x; j++) {
-			histogram[image->data[i][j].red]++;
-		}
-	}
+	uint32_t *histogram = generate_histogram(image);
 
 	uint32_t *binned_histogram = calloc(bins, sizeof(uint32_t));
 
@@ -383,6 +391,30 @@ void equalize(image_t *image)
 		return;
 	}
 
+	uint32_t *histogram = generate_histogram(image);
+
+	for (int i = 0; i < 256; i++) {
+		if(histogram[i] != 0)
+			printf("%d -> %d\n", i, histogram[i]);
+	}
+
+	double area_reversed = 1.0 / ((image->selection_end.x - image->selection_start.x + 1) *
+								  (image->selection_end.y - image->selection_start.y + 1));
+
+	printf("%d\n", ((image->selection_end.x - image->selection_start.x + 1) *
+				  (image->selection_end.y - image->selection_start.y + 1)));
+	printf("%f\n", area_reversed);
+
+	for (uint32_t y = image->selection_start.y; y <= image->selection_end.y; y++)
+		for (uint32_t x = image->selection_start.x; x <= image->selection_end.x; x++) {
+			uint32_t sum = 0;
+
+			for (uint32_t i = 0; i <= image->data[y][x].red; i++)
+				sum += histogram[i];
+
+			image->data[y][x].red = (uint8_t) round(255.0 * area_reversed * sum);
+			image->data[y][x].red = clamp(image->data[y][x].red, 0, 255);
+		}
 
 	printf("Equalize done\n");
 }

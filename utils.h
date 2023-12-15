@@ -20,6 +20,8 @@ Grupa: 315 CA
 
 bool is_power_of_two(uint32_t number);
 
+int clamp(int value, int min, int max);
+
 // Memory utils
 void *safe_malloc(size_t size);
 

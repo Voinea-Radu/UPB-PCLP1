@@ -83,14 +83,19 @@ int handle_print(image_t *image)
 	printf("\n\n");
 
 	printf("Type: %d\n", image->type);
-	printf("Max value: %zu\n", image->max_data_value);
+	//printf("Max value: %zu\n", image->max_data_value);
 	printf("Size: %zux%zu\n", image->width, image->height);
 	printf("Selected: [%u %u] -> [%u %u]\n", image->selection_start.x, image->selection_start.y, image->selection_end.x,
 		   image->selection_end.y);
 	printf("Data:\n");
 	for (size_t i = 0; i < image->height; i++) {
 		for (size_t j = 0; j < image->width; j++) {
-			printf("(%3d %3d %3d) ", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
+			if(is_mono(image)){
+				printf("%3d ", image->data[i][j].red);
+			}
+			else{
+				printf("(%3d %3d %3d) ", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
+			}
 		}
 		printf("\n");
 	}
