@@ -131,4 +131,6 @@ void equalize(image_t*image);
 
 uint32_t* generate_histogram(image_t *image);
 
+void 	save_image(image_t *image, FILE *file);
+
 #endif //TEMA3_IMAGE_H

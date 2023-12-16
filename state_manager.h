@@ -29,7 +29,8 @@ int process_command(string_t command);
 int handle_load(image_t *image);
 
 int handle_print(image_t *image);
-
+int handle_convert_to_mono(image_t *image);
+int handle_save(image_t *image);
 int handle_exit(image_t *image);
 int handle_select(image_t *image);
 int handle_histogram(image_t *image);

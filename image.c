@@ -418,3 +418,26 @@ void equalize(image_t *image)
 
 	printf("Equalize done\n");
 }
+
+void 	save_image(image_t *image, FILE *file)
+{
+	fprintf(file, "P%d\n", image->type);
+	fprintf(file, "%zu %zu\n", image->width, image->height);
+
+	if (image->type== 1 || image->type == 4) {
+		fprintf(file, "1\n");
+	} else {
+		fprintf(file, "255\n");
+	}
+
+	for (size_t i = 0; i < image->height; i++) {
+		for (size_t j = 0; j < image->width; j++) {
+			if (is_mono(image)) {
+				fprintf(file, "%d ", image->data[i][j].red);
+			} else {
+				fprintf(file, "%d %d %d ", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
+			}
+		}
+		fprintf(file, "\n");
+	}
+}

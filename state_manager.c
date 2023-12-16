@@ -12,13 +12,15 @@ Grupa: 315 CA
 
 
 static string_to_handle command_table[] = {
-		{"print",     handle_print},
-		{"load",      handle_load},
-		{"histogram", handle_histogram},
-		{"equalize", handle_equalize},
-		{"select",    handle_select},
-		{"exit",      handle_exit},
-		{"quit",      handle_exit}
+		{"print",           handle_print},
+		{"convert_to_mono", handle_convert_to_mono},
+		{"save", handle_save},
+		{"load",            handle_load},
+		{"histogram",       handle_histogram},
+		{"equalize",        handle_equalize},
+		{"select",          handle_select},
+		{"exit",            handle_exit},
+		{"quit",            handle_exit}
 };
 
 int process_command(string_t command)
@@ -78,6 +80,41 @@ int handle_load(image_t *image)
 	return CONTINUE;
 }
 
+int handle_save(image_t *image)
+{
+	string_t file_name = read_string(MAX_ARGUMENT_SIZE, stdin);
+
+	FILE *file = fopen(file_name, "w");
+
+	if (NULL == file) {
+		printf("Failed to save %s\n", file_name);
+		return CONTINUE;
+	}
+
+	save_image(image, file);
+
+	printf("Saved %s\n", file_name);
+
+	free(file_name);
+	fclose(file);
+
+	return CONTINUE;
+}
+
+int handle_convert_to_mono(image_t *image)
+{
+	if (image->type == 3) {
+		image->type = 2;
+	} else if (image->type == 6) {
+		image->type = 5;
+	}
+
+	printf("Converted to mono\n");
+
+	return CONTINUE;
+}
+
+
 int handle_print(image_t *image)
 {
 	printf("\n\n");
@@ -90,10 +127,9 @@ int handle_print(image_t *image)
 	printf("Data:\n");
 	for (size_t i = 0; i < image->height; i++) {
 		for (size_t j = 0; j < image->width; j++) {
-			if(is_mono(image)){
+			if (is_mono(image)) {
 				printf("%3d ", image->data[i][j].red);
-			}
-			else{
+			} else {
 				printf("(%3d %3d %3d) ", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
 			}
 		}
