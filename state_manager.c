@@ -14,7 +14,7 @@ Grupa: 315 CA
 static string_to_handle command_table[] = {
 		{"print",           handle_print},
 		{"convert_to_mono", handle_convert_to_mono},
-		{"save", handle_save},
+		{"save",            handle_save},
 		{"load",            handle_load},
 		{"histogram",       handle_histogram},
 		{"equalize",        handle_equalize},

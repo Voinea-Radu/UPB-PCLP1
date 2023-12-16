@@ -94,7 +94,7 @@ void to_lower(string_t string)
 {
 	size_t size = strlen(string);
 
-	for (size_t i = 0; i< size; i++) {
+	for (size_t i = 0; i < size; i++) {
 		string[i] = string[i];
 		string[i] = (char)tolower(string[i]);
 	}

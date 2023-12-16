@@ -394,7 +394,7 @@ void equalize(image_t *image)
 	uint32_t *histogram = generate_histogram(image);
 
 	for (int i = 0; i < 256; i++) {
-		if(histogram[i] != 0)
+		if (histogram[i] != 0)
 			printf("%d -> %d\n", i, histogram[i]);
 	}
 
@@ -402,7 +402,7 @@ void equalize(image_t *image)
 								  (image->selection_end.y - image->selection_start.y + 1));
 
 	printf("%d\n", ((image->selection_end.x - image->selection_start.x + 1) *
-				  (image->selection_end.y - image->selection_start.y + 1)));
+					(image->selection_end.y - image->selection_start.y + 1)));
 	printf("%f\n", area_reversed);
 
 	for (uint32_t y = image->selection_start.y; y <= image->selection_end.y; y++)
@@ -412,19 +412,19 @@ void equalize(image_t *image)
 			for (uint32_t i = 0; i <= image->data[y][x].red; i++)
 				sum += histogram[i];
 
-			image->data[y][x].red = (uint8_t) round(255.0 * area_reversed * sum);
+			image->data[y][x].red = (uint8_t)round(255.0 * area_reversed * sum);
 			image->data[y][x].red = clamp(image->data[y][x].red, 0, 255);
 		}
 
 	printf("Equalize done\n");
 }
 
-void 	save_image(image_t *image, FILE *file)
+void save_image(image_t *image, FILE *file)
 {
 	fprintf(file, "P%d\n", image->type);
 	fprintf(file, "%zu %zu\n", image->width, image->height);
 
-	if (image->type== 1 || image->type == 4) {
+	if (image->type == 1 || image->type == 4) {
 		fprintf(file, "1\n");
 	} else {
 		fprintf(file, "255\n");
