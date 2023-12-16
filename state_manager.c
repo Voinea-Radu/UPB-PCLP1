@@ -12,15 +12,15 @@ Grupa: 315 CA
 
 
 static string_to_handle command_table[] = {
-		{"print",           handle_print},
-		{"convert_to_mono", handle_convert_to_mono},
-		{"save",            handle_save},
+		{"print",           handle_print}, // Only for debug purposes
+		{"convert_to_mono", handle_convert_to_mono}, // Only for debug purposes
+		{"save",            handle_save}, // TODO Chane. This is not to spec. Only for debug purposes as of now
 		{"load",            handle_load},
 		{"histogram",       handle_histogram},
 		{"equalize",        handle_equalize},
 		{"select",          handle_select},
 		{"exit",            handle_exit},
-		{"quit",            handle_exit}
+		{"quit",            handle_exit} // Only for debug purposes
 };
 
 int process_command(string_t command)
