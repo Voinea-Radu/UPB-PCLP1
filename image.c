@@ -6,10 +6,7 @@ Grupa: 315 CA
 #include <string.h>
 #include "image.h"
 #include "utils.h"
-#include "statics.h"
 #include <math.h>
-
-// Image loading states
 
 image_t new_image(FILE *file)
 {
@@ -287,11 +284,6 @@ position_t new_position(uint32_t x, uint32_t y)
 	return position;
 }
 
-/**
- * @return 0 - if the selection was successful
- * 		   1 - if the selection failed because one of the coordinates was out of bounds
- * 		   2 -  if the selection failed because the image was not loaded
- */
 int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2)
 {
 	if (image->state == IMAGE_NOT_LOADED) {
