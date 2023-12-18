@@ -446,15 +446,65 @@ void rotate(image_t *image, int16_t degrees)
 		return;
 	}
 
+	uint8_t iterations = abs(degrees) / 90;
+
 	uint32_t size_x = image->selection_end.x - image->selection_start.x + 1;
 	uint32_t size_y = image->selection_end.y - image->selection_start.y + 1;
 
+	if (size_x == image->width && size_y == image->height) {
+		rotate_matrix(image, degrees, size_x, size_y, iterations);
+		return;
+	}
+
+	rotate_sub_matrix(image, degrees, size_x, size_y, iterations);
+}
+
+void rotate_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t size_y, uint8_t iterations)
+{
+	pixel_t **new_data = safe_malloc(size_x * sizeof(uint32_t *));
+	for (uint32_t i = 0; i < size_x; i++) {
+		new_data[i] = safe_malloc(size_y * sizeof(uint32_t));
+	}
+
+	for(uint8_t iteration = 0; iteration < iterations; iteration++) {
+		for (uint32_t y = 0; y < size_y; y++) {
+			for (uint32_t x = 0; x < size_x; x++) {
+				if (degrees > 0) {
+					new_data[x][y] = image->data[size_y - y - 1][x];
+				} else {
+					new_data[x][y] = image->data[y][size_x - x - 1];
+				}
+			}
+		}
+
+		free_image(*image);
+
+		image->width = size_y;
+		image->height = size_x;
+
+		image->selection_start = new_position(0, 0);
+		image->selection_end = new_position(image->width - 1, image->height - 1);
+
+		image->data = malloc(image->height * sizeof(pixel_t *));
+		for (size_t i = 0; i < image->height; i++) {
+			image->data[i] = malloc(image->width * sizeof(pixel_t));
+		}
+
+		for (uint32_t y = 0; y < image->height; y++) {
+			for (uint32_t x = 0; x < image->width; x++) {
+				image->data[y][x] = new_data[y][x];
+			}
+		}
+	}
+	printf("Rotated %d\n", degrees);
+}
+
+void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t size_y, uint8_t iterations)
+{
 	if (size_x != size_y) {
 		printf("The selection must be square\n");
 		return;
 	}
-
-	uint8_t iterations = abs(degrees) / 90;
 
 	pixel_t **new_data = safe_malloc(size_x * sizeof(uint32_t *));
 	for (uint32_t i = 0; i < size_x; i++) {

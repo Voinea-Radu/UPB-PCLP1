@@ -139,5 +139,7 @@ uint32_t* generate_histogram(image_t *image);
 void save_image(image_t *image, FILE *file);
 
 void rotate(image_t *image, int16_t degrees);
+void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t size_y, uint8_t iterations);
+void rotate_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t size_y, uint8_t iterations);
 
 #endif //TEMA3_IMAGE_H
