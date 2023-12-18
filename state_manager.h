@@ -36,5 +36,6 @@ int handle_select(image_t *image);
 int handle_histogram(image_t *image);
 int handle_equalize(image_t *image);
 int handle_rotate(image_t *image);
+int handle_crop(image_t *image);
 
 #endif //TEMA3_STATE_MANAGER_H

@@ -532,3 +532,46 @@ void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t
 
 	printf("Rotated %d\n", degrees);
 }
+
+void crop(image_t *image)
+{
+	if (image->state == IMAGE_NOT_LOADED) {
+		printf("No image loaded\n");
+		return;
+	}
+
+	uint32_t size_x = image->selection_end.x - image->selection_start.x + 1;
+	uint32_t size_y = image->selection_end.y - image->selection_start.y + 1;
+
+	pixel_t **new_data = safe_malloc(size_y * sizeof(uint32_t *));
+	for (uint32_t i = 0; i < size_x; i++) {
+		new_data[i] = safe_malloc(size_x * sizeof(uint32_t));
+	}
+
+	for (uint32_t y = 0; y < size_y; y++) {
+		for (uint32_t x = 0; x < size_x; x++) {
+			new_data[y][x] = image->data[image->selection_start.y + y][image->selection_start.x + x];
+		}
+	}
+
+	free_image(*image);
+
+	image->width = size_x;
+	image->height = size_y;
+
+	image->selection_start = new_position(0, 0);
+	image->selection_end = new_position(image->width - 1, image->height - 1);
+
+	image->data = malloc(image->height * sizeof(pixel_t *));
+	for (size_t i = 0; i < image->height; i++) {
+		image->data[i] = malloc(image->width * sizeof(pixel_t));
+	}
+
+	for (uint32_t y = 0; y < image->height; y++) {
+		for (uint32_t x = 0; x < image->width; x++) {
+			image->data[y][x] = new_data[y][x];
+		}
+	}
+
+	printf("Cropped\n");
+}

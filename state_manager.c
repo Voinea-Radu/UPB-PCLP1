@@ -16,7 +16,8 @@ static string_to_handle command_table[] = {
 		{"convert_to_mono", handle_convert_to_mono}, // Only for debug purposes
 		{"save",            handle_save}, // TODO Chane. This is not to spec. Only for debug purposes as of now
 		{"load",            handle_load},
-		{"rotate",            handle_rotate},
+		{"crop",            handle_crop},
+		{"rotate",          handle_rotate},
 		{"histogram",       handle_histogram},
 		{"equalize",        handle_equalize},
 		{"select",          handle_select},
@@ -26,7 +27,8 @@ static string_to_handle command_table[] = {
 
 int process_command(string_t command)
 {
-	if (strcmp(command, " ") == 0 || strcmp(command, "\n") == 0 || strcmp(command, "") == 0)
+	if (strcmp(command, " ") == 0 || strcmp(command, "\n") == 0 ||
+		strcmp(command, "") == 0)
 		return CONTINUE;
 
 	static image_t *image = NULL;
@@ -114,6 +116,7 @@ int handle_convert_to_mono(image_t *image)
 
 	return CONTINUE;
 }
+
 int handle_print(image_t *image)
 {
 	printf("\n\n");
@@ -121,7 +124,8 @@ int handle_print(image_t *image)
 	printf("Type: %d\n", image->type);
 	//printf("Max value: %zu\n", image->max_data_value);
 	printf("Size: %zux%zu\n", image->width, image->height);
-	printf("Selected: [%u %u] -> [%u %u]\n", image->selection_start.x, image->selection_start.y, image->selection_end.x,
+	printf("Selected: [%u %u] -> [%u %u]\n", image->selection_start.x,
+		   image->selection_start.y, image->selection_end.x,
 		   image->selection_end.y);
 	printf("Data:\n");
 	for (size_t i = 0; i < image->height; i++) {
@@ -129,7 +133,8 @@ int handle_print(image_t *image)
 			if (is_mono(image)) {
 				printf("%3d ", image->data[i][j].red);
 			} else {
-				printf("(%3d %3d %3d) ", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
+				printf("(%3d %3d %3d) ", image->data[i][j].red,
+					   image->data[i][j].green, image->data[i][j].blue);
 			}
 		}
 		printf("\n");
@@ -214,6 +219,13 @@ int handle_rotate(image_t *image)
 	scanf("%hd", &degrees);
 
 	rotate(image, degrees);
+
+	return CONTINUE;
+}
+
+int handle_crop(image_t *image)
+{
+	crop(image);
 
 	return CONTINUE;
 }
