@@ -18,6 +18,7 @@ static string_to_handle command_table[] = {
 		{"load",            handle_load},
 		{"crop",            handle_crop},
 		{"rotate",          handle_rotate},
+		{"apply",           handle_apply},
 		{"histogram",       handle_histogram},
 		{"equalize",        handle_equalize},
 		{"select",          handle_select},
@@ -226,6 +227,35 @@ int handle_rotate(image_t *image)
 int handle_crop(image_t *image)
 {
 	crop(image);
+
+	return CONTINUE;
+}
+
+int handle_apply(image_t *image)
+{
+	string_t filter_name = read_string(MAX_ARGUMENT_SIZE, stdin);
+
+	to_lower(filter_name);
+
+	bool result = 0;
+
+	if (strcmp(filter_name, "edge") == 0) {
+		result = apply_filter(image, EDGE_FILTER, EDGE_FILTER_FACTOR);
+	} else if (strcmp(filter_name, "sharpen") == 0) {
+		result = apply_filter(image, SHARPEN_FILTER, SHARPEN_FILTER_FACTOR);
+	} else if (strcmp(filter_name, "blur") == 0) {
+		result = apply_filter(image, BLUR_FILTER, BLUR_FILTER_FACTOR);
+	} else if (strcmp(filter_name, "gaussian_blur") == 0) {
+		result = apply_filter(image, GAUSSIAN_BLUR_FILTER, GAUSSIAN_BLUR_FILTER_FACTOR);
+	} else {
+		printf("APPLY parameter invalid\n");
+	}
+
+	if(result){
+		printf("APPLY %s done\n", filter_name);
+	}
+
+	free(filter_name);
 
 	return CONTINUE;
 }

@@ -14,6 +14,35 @@ Grupa: 315 CA
 
 #include "string_utils.h"
 
+// Filters
+static const double EDGE_FILTER_FACTOR = 1;
+static const int8_t EDGE_FILTER[3][3] = {
+		{-1, -1, -1},
+		{-1, 8,  -1},
+		{-1, -1, -1}
+};
+
+static const double SHARPEN_FILTER_FACTOR = 1;
+static const int8_t SHARPEN_FILTER[3][3] = {
+		{0,  -1, 0},
+		{-1, 5,  -1},
+		{0,  -1, 0}
+};
+
+static const double BLUR_FILTER_FACTOR = 1.0 / 9.0;
+static const int8_t BLUR_FILTER[3][3] = {
+		{1, 1, 1},
+		{1, 1, 1},
+		{1, 1, 1}
+};
+
+static const double GAUSSIAN_BLUR_FILTER_FACTOR = 1.0 / 16.0;
+static const int8_t GAUSSIAN_BLUR_FILTER[3][3] = {
+		{1, 2, 1},
+		{2, 4, 2},
+		{1, 2, 1}
+};
+
 typedef struct image_t_prototype image_t;
 typedef struct pixel_t_prototype pixel_t;
 typedef struct position_t_prototype position_t;
@@ -128,19 +157,28 @@ void print_histogram(image_t *image, uint32_t x, uint32_t bins);
  * 		   1 - if the selection failed because one of the coordinates was out of bounds
  * 		   2 -  if the selection failed because the image was not loaded
  */
-int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2);
+int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2,
+				  uint32_t y2);
 
-void equalize(image_t*image);
+void equalize(image_t *image);
 
 // Utils
 
-uint32_t* generate_histogram(image_t *image);
+uint32_t *generate_histogram(image_t *image);
 
 void save_image(image_t *image, FILE *file);
 
 void rotate(image_t *image, int16_t degrees);
-void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t size_y, uint8_t iterations);
-void rotate_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t size_y, uint8_t iterations);
+
+void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,
+					   uint32_t size_y, uint8_t iterations);
+
+void
+rotate_matrix(image_t *image, int16_t degrees, uint32_t size_x, uint32_t size_y,
+			  uint8_t iterations);
+
 void crop(image_t *image);
+
+bool apply_filter(image_t *image, int8_t filter[3][3], double factor);
 
 #endif //TEMA3_IMAGE_H
