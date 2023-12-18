@@ -16,6 +16,7 @@ static string_to_handle command_table[] = {
 		{"convert_to_mono", handle_convert_to_mono}, // Only for debug purposes
 		{"save",            handle_save}, // TODO Chane. This is not to spec. Only for debug purposes as of now
 		{"load",            handle_load},
+		{"rotate",            handle_rotate},
 		{"histogram",       handle_histogram},
 		{"equalize",        handle_equalize},
 		{"select",          handle_select},
@@ -113,8 +114,6 @@ int handle_convert_to_mono(image_t *image)
 
 	return CONTINUE;
 }
-
-
 int handle_print(image_t *image)
 {
 	printf("\n\n");
@@ -149,7 +148,7 @@ int handle_select(image_t *image)
 	uint32_t x1, y1, x2, y2;
 
 	string_t sub_command = read_string(MAX_ARGUMENT_SIZE, stdin);
-	bool select_all;
+	bool select_all = false;
 
 	to_lower(sub_command);
 
@@ -204,5 +203,17 @@ int handle_histogram(image_t *image)
 int handle_equalize(image_t *image)
 {
 	equalize(image);
+	return CONTINUE;
+}
+
+
+int handle_rotate(image_t *image)
+{
+	int16_t degrees;
+
+	scanf("%hd", &degrees);
+
+	rotate(image, degrees);
+
 	return CONTINUE;
 }

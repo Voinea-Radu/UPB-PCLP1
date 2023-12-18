@@ -433,3 +433,52 @@ void save_image(image_t *image, FILE *file)
 		fprintf(file, "\n");
 	}
 }
+
+void rotate(image_t *image, int16_t degrees)
+{
+	if (image->state == IMAGE_NOT_LOADED) {
+		printf("No image loaded\n");
+		return;
+	}
+
+	if (degrees > 360 || degrees < -360 || degrees == 0 || degrees % 90 != 0) {
+		printf("Unsupported rotation angle\n");
+		return;
+	}
+
+	uint32_t size_x = image->selection_end.x - image->selection_start.x + 1;
+	uint32_t size_y = image->selection_end.y - image->selection_start.y + 1;
+
+	if (size_x != size_y) {
+		printf("The selection must be square\n");
+		return;
+	}
+
+	uint8_t iterations = abs(degrees) / 90;
+
+	pixel_t **new_data = safe_malloc(size_x * sizeof(uint32_t *));
+	for (uint32_t i = 0; i < size_x; i++) {
+		new_data[i] = safe_malloc(size_y * sizeof(uint32_t));
+	}
+
+	for(uint8_t iteration = 0; iteration < iterations; iteration++) {
+		for (uint32_t y = 0; y < size_y; y++) {
+			for (uint32_t x = 0; x < size_x; x++) {
+				if (degrees > 0) {
+					new_data[x][y] = image->data[image->selection_start.y + size_y - y - 1][image->selection_start.x + x];
+				} else {
+					new_data[x][y] = image->data[image->selection_start.y + y][image->selection_start.x + size_x - x - 1];
+				}
+			}
+		}
+
+		for (uint32_t y = 0; y < size_y; y++) {
+			for (uint32_t x = 0; x < size_x; x++) {
+				image->data[image->selection_start.y + y][image->selection_start.x + x] = new_data[y][x];
+			}
+		}
+
+	}
+
+	printf("Rotated %d\n", degrees);
+}
