@@ -226,7 +226,7 @@ def check_style(config):
     return 0
 
 
-def run_test(task, test, use_valgrind=False, ):
+def run_test(task, test, use_valgrind=True, ):
     indent_log()
     stage_name = 'test' if not use_valgrind else 'valgrind'
     log('running {:10s} ...'.format(stage_name))
@@ -284,7 +284,7 @@ def run_test(task, test, use_valgrind=False, ):
     return 0
 
 
-def run_test_with_env_deps(task, test, use_valgrind=False, ):
+def run_test_with_env_deps(task, test, use_valgrind=True, ):
     if task.use_env_deps:
         backup_cwd = os.getcwd()
 
