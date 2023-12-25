@@ -28,7 +28,7 @@ static string_to_handle command_table[] = {
 };
 
 
-int process_command( string_t instruction)
+int process_command(string_t instruction)
 {
 	static const size_t size = sizeof(command_table) / sizeof(string_to_handle);
 	static image_t *image = NULL;
@@ -40,28 +40,28 @@ int process_command( string_t instruction)
 	}
 
 	int args_size = 0;
-	string_t* args = split_string(&args_size, instruction, ' ');
+	string_t *args = split_string(&args_size, instruction, ' ');
 
 	to_lower(args[0]);
 
 	for (size_t i = 0; i < size; i++) {
 		string_to_handle pair = command_table[i];
 
-		if (strcmp(pair.key, args[0]) == 0){
-			output = pair.handle(args,args_size, image);
+		if (strcmp(pair.key, args[0]) == 0) {
+			output = pair.handle(args, args_size, image);
 		}
 	}
 
 	free_matrix(args, args_size);
 
-	if(UNKNOWN_COMMAND == output){
+	if (UNKNOWN_COMMAND == output) {
 		printf("Invalid command\n");
 	}
 
 	return output;
 }
 
-int handle_load( string_t* args, int args_size,image_t *image)
+int handle_load(string_t *args, int args_size, image_t *image)
 {
 	string_t file_name = args[1];
 
@@ -77,9 +77,9 @@ int handle_load( string_t* args, int args_size,image_t *image)
 	*image = new_image(file);
 
 
-	if (image->state == IMAGE_LOADED){
+	if (image->state == IMAGE_LOADED) {
 		printf("Loaded %s\n", file_name);
-	}	else {
+	} else {
 		printf("Failed to load %s\n", file_name);
 		image->state = IMAGE_NOT_LOADED;
 	}
@@ -89,16 +89,16 @@ int handle_load( string_t* args, int args_size,image_t *image)
 	return CONTINUE;
 }
 
-int handle_save(string_t* args, int args_size, image_t *image)
+int handle_save(string_t *args, int args_size, image_t *image)
 {
-	if(image->state == IMAGE_NOT_LOADED){
+	if (image->state == IMAGE_NOT_LOADED) {
 		printf("No image loaded\n");
 		return CONTINUE;
 	}
 
 	string_t file_name = args[1];
 	string_t type = "binary";
-	if(args_size == 3){
+	if (args_size == 3) {
 		type = args[2];
 	}
 
@@ -109,9 +109,9 @@ int handle_save(string_t* args, int args_size, image_t *image)
 		return CONTINUE;
 	}
 
-	if (strcmp(type, "binary") == 0){
+	if (strcmp(type, "binary") == 0) {
 		save_image_binary(image, file);
-	}else{
+	} else {
 		save_image_ascii(image, file);
 	}
 
@@ -122,7 +122,7 @@ int handle_save(string_t* args, int args_size, image_t *image)
 	return CONTINUE;
 }
 
-int handle_convert_to_mono( string_t* args, int args_size,image_t *image)
+int handle_convert_to_mono(string_t *args, int args_size, image_t *image)
 {
 	if (image->type == 3) {
 		image->type = 2;
@@ -135,15 +135,15 @@ int handle_convert_to_mono( string_t* args, int args_size,image_t *image)
 	return CONTINUE;
 }
 
-int handle_print( string_t* args, int args_size,image_t *image)
+int handle_print(string_t *args, int args_size, image_t *image)
 {
 	printf("\n\n");
 
-	if(args_size == 3){
+	if (args_size == 3) {
 		int x = strtol(args[1], NULL, 10);
 		int y = strtol(args[2], NULL, 10);
 
-		if(x < 0 || x >= image->width || y < 0 || y >= image->height) {
+		if (x < 0 || x >= image->width || y < 0 || y >= image->height) {
 			printf("Invalid coordinates\n");
 			return CONTINUE;
 		}
@@ -165,8 +165,8 @@ int handle_print( string_t* args, int args_size,image_t *image)
 		   image->selection_end.y);
 	printf("Data:\n");
 
-	if(args_size == 2){
-		if(strcmp(args[1], "meta") == 0){
+	if (args_size == 2) {
+		if (strcmp(args[1], "meta") == 0) {
 			return CONTINUE;
 		}
 	}
@@ -185,9 +185,9 @@ int handle_print( string_t* args, int args_size,image_t *image)
 	return CONTINUE;
 }
 
-int handle_exit( string_t* args, int args_size,image_t *image)
+int handle_exit(string_t *args, int args_size, image_t *image)
 {
-	if(image->state == IMAGE_NOT_LOADED){
+	if (image->state == IMAGE_NOT_LOADED) {
 		printf("No image loaded\n");
 	}
 
@@ -195,9 +195,9 @@ int handle_exit( string_t* args, int args_size,image_t *image)
 	return EXIT;
 }
 
-int handle_select(string_t* args, int args_size, image_t *image)
+int handle_select(string_t *args, int args_size, image_t *image)
 {
-	if(image->state == IMAGE_NOT_LOADED){
+	if (image->state == IMAGE_NOT_LOADED) {
 		printf("No image loaded\n");
 		return CONTINUE;
 	}
@@ -215,7 +215,7 @@ int handle_select(string_t* args, int args_size, image_t *image)
 		y2 = image->height;
 		select_all = true;
 	} else {
-		if(args_size != 5){
+		if (args_size != 5) {
 			printf("Invalid command\n");
 			return CONTINUE;
 		}
@@ -233,7 +233,7 @@ int handle_select(string_t* args, int args_size, image_t *image)
 		y2 = strtol(args[4], NULL, 10);
 	}
 
-	int result = set_selection(image, &x1, &y1,& x2, &y2);
+	int result = set_selection(image, &x1, &y1, &x2, &y2);
 
 	switch (result) {
 		case 0:
@@ -251,8 +251,25 @@ int handle_select(string_t* args, int args_size, image_t *image)
 	return CONTINUE;
 }
 
-int handle_histogram(string_t* args, int args_size, image_t *image)
+int handle_histogram(string_t *args, int args_size, image_t *image)
 {
+	if(image->state == IMAGE_NOT_LOADED) {
+		printf("No image loaded\n");
+		return CONTINUE;
+	}
+
+	if (args_size != 3) {
+		printf("Invalid command\n");
+		return CONTINUE;
+	}
+
+	for (int i = 1; i < args_size; i++) {
+		if (!is_number(args[i])) {
+			printf("Invalid command\n");
+			return CONTINUE;
+		}
+	}
+
 	uint32_t max_stars = strtol(args[1], NULL, 10);
 	uint32_t bins = strtol(args[2], NULL, 10);
 
@@ -266,13 +283,13 @@ int handle_histogram(string_t* args, int args_size, image_t *image)
 	return CONTINUE;
 }
 
-int handle_equalize( string_t* args, int args_size,image_t *image)
+int handle_equalize(string_t *args, int args_size, image_t *image)
 {
 	equalize(image);
 	return CONTINUE;
 }
 
-int handle_rotate(string_t* args, int args_size, image_t *image)
+int handle_rotate(string_t *args, int args_size, image_t *image)
 {
 	int16_t degrees = strtol(args[1], NULL, 10);
 
@@ -281,21 +298,21 @@ int handle_rotate(string_t* args, int args_size, image_t *image)
 	return CONTINUE;
 }
 
-int handle_crop( string_t* args, int args_size,image_t *image)
+int handle_crop(string_t *args, int args_size, image_t *image)
 {
 	crop(image);
 
 	return CONTINUE;
 }
 
-int handle_apply(string_t* args, int args_size, image_t *image)
+int handle_apply(string_t *args, int args_size, image_t *image)
 {
-	if(image->state==IMAGE_NOT_LOADED){
+	if (image->state == IMAGE_NOT_LOADED) {
 		printf("No image loaded\n");
 		return CONTINUE;
 	}
 
-	if(args_size != 2){
+	if (args_size != 2) {
 		printf("Invalid command\n");
 		return CONTINUE;
 	}
@@ -328,9 +345,10 @@ int handle_apply(string_t* args, int args_size, image_t *image)
 	return CONTINUE;
 }
 
-int handle_debug( string_t* args, int args_size,image_t *image)
+int handle_debug(string_t *args, int args_size, image_t *image)
 {
-	printf("%d %d %d\n", image->data[100][149].red, image->data[100][149].green, image->data[100][149].blue);
+	printf("%d %d %d\n", image->data[100][149].red, image->data[100][149].green,
+		   image->data[100][149].blue);
 
 	return CONTINUE;
 }

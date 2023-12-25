@@ -488,7 +488,12 @@ void rotate(image_t *image, int16_t degrees)
 		return;
 	}
 
-	if (degrees > 360 || degrees < -360 || degrees == 0 || degrees % 90 != 0) {
+	if(degrees == 0){
+		printf("Rotated 0\n");
+		return;
+	}
+
+	if (degrees > 360 || degrees < -360 || degrees % 90 != 0) {
 		printf("Unsupported rotation angle\n");
 		return;
 	}
@@ -508,16 +513,14 @@ void rotate(image_t *image, int16_t degrees)
 
 void rotate_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t size_y, uint8_t iterations)
 {
-	pixel_t **new_data = safe_malloc(size_x * sizeof(uint32_t *));
-	for (uint32_t i = 0; i < size_x; i++) {
-		new_data[i] = safe_malloc(size_y * sizeof(uint32_t));
-	}
+	pixel_t **new_data;
+	init_image_data(&new_data, size_y, size_x);
 
-	for(uint8_t iteration = 0; iteration < iterations; iteration++) {
 		for (uint32_t y = 0; y < size_y; y++) {
 			for (uint32_t x = 0; x < size_x; x++) {
 				if (degrees > 0) {
-					new_data[x][y] = image->data[size_y - y - 1][x];
+					pixel_t pixel = image->data[size_y - y - 1][x];
+					new_data[x][y] = pixel;
 				} else {
 					new_data[x][y] = image->data[y][size_x - x - 1];
 				}
@@ -542,7 +545,12 @@ void rotate_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t siz
 				image->data[y][x] = new_data[y][x];
 			}
 		}
-	}
+
+		if(iterations!=1){
+			rotate_matrix(image, degrees, size_y, size_x, iterations-1);
+			return;
+		}
+
 	printf("Rotated %d\n", degrees);
 }
 
@@ -553,12 +561,9 @@ void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t
 		return;
 	}
 
-	pixel_t **new_data = safe_malloc(size_x * sizeof(uint32_t *));
-	for (uint32_t i = 0; i < size_x; i++) {
-		new_data[i] = safe_malloc(size_y * sizeof(uint32_t));
-	}
+	pixel_t **new_data;
+	init_image_data(&new_data, size_x, size_y);
 
-	for(uint8_t iteration = 0; iteration < iterations; iteration++) {
 		for (uint32_t y = 0; y < size_y; y++) {
 			for (uint32_t x = 0; x < size_x; x++) {
 				if (degrees > 0) {
@@ -575,6 +580,10 @@ void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t
 			}
 		}
 
+
+	if(iterations!=1){
+		rotate_matrix(image, degrees, size_y, size_x, iterations-1);
+		return;
 	}
 
 	printf("Rotated %d\n", degrees);
