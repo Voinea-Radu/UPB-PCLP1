@@ -92,7 +92,7 @@ void image_read_height(image_t *image, string_t buffer)
 {
 	image->height = strtol(buffer, NULL, 10);
 
-	if(image->height == 0 || image->width == 0){
+	if (image->height == 0 || image->width == 0) {
 		image->state = IMAGE_NOT_LOADED;
 		return;
 	}
@@ -171,19 +171,22 @@ void image_read_rgb_data(image_t *image, string_t buffer)
 		case IMAGE_READ_DATA_RED:
 			image->data[image->read_y][image->read_x].red = is_binary(image) ?
 															(int)buffer[0] :
-															strtol(buffer, NULL, 10);
+															strtol(buffer, NULL,
+																   10);
 			image->state = IMAGE_READ_DATA_GREEN;
 			break;
 		case IMAGE_READ_DATA_GREEN:
 			image->data[image->read_y][image->read_x].green = is_binary(image) ?
 															  (int)buffer[0] :
-															  strtol(buffer, NULL, 10);
+															  strtol(buffer,
+																	 NULL, 10);
 			image->state = IMAGE_READ_DATA_BLUE;
 			break;
 		case IMAGE_READ_DATA_BLUE:
 			image->data[image->read_y][image->read_x].blue = is_binary(image) ?
 															 (int)buffer[0] :
-															 strtol(buffer, NULL, 10);
+															 strtol(buffer,
+																	NULL, 10);
 			image->state = IMAGE_READ_DATA_RED;
 
 			image->read_x++;
@@ -201,7 +204,8 @@ void image_read_rgb_data(image_t *image, string_t buffer)
 
 bool is_mono(image_t *image)
 {
-	return image->type == 1 || image->type == 2 || image->type == 4 || image->type == 5;
+	return image->type == 1 || image->type == 2 || image->type == 4 ||
+		   image->type == 5;
 }
 
 pixel_t new_pixel_mono_color(uint8_t color)
@@ -237,7 +241,7 @@ void free_image(image_t image)
 	free_data(&image.data, image.height);
 }
 
-void free_data(pixel_t*** data, uint32_t size_y)
+void free_data(pixel_t ***data, uint32_t size_y)
 {
 	for (size_t i = 0; i < size_y; i++) {
 		free((*data)[i]);
@@ -298,13 +302,14 @@ position_t new_position(uint32_t x, uint32_t y)
 	return position;
 }
 
-int set_selection(image_t *image, uint32_t *x1, uint32_t *y1, uint32_t *x2, uint32_t *y2)
+int set_selection(image_t *image, uint32_t *x1, uint32_t *y1, uint32_t *x2,
+				  uint32_t *y2)
 {
 	// The (-1)s are because the specification stats that the selection is
 	// inclusive to the left and top and exclusive to the right
 	// [x1, x2) [y1, y2)
 
-	if(*x1==*x2 || *y1==*y2){
+	if (*x1 == *x2 || *y1 == *y2) {
 		return 1;
 	}
 
@@ -318,24 +323,30 @@ int set_selection(image_t *image, uint32_t *x1, uint32_t *y1, uint32_t *x2, uint
 	*y1 = real_y1;
 	*y2 = real_y2;
 
-	if (*x1 >= image->width ||* x2 > image->width || *y1 >= image->height || *y2 > image->height) {
+	if (*x1 >= image->width || *x2 > image->width || *y1 >= image->height ||
+		*y2 > image->height) {
 		return 1;
 	}
 
 	image->selection_start = new_position(*x1, *y1);
-	image->selection_end = new_position(*x2-1, *y2-1);
+	image->selection_end = new_position(*x2 - 1, *y2 - 1);
 
 	return 0;
 }
 
 uint32_t *generate_histogram(image_t *image)
 {
-	return generate_histogram_coords(image, image->selection_start.x, image->selection_start.y, image->selection_end.x, image->selection_end.y);
+	return generate_histogram_coords(image, image->selection_start.x,
+									 image->selection_start.y,
+									 image->selection_end.x,
+									 image->selection_end.y);
 }
 
-uint32_t *generate_histogram_coords(image_t *image, uint32_t start_x, uint32_t start_y, uint32_t end_x, uint32_t end_y)
+uint32_t *
+generate_histogram_coords(image_t *image, uint32_t start_x, uint32_t start_y,
+						  uint32_t end_x, uint32_t end_y)
 {
-	uint32_t *histogram = calloc(255, sizeof(uint32_t));
+	uint32_t *histogram = calloc(260, sizeof(uint32_t));
 
 	for (size_t i = start_y; i <= end_y; i++) {
 		for (size_t j = start_x; j <= end_x; j++) {
@@ -367,8 +378,10 @@ void print_histogram(image_t *image, uint32_t max_stars, uint32_t bins)
 	uint32_t max_value = 0;
 
 	for (int bin_index = 0; bin_index < bins; bin_index++) {
-		for (int element_index = 0; element_index < elements_per_bin; element_index++) {
-			binned_histogram[bin_index] += histogram[bin_index * elements_per_bin + element_index];
+		for (int element_index = 0;
+			 element_index < elements_per_bin; element_index++) {
+			binned_histogram[bin_index] += histogram[
+					bin_index * elements_per_bin + element_index];
 
 			if (binned_histogram[bin_index] > max_value) {
 				max_value = binned_histogram[bin_index];
@@ -404,7 +417,9 @@ void equalize(image_t *image)
 		return;
 	}
 
-	uint32_t *histogram = generate_histogram_coords(image, 0, 0, image->width-1, image->height-1);
+	uint32_t *histogram = generate_histogram_coords(image, 0, 0,
+													image->width - 1,
+													image->height - 1);
 
 	double area_reversed = 1.0 / (image->width * image->height);
 
@@ -419,19 +434,20 @@ void equalize(image_t *image)
 			image->data[y][x].red = clamp(image->data[y][x].red, 0, 255);
 		}
 
+	free(histogram);
 	printf("Equalize done\n");
 }
 
 void save_image_ascii(image_t *image, FILE *file)
 {
-	for (int i=0;i<=0;i++){
-		for (int j=0;j<=0;j++){
+	for (int i = 0; i <= 0; i++) {
+		for (int j = 0; j <= 0; j++) {
 		}
 	}
 
-	if(image->type > 3){
-		fprintf(file, "P%d\n", image->type-3);
-	}else{
+	if (image->type > 3) {
+		fprintf(file, "P%d\n", image->type - 3);
+	} else {
 		fprintf(file, "P%d\n", image->type);
 	}
 	fprintf(file, "%zu %zu\n", image->width, image->height);
@@ -447,7 +463,8 @@ void save_image_ascii(image_t *image, FILE *file)
 			if (is_mono(image)) {
 				fprintf(file, "%d ", image->data[i][j].red);
 			} else {
-				fprintf(file, "%d %d %d ", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
+				fprintf(file, "%d %d %d ", image->data[i][j].red,
+						image->data[i][j].green, image->data[i][j].blue);
 			}
 		}
 		fprintf(file, "\n");
@@ -456,9 +473,9 @@ void save_image_ascii(image_t *image, FILE *file)
 
 void save_image_binary(image_t *image, FILE *file)
 {
-	if(image->type <= 3){
-		fprintf(file, "P%d\n", image->type+3);
-	}else{
+	if (image->type <= 3) {
+		fprintf(file, "P%d\n", image->type + 3);
+	} else {
 		fprintf(file, "P%d\n", image->type);
 	}
 	fprintf(file, "%zu %zu\n", image->width, image->height);
@@ -474,7 +491,8 @@ void save_image_binary(image_t *image, FILE *file)
 			if (is_mono(image)) {
 				fprintf(file, "%c", image->data[i][j].red);
 			} else {
-				fprintf(file, "%c%c%c", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
+				fprintf(file, "%c%c%c", image->data[i][j].red,
+						image->data[i][j].green, image->data[i][j].blue);
 			}
 		}
 	}
@@ -488,7 +506,7 @@ void rotate(image_t *image, int16_t degrees)
 		return;
 	}
 
-	if(degrees == 0){
+	if (degrees == 0) {
 		printf("Rotated 0\n");
 		return;
 	}
@@ -511,50 +529,51 @@ void rotate(image_t *image, int16_t degrees)
 	rotate_sub_matrix(image, degrees, size_x, size_y, iterations);
 }
 
-void rotate_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t size_y, uint8_t iterations)
+void
+rotate_matrix(image_t *image, int16_t degrees, uint32_t size_x, uint32_t size_y,
+			  uint8_t iterations)
 {
 	pixel_t **new_data;
 	init_image_data(&new_data, size_y, size_x);
 
-		for (uint32_t y = 0; y < size_y; y++) {
-			for (uint32_t x = 0; x < size_x; x++) {
-				if (degrees > 0) {
-					pixel_t pixel = image->data[size_y - y - 1][x];
-					new_data[x][y] = pixel;
-				} else {
-					new_data[x][y] = image->data[y][size_x - x - 1];
-				}
+	for (uint32_t y = 0; y < size_y; y++) {
+		for (uint32_t x = 0; x < size_x; x++) {
+			if (degrees > 0) {
+				pixel_t pixel = image->data[size_y - y - 1][x];
+				new_data[x][y] = pixel;
+			} else {
+				new_data[x][y] = image->data[y][size_x - x - 1];
 			}
 		}
+	}
 
-		free_image(*image);
+	free_image(*image);
 
-		image->width = size_y;
-		image->height = size_x;
+	image->width = size_y;
+	image->height = size_x;
 
-		image->selection_start = new_position(0, 0);
-		image->selection_end = new_position(image->width - 1, image->height - 1);
+	image->selection_start = new_position(0, 0);
+	image->selection_end = new_position(image->width - 1, image->height - 1);
 
-		image->data = malloc(image->height * sizeof(pixel_t *));
-		for (size_t i = 0; i < image->height; i++) {
-			image->data[i] = malloc(image->width * sizeof(pixel_t));
-		}
+	image->data = malloc(image->height * sizeof(pixel_t *));
+	for (size_t i = 0; i < image->height; i++) {
+		image->data[i] = malloc(image->width * sizeof(pixel_t));
+	}
 
-		for (uint32_t y = 0; y < image->height; y++) {
-			for (uint32_t x = 0; x < image->width; x++) {
-				image->data[y][x] = new_data[y][x];
-			}
-		}
+	free_data(&image->data, image->height);
 
-		if(iterations!=1){
-			rotate_matrix(image, degrees, size_y, size_x, iterations-1);
-			return;
-		}
+	image->data = new_data;
+
+	if (iterations != 1) {
+		rotate_matrix(image, degrees, size_y, size_x, iterations - 1);
+		return;
+	}
 
 	printf("Rotated %d\n", degrees);
 }
 
-void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t size_y, uint8_t iterations)
+void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,
+					   uint32_t size_y, uint8_t iterations)
 {
 	if (size_x != size_y) {
 		printf("The selection must be square\n");
@@ -564,36 +583,42 @@ void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t
 	pixel_t **new_data;
 	init_image_data(&new_data, size_x, size_y);
 
-		for (uint32_t y = 0; y < size_y; y++) {
-			for (uint32_t x = 0; x < size_x; x++) {
-				if (degrees > 0) {
-					new_data[x][y] = image->data[image->selection_start.y + size_y - y - 1][image->selection_start.x + x];
-				} else {
-					new_data[x][y] = image->data[image->selection_start.y + y][image->selection_start.x + size_x - x - 1];
-				}
+	for (uint32_t y = 0; y < size_y; y++) {
+		for (uint32_t x = 0; x < size_x; x++) {
+			if (degrees > 0) {
+				new_data[x][y] = image->data[image->selection_start.y + size_y -
+											 y - 1][image->selection_start.x +
+													x];
+			} else {
+				new_data[x][y] = image->data[image->selection_start.y + y][
+						image->selection_start.x + size_x - x - 1];
 			}
 		}
+	}
 
-		for (uint32_t y = 0; y < size_y; y++) {
-			for (uint32_t x = 0; x < size_x; x++) {
-				image->data[image->selection_start.y + y][image->selection_start.x + x] = new_data[y][x];
-			}
+	for (uint32_t y = 0; y < size_y; y++) {
+		for (uint32_t x = 0; x < size_x; x++) {
+			image->data[image->selection_start.y + y][image->selection_start.x +
+													  x] = new_data[y][x];
 		}
+	}
 
+	free_data(&new_data, size_y);
 
-	if(iterations!=1){
-		rotate_sub_matrix(image, degrees, size_y, size_x, iterations-1);
+	if (iterations != 1) {
+		rotate_sub_matrix(image, degrees, size_y, size_x, iterations - 1);
 		return;
 	}
 
 	printf("Rotated %d\n", degrees);
 }
 
-void init_image_data(pixel_t***data_pointer, uint32_t size_x, uint32_t size_y){
-    *data_pointer = safe_malloc(size_y * sizeof(uint32_t *));
-    for (uint32_t i = 0; i < size_y; i++) {
-        (*data_pointer)[i] = safe_malloc(size_x * sizeof(uint32_t));
-    }
+void init_image_data(pixel_t ***data_pointer, uint32_t size_x, uint32_t size_y)
+{
+	*data_pointer = safe_malloc(size_y * sizeof(uint32_t *));
+	for (uint32_t i = 0; i < size_y; i++) {
+		(*data_pointer)[i] = safe_malloc(size_x * sizeof(uint32_t));
+	}
 }
 
 void crop(image_t *image)
@@ -607,11 +632,12 @@ void crop(image_t *image)
 	uint32_t size_y = image->selection_end.y - image->selection_start.y + 1;
 
 	pixel_t **new_data;
-    init_image_data(&new_data, size_x, size_y);
+	init_image_data(&new_data, size_x, size_y);
 
 	for (uint32_t y = 0; y < size_y; y++) {
 		for (uint32_t x = 0; x < size_x; x++) {
-			new_data[y][x] = image->data[image->selection_start.y + y][image->selection_start.x + x];
+			new_data[y][x] = image->data[image->selection_start.y + y][
+					image->selection_start.x + x];
 		}
 	}
 
@@ -645,8 +671,10 @@ bool apply_filter(image_t *image, int8_t filter[3][3], double factor)
 		new_data[i] = safe_malloc(image->width * sizeof(uint32_t));
 	}
 
-	for (uint32_t y = max(image->selection_start.y, 1); y <= min(image->selection_end.y, image->height-2); y++) {
-		for (uint32_t x = max(image->selection_start.x, 1); x <= min(image->selection_end.x, image->width-2); x++) {
+	for (uint32_t y = max(image->selection_start.y, 1);
+		 y <= min(image->selection_end.y, image->height - 2); y++) {
+		for (uint32_t x = max(image->selection_start.x, 1);
+			 x <= min(image->selection_end.x, image->width - 2); x++) {
 			int16_t red = 0;
 			int16_t green = 0;
 			int16_t blue = 0;
@@ -654,8 +682,10 @@ bool apply_filter(image_t *image, int8_t filter[3][3], double factor)
 			for (int8_t i = -1; i <= 1; i++) {
 				for (int8_t j = -1; j <= 1; j++) {
 					red += image->data[y + i][x + j].red * filter[i + 1][j + 1];
-					green += image->data[y + i][x + j].green * filter[i + 1][j + 1];
-					blue += image->data[y + i][x + j].blue * filter[i + 1][j + 1];
+					green += image->data[y + i][x + j].green *
+							 filter[i + 1][j + 1];
+					blue += image->data[y + i][x + j].blue *
+							filter[i + 1][j + 1];
 				}
 			}
 
@@ -667,15 +697,20 @@ bool apply_filter(image_t *image, int8_t filter[3][3], double factor)
 			green = clamp(green, 0, 255);
 			blue = clamp(blue, 0, 255);
 
-			new_data[y][x] = new_pixel_color((uint8_t)red, (uint8_t)green, (uint8_t)blue);
+			new_data[y][x] = new_pixel_color((uint8_t)red, (uint8_t)green,
+											 (uint8_t)blue);
 		}
 	}
 
-	for (uint32_t y = max(image->selection_start.y, 1); y <= min(image->selection_end.y, image->height-2); y++) {
-		for (uint32_t x = max(image->selection_start.x, 1); x <= min(image->selection_end.x, image->width-2); x++) {
+	for (uint32_t y = max(image->selection_start.y, 1);
+		 y <= min(image->selection_end.y, image->height - 2); y++) {
+		for (uint32_t x = max(image->selection_start.x, 1);
+			 x <= min(image->selection_end.x, image->width - 2); x++) {
 			image->data[y][x] = new_data[y][x];
 		}
 	}
+
+	free_data(&new_data, image->height);
 
 	return true;
 }

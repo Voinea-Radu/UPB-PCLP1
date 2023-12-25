@@ -26,7 +26,7 @@ string_t read_line(int max_size, FILE *stream)
 		bool is_separator = false;
 
 		if (current_char == EOF) {
-			if(size==0){
+			if (size == 0) {
 				free(data);
 				return NULL;
 			}
@@ -46,8 +46,9 @@ string_t read_line(int max_size, FILE *stream)
 	return data;
 }
 
-string_t* split_string(int* size, string_t string, char separator){
-	string_t* result = safe_malloc(sizeof(string_t) * strlen(string));
+string_t *split_string(int *size, string_t string, char separator)
+{
+	string_t *result = safe_malloc(sizeof(string_t) * strlen(string));
 
 	string_t buffer = safe_malloc(strlen(string) * sizeof(char) + 1);
 	size_t buffer_size = 0;
@@ -70,6 +71,8 @@ string_t* split_string(int* size, string_t string, char separator){
 	if (buffer_size != 0) {
 		buffer[buffer_size] = '\0';
 		result[(*size)++] = buffer;
+	} else {
+		free(buffer);
 	}
 
 	return result;

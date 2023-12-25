@@ -139,7 +139,7 @@ void free_image_pointer(image_t *image);
 
 void free_image(image_t image);
 
-void free_data(pixel_t*** data, uint32_t size_y);
+void free_data(pixel_t ***data, uint32_t size_y);
 
 // Image processing
 
@@ -154,17 +154,22 @@ void print_histogram(image_t *image, uint32_t x, uint32_t bins);
 
 // Setters
 
-int set_selection(image_t *image, uint32_t *x1, uint32_t *y1, uint32_t *x2, uint32_t *y2);
+int set_selection(image_t *image, uint32_t *x1, uint32_t *y1, uint32_t *x2,
+				  uint32_t *y2);
 
 void equalize(image_t *image);
 
 // Utils
 
 uint32_t *generate_histogram(image_t *image);
-uint32_t *generate_histogram_coords(image_t *image, uint32_t start_x, uint32_t start_y, uint32_t end_x, uint32_t end_y);
+
+uint32_t *
+generate_histogram_coords(image_t *image, uint32_t start_x, uint32_t start_y,
+						  uint32_t end_x, uint32_t end_y);
 
 
 void save_image_ascii(image_t *image, FILE *file);
+
 void save_image_binary(image_t *image, FILE *file);
 
 void rotate(image_t *image, int16_t degrees);
@@ -180,6 +185,6 @@ void crop(image_t *image);
 
 bool apply_filter(image_t *image, int8_t filter[3][3], double factor);
 
-void init_image_data(pixel_t***data_pointer, uint32_t size_x, uint32_t size_y);
+void init_image_data(pixel_t ***data_pointer, uint32_t size_x, uint32_t size_y);
 
 #endif //TEMA3_IMAGE_H

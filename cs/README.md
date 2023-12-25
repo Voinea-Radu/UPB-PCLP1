@@ -1,6 +1,7 @@
 # cs
 
 ## Usage
+
 ```
 $ cs/cs.sh
 Usage: cs/cs.sh file
@@ -13,7 +14,9 @@ $ cs/cs.sh cs/tests/10-FUNCTION_TOO_LONG.c
 cs/tests/10-FUNCTION_TOO_LONG.c:83: WARNING:LONG_FUNCTION: 'func_not_ok' function definition is 81 lines, perhaps refactor
 
 ```
+
 ## Tests
+
 ```
 cs/cs.sh cs/tests/
 cs/tests/05-TABS.c:3: WARNING:LEADING_SPACE: please, no spaces at the start of a line
