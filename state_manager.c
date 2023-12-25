@@ -253,7 +253,7 @@ int handle_select(string_t *args, int args_size, image_t *image)
 
 int handle_histogram(string_t *args, int args_size, image_t *image)
 {
-	if(image->state == IMAGE_NOT_LOADED) {
+	if (image->state == IMAGE_NOT_LOADED) {
 		printf("No image loaded\n");
 		return CONTINUE;
 	}
