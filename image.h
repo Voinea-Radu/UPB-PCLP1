@@ -11,33 +11,34 @@ Grupa: 315 CA
 #include <stdbool.h>
 #include <bits/types/FILE.h>
 #include <stdlib.h>
+#include <asm-generic/types.h>
 
 #include "string_utils.h"
 
 // Filters
 static const double EDGE_FILTER_FACTOR = 1;
-static const int8_t EDGE_FILTER[3][3] = {
+static const __s8 EDGE_FILTER[3][3] = {
 		{-1, -1, -1},
 		{-1, 8,  -1},
 		{-1, -1, -1}
 };
 
 static const double SHARPEN_FILTER_FACTOR = 1;
-static const int8_t SHARPEN_FILTER[3][3] = {
+static const __s8 SHARPEN_FILTER[3][3] = {
 		{0,  -1, 0},
 		{-1, 5,  -1},
 		{0,  -1, 0}
 };
 
 static const double BLUR_FILTER_FACTOR = 1.0 / 9.0;
-static const int8_t BLUR_FILTER[3][3] = {
+static const __s8 BLUR_FILTER[3][3] = {
 		{1, 1, 1},
 		{1, 1, 1},
 		{1, 1, 1}
 };
 
 static const double GAUSSIAN_BLUR_FILTER_FACTOR = 1.0 / 16.0;
-static const int8_t GAUSSIAN_BLUR_FILTER[3][3] = {
+static const __s8 GAUSSIAN_BLUR_FILTER[3][3] = {
 		{1, 2, 1},
 		{2, 4, 2},
 		{1, 2, 1}
@@ -62,18 +63,18 @@ typedef struct position_t_prototype position_t;
 
 #define IMAGE_LOADED 100
 
-struct pixel_t_prototype{
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
+struct pixel_t_prototype {
+	__s8 red;
+	__s8 green;
+	__s8 blue;
 };
 
-struct position_t_prototype{
-	uint32_t x;
-	uint32_t y;
+struct position_t_prototype {
+	__u32 x;
+	__u32 y;
 };
 
-struct image_t_prototype{
+struct image_t_prototype {
 	/**
 	 * (P)1 ASCII black and white
 	 * (P)2 ASCII grayscale
@@ -104,20 +105,19 @@ struct image_t_prototype{
 	int state;
 
 	// Precessing functions
-	void (*load)(image_t *, string_t);
+	void (*load)(image_t *image, string_t buffer);
 };
 
-
 // Constructors
-image_t new_empty_image();
+image_t new_empty_image(void);
 
 image_t new_image(FILE *file);
 
-pixel_t new_pixel_mono_color(uint8_t color);
+pixel_t new_pixel_mono_color(__s8 color);
 
-pixel_t new_pixel_color(uint8_t red, uint8_t green, uint8_t blue);
+pixel_t new_pixel_color(__s8 red, __s8 green, __s8 blue);
 
-position_t new_position(uint32_t x, uint32_t y);
+position_t new_position(__u32 x, __u32 y);
 
 // Constructor helpers
 
@@ -139,7 +139,7 @@ void free_image_pointer(image_t *image);
 
 void free_image(image_t image);
 
-void free_data(pixel_t ***data, uint32_t size_y);
+void free_data(pixel_t ***data, __u32 size_y);
 
 // Image processing
 
@@ -150,41 +150,40 @@ bool is_reading_binary(image_t *image);
 
 bool is_binary(image_t *image);
 
-void print_histogram(image_t *image, uint32_t x, uint32_t bins);
+void print_histogram(image_t *image, __u32 x, __u32 bins);
 
 // Setters
 
-int set_selection(image_t *image, uint32_t *x1, uint32_t *y1, uint32_t *x2,
-				  uint32_t *y2);
+int set_selection(image_t *image, __u32 *x1, __u32 *y1, __u32 *x2,
+				  __u32 *y2);
 
 void equalize(image_t *image);
 
 // Utils
 
-uint32_t *generate_histogram(image_t *image);
+__u32 *generate_histogram(image_t *image);
 
-uint32_t *
-generate_histogram_coords(image_t *image, uint32_t start_x, uint32_t start_y,
-						  uint32_t end_x, uint32_t end_y);
-
+__u32 *
+generate_histogram_coords(image_t *image, __u32 start_x, __u32 start_y,
+						  __u32 end_x, __u32 end_y);
 
 void save_image_ascii(image_t *image, FILE *file);
 
 void save_image_binary(image_t *image, FILE *file);
 
-void rotate(image_t *image, int16_t degrees);
+void rotate(image_t *image, __s16 degrees);
 
-void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,
-					   uint32_t size_y, uint8_t iterations);
+void rotate_sub_matrix(image_t *image, __s16 degrees, __u32 size_x,
+					   __u32 size_y, __s8 iterations);
 
 void
-rotate_matrix(image_t *image, int16_t degrees, uint32_t size_x, uint32_t size_y,
-			  uint8_t iterations);
+rotate_matrix(image_t *image, __s16 degrees, __u32 size_x, __u32 size_y,
+			  __s8 iterations);
 
 void crop(image_t *image);
 
-bool apply_filter(image_t *image, int8_t filter[3][3], double factor);
+bool apply_filter(image_t *image, __s8 filter[3][3], double factor);
 
-void init_image_data(pixel_t ***data_pointer, uint32_t size_x, uint32_t size_y);
+void init_image_data(pixel_t ***data_pointer, __u32 size_x, __u32 size_y);
 
 #endif //TEMA3_IMAGE_H

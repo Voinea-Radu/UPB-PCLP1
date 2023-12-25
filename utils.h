@@ -10,17 +10,26 @@ Grupa: 315 CA
 #include <malloc.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <linux/types.h>
 #include <bits/stdint-uintn.h>
 
 #include "string_utils.h"
 
 // Math macros
-#define max(a, b) ((a) > (b) ? (a) : (b))
-#define min(a, b) ((a) < (b) ? (a) : (b))
+
+__u32 max(__u32 max_a, __u32 max_b)
+{
+	return max_a > max_b ? max_a : max_b;
+}
+
+__u32 min(__u32 min_a, __u32 min_b)
+{
+	return min_a < min_b ? min_a : min_b;
+}
 
 // Math utils
 
-bool is_power_of_two(uint32_t number);
+bool is_power_of_two(__u32 number);
 
 int clamp(int value, int min, int max);
 

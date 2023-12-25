@@ -14,13 +14,11 @@ Grupa: 315 CA
 #define CONTINUE 1
 #define UNKNOWN_COMMAND 3
 
-typedef struct{
+typedef struct {
 	string_t key;
 
-	int (*handle)(string_t *args, int args_size, image_t *);
+	int (*handle)(string_t *args, int args_size, image_t *image);
 } string_to_handle;
-
-void process_instruction(string_t instruction);
 
 int process_command(string_t instruction);
 

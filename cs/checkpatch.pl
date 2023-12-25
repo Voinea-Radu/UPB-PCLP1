@@ -4114,7 +4114,7 @@ sub process {
 		}
 
 # check for initialized const char arrays that should be static const
-		if ($line =~ /^\+\s*const\s+(char|unsigned\s+char|_*u8|(?:[us]_)?int8_t)\s+\w+\s*\[\s*(?:\w+\s*)?\]\s*=\s*"/) {
+		if ($line =~ /^\+\s*const\s+(char|unsigned\s+char|_*u8|(?:[us]_)?__s8)\s+\w+\s*\[\s*(?:\w+\s*)?\]\s*=\s*"/) {
 			if (WARN("STATIC_CONST_CHAR_ARRAY",
 				 "const array should probably be static const\n" . $herecurr) &&
 			    $fix) {
@@ -6116,7 +6116,7 @@ sub process {
 			      "Using weak declarations can have unintended link defects\n" . $herecurr);
 		}
 
-# check for c99 types like uint8_t used outside of uapi/ and tools/
+# check for c99 types like u__s8 used outside of uapi/ and tools/
 		if ($realfile !~ m@\binclude/uapi/@ &&
 		    $realfile !~ m@\btools/@ &&
 		    $line =~ /\b($Declare)\s*$Ident\s*[=;,\[]/) {

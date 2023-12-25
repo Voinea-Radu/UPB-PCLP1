@@ -9,12 +9,6 @@ Grupa: 315 CA
 #include "string_utils.h"
 #include "utils.h"
 
-
-string_t generic_read_string(int max_size, FILE *stream, char *separators)
-{
-
-}
-
 string_t read_line(int max_size, FILE *stream)
 {
 	string_t data = safe_malloc(max_size * sizeof(char));
@@ -55,9 +49,8 @@ string_t *split_string(int *size, string_t string, char separator)
 
 	for (size_t i = 0; i < strlen(string); i++) {
 		if (string[i] == separator) {
-			if (buffer_size == 0) {
+			if (buffer_size == 0)
 				continue;
-			}
 
 			buffer[buffer_size] = '\0';
 			result[(*size)++] = buffer;
@@ -88,17 +81,15 @@ void to_lower(string_t string)
 {
 	size_t size = strlen(string);
 
-	for (size_t i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; i++)
 		string[i] = (char)tolower(string[i]);
-	}
 }
 
 void to_upper(string_t string)
 {
 	size_t size = strlen(string);
 
-	for (size_t i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; i++)
 		string[i] = (char)toupper(string[i]);
-	}
 }
 

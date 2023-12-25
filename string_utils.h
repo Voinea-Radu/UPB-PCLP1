@@ -22,5 +22,4 @@ void to_lower(string_t string);
 
 void to_upper(string_t string);
 
-
 #endif //TEMA3_STRING_UTILS_H

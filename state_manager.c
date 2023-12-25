@@ -8,8 +8,6 @@ Grupa: 315 CA
 #include "string_utils.h"
 #include "image.h"
 #include "utils.h"
-#include <ctype.h>
-
 
 static string_to_handle command_table[] = {
 		{"print",           handle_print}, // Only for debug purposes
@@ -27,17 +25,15 @@ static string_to_handle command_table[] = {
 		{"quit",            handle_exit} // Only for debug purposes
 };
 
-
 int process_command(string_t instruction)
 {
 	static const size_t size = sizeof(command_table) / sizeof(string_to_handle);
-	static image_t *image = NULL;
+	static image_t *image;
 
 	int output = UNKNOWN_COMMAND;
 
-	if (image == NULL) {
+	if (!image)
 		image = safe_calloc(sizeof(image_t));
-	}
 
 	int args_size = 0;
 	string_t *args = split_string(&args_size, instruction, ' ');
@@ -47,16 +43,14 @@ int process_command(string_t instruction)
 	for (size_t i = 0; i < size; i++) {
 		string_to_handle pair = command_table[i];
 
-		if (strcmp(pair.key, args[0]) == 0) {
+		if (strcmp(pair.key, args[0]) == 0)
 			output = pair.handle(args, args_size, image);
-		}
 	}
 
 	free_matrix(args, args_size);
 
-	if (UNKNOWN_COMMAND == output) {
+	if (UNKNOWN_COMMAND == output)
 		printf("Invalid command\n");
-	}
 
 	return output;
 }
@@ -75,7 +69,6 @@ int handle_load(string_t *args, int args_size, image_t *image)
 
 	free_image(*image);
 	*image = new_image(file);
-
 
 	if (image->state == IMAGE_LOADED) {
 		printf("Loaded %s\n", file_name);
@@ -98,9 +91,8 @@ int handle_save(string_t *args, int args_size, image_t *image)
 
 	string_t file_name = args[1];
 	string_t type = "binary";
-	if (args_size == 3) {
+	if (args_size == 3)
 		type = args[2];
-	}
 
 	FILE *file = fopen(file_name, "w");
 
@@ -109,11 +101,10 @@ int handle_save(string_t *args, int args_size, image_t *image)
 		return CONTINUE;
 	}
 
-	if (strcmp(type, "binary") == 0) {
+	if (strcmp(type, "binary") == 0)
 		save_image_binary(image, file);
-	} else {
+	else
 		save_image_ascii(image, file);
-	}
 
 	printf("Saved %s\n", file_name);
 
@@ -124,11 +115,10 @@ int handle_save(string_t *args, int args_size, image_t *image)
 
 int handle_convert_to_mono(string_t *args, int args_size, image_t *image)
 {
-	if (image->type == 3) {
+	if (image->type == 3)
 		image->type = 2;
-	} else if (image->type == 6) {
+	else if (image->type == 6)
 		image->type = 5;
-	}
 
 	printf("Converted to mono\n");
 
@@ -165,11 +155,8 @@ int handle_print(string_t *args, int args_size, image_t *image)
 		   image->selection_end.y);
 	printf("Data:\n");
 
-	if (args_size == 2) {
-		if (strcmp(args[1], "meta") == 0) {
-			return CONTINUE;
-		}
-	}
+	if (args_size == 2 && strcmp(args[1], "meta") == 0)
+		return CONTINUE;
 
 	for (size_t i = 0; i < image->height; i++) {
 		for (size_t j = 0; j < image->width; j++) {
@@ -187,12 +174,11 @@ int handle_print(string_t *args, int args_size, image_t *image)
 
 int handle_exit(string_t *args, int args_size, image_t *image)
 {
-	if (image->state == IMAGE_NOT_LOADED) {
+	if (image->state == IMAGE_NOT_LOADED)
 		printf("No image loaded\n");
-	}
 
 	free_image_pointer(image);
-	return EXIT;
+	return -EXIT;
 }
 
 int handle_select(string_t *args, int args_size, image_t *image)
@@ -202,7 +188,7 @@ int handle_select(string_t *args, int args_size, image_t *image)
 		return CONTINUE;
 	}
 
-	uint32_t x1, y1, x2, y2;
+	__u32 x1, y1, x2, y2;
 
 	bool select_all = false;
 
@@ -236,16 +222,16 @@ int handle_select(string_t *args, int args_size, image_t *image)
 	int result = set_selection(image, &x1, &y1, &x2, &y2);
 
 	switch (result) {
-		case 0:
-			if (select_all) {
-				printf("Selected ALL\n");
-				break;
-			}
-			printf("Selected %u %u %u %u\n", x1, y1, x2, y2);
+	case 0:
+		if (select_all) {
+			printf("Selected ALL\n");
 			break;
-		case 1:
-			printf("Invalid set of coordinates\n");
-			break;
+		}
+		printf("Selected %u %u %u %u\n", x1, y1, x2, y2);
+		break;
+	case 1:
+		printf("Invalid set of coordinates\n");
+		break;
 	}
 
 	return CONTINUE;
@@ -270,8 +256,8 @@ int handle_histogram(string_t *args, int args_size, image_t *image)
 		}
 	}
 
-	uint32_t max_stars = strtol(args[1], NULL, 10);
-	uint32_t bins = strtol(args[2], NULL, 10);
+	__u32 max_stars = strtol(args[1], NULL, 10);
+	__u32 bins = strtol(args[2], NULL, 10);
 
 	if (bins < 2 || !is_power_of_two(bins)) {
 		printf("Invalid number of bins\n");
@@ -291,7 +277,7 @@ int handle_equalize(string_t *args, int args_size, image_t *image)
 
 int handle_rotate(string_t *args, int args_size, image_t *image)
 {
-	int16_t degrees = strtol(args[1], NULL, 10);
+	__s16 degrees = strtol(args[1], NULL, 10);
 
 	rotate(image, degrees);
 
@@ -338,9 +324,8 @@ int handle_apply(string_t *args, int args_size, image_t *image)
 
 	to_upper(filter_name);
 
-	if (result) {
+	if (result)
 		printf("APPLY %s done\n", filter_name);
-	}
 
 	return CONTINUE;
 }

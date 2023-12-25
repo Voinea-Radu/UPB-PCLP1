@@ -19,18 +19,16 @@ int main(void)
 	while (1) {
 		instruction = read_line(MAX_COMMAND_SIZE, stdin);
 
-		if (instruction == NULL) {
+		if (0 == instruction)
 			break;
-		}
 
 		to_lower(instruction);
 
 		int result = process_command(instruction);
 		free(instruction);
 
-		if (result == EXIT) {
+		if (result == EXIT)
 			break;
-		}
 	}
-
 }
+
