@@ -69,8 +69,8 @@ int handle_load( string_t* args, int args_size,image_t *image)
 	free_image(*image);
 	*image = new_image(file);
 
-	if (image->state == IMAGE_LOADED){
 
+	if (image->state == IMAGE_LOADED){
 		printf("Loaded %s\n", file_name);
 	}	else {
 		printf("Failed to load %s\n", file_name);

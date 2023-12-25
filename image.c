@@ -64,7 +64,7 @@ image_t new_image(FILE *file)
 			}
 		}
 
-		if (image.state == IMAGE_LOADED) {
+		if (image.state == IMAGE_LOADED || image.state == IMAGE_NOT_LOADED) {
 			break;
 		}
 	}
@@ -91,6 +91,11 @@ void image_read_width(image_t *image, string_t buffer)
 void image_read_height(image_t *image, string_t buffer)
 {
 	image->height = strtol(buffer, NULL, 10);
+
+	if(image->height == 0 || image->width == 0){
+		image->state = IMAGE_NOT_LOADED;
+		return;
+	}
 
 	// Create the data matrix
 	image->data = malloc(image->height * sizeof(pixel_t *));
@@ -390,17 +395,8 @@ void equalize(image_t *image)
 
 	uint32_t *histogram = generate_histogram(image);
 
-	for (int i = 0; i < 256; i++) {
-		if (histogram[i] != 0)
-			printf("%d -> %d\n", i, histogram[i]);
-	}
-
 	double area_reversed = 1.0 / ((image->selection_end.x - image->selection_start.x + 1) *
 								  (image->selection_end.y - image->selection_start.y + 1));
-
-	printf("%d\n", ((image->selection_end.x - image->selection_start.x + 1) *
-					(image->selection_end.y - image->selection_start.y + 1)));
-	printf("%f\n", area_reversed);
 
 	for (uint32_t y = image->selection_start.y; y <= image->selection_end.y; y++)
 		for (uint32_t x = image->selection_start.x; x <= image->selection_end.x; x++) {
