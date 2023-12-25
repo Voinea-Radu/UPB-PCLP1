@@ -5,3 +5,4 @@ cmake-build-debug
 *.zip
 mem.dump
 pgm
+output/
