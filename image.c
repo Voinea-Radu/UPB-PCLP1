@@ -296,13 +296,13 @@ position_t new_position(uint32_t x, uint32_t y)
 
 int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2)
 {
-	if (image->state == IMAGE_NOT_LOADED) {
-		return 2;
-	}
-
 	// The (-1)s are because the specification stats that the selection is
 	// inclusive to the left and top and exclusive to the right
 	// [x1, x2) [y1, y2)
+
+	if(x1==x2 || y1==y2){
+		return 1;
+	}
 
 	x2--;
 	y2--;

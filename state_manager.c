@@ -138,6 +138,13 @@ int handle_print( string_t* args, int args_size,image_t *image)
 		   image->selection_start.y, image->selection_end.x,
 		   image->selection_end.y);
 	printf("Data:\n");
+
+	if(args_size == 2){
+		if(strcmp(args[1], "meta") == 0){
+			return CONTINUE;
+		}
+	}
+
 	for (size_t i = 0; i < image->height; i++) {
 		for (size_t j = 0; j < image->width; j++) {
 			if (is_mono(image)) {
@@ -164,6 +171,11 @@ int handle_exit( string_t* args, int args_size,image_t *image)
 
 int handle_select(string_t* args, int args_size, image_t *image)
 {
+	if(image->state == IMAGE_NOT_LOADED){
+		printf("No image loaded\n");
+		return CONTINUE;
+	}
+
 	uint32_t x1, y1, x2, y2;
 
 	bool select_all = false;
@@ -195,9 +207,6 @@ int handle_select(string_t* args, int args_size, image_t *image)
 			break;
 		case 1:
 			printf("Invalid set of coordinates\n");
-			break;
-		case 2:
-			printf("No image loaded\n");
 			break;
 	}
 
