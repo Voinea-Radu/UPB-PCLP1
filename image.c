@@ -630,9 +630,6 @@ bool apply_filter(image_t *image, int8_t filter[3][3], double factor)
 		new_data[i] = safe_malloc(image->width * sizeof(uint32_t));
 	}
 
-	printf("Processing from (%d, %d) to (%zu, %zu)\n", max(image->selection_start.x, 1), max(image->selection_start.y, 1),
-		   min(image->selection_end.x, image->width-2), min(image->selection_end.y, image->height-2) );
-
 	for (uint32_t y = max(image->selection_start.y, 1); y <= min(image->selection_end.y, image->height-2); y++) {
 		for (uint32_t x = max(image->selection_start.x, 1); x <= min(image->selection_end.x, image->width-2); x++) {
 			int16_t red = 0;
@@ -655,17 +652,12 @@ bool apply_filter(image_t *image, int8_t filter[3][3], double factor)
 			green = clamp(green, 0, 255);
 			blue = clamp(blue, 0, 255);
 
-			if(x == 149 && y == 100){
-				printf("Old: %d %d %d\n", image->data[y][x].red, image->data[y][x].green, image->data[y][x].blue);
-				printf("New: %d %d %d\n", red, green, blue);
-			}
-
 			new_data[y][x] = new_pixel_color((uint8_t)red, (uint8_t)green, (uint8_t)blue);
 		}
 	}
 
-	for (uint32_t y = max(image->selection_start.y, 1); y < min(image->selection_end.y, image->height-2); y++) {
-		for (uint32_t x = max(image->selection_start.x, 1); x < min(image->selection_end.x, image->width-2); x++) {
+	for (uint32_t y = max(image->selection_start.y, 1); y <= min(image->selection_end.y, image->height-2); y++) {
+		for (uint32_t x = max(image->selection_start.x, 1); x <= min(image->selection_end.x, image->width-2); x++) {
 			image->data[y][x] = new_data[y][x];
 		}
 	}

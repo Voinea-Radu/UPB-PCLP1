@@ -22,54 +22,41 @@ static string_to_handle command_table[] = {
 		{"histogram",       handle_histogram},
 		{"equalize",        handle_equalize},
 		{"select",          handle_select},
-		{"debug",          handle_debug},
+		{"debug",           handle_debug},
 		{"exit",            handle_exit},
 		{"quit",            handle_exit} // Only for debug purposes
 };
 
-void process_instructions(instructions_t instructions)
+
+int process_command( string_t instruction)
 {
-	image_t *image = NULL;
+	static const size_t size = sizeof(command_table) / sizeof(string_to_handle);
+	static image_t *image = NULL;
 
 	if (image == NULL) {
 		image = safe_calloc(sizeof(image_t));
 	}
 
-	string_t command = get_next_instruction(&instructions);
-	while (command != NULL) {
-		int code = process_command(&instructions, command, image);
+	int args_size = 0;
+	string_t* args = split_string(&args_size, instruction, ' ');
 
-		if (code == EXIT) {
-			break;
-		}
-
-		command = get_next_instruction(&instructions);
-	}
-
-	free_image_pointer(image);
-}
-
-int process_command(instructions_t *instructions, string_t command, image_t *image)
-{
-	static const size_t size = sizeof(command_table) / sizeof(string_to_handle);
+	to_lower(args[0]);
 
 	for (size_t i = 0; i < size; i++) {
 		string_to_handle pair = command_table[i];
 
-		to_lower(command);
-
-		if (strcmp(pair.key, command) == 0)
-			return pair.handle(instructions, image);
+		if (strcmp(pair.key, args[0]) == 0)
+			return pair.handle(args,args_size, image);
 	}
 
-	printf("Unknown command: '%s'\n", command);
+	printf("Unknown command\n");
 
 	return UNKNOWN_COMMAND;
 }
 
-int handle_load(instructions_t *instructions, image_t *image)
+int handle_load( string_t* args, int args_size,image_t *image)
 {
-	string_t file_name = get_next_instruction(instructions);
+	string_t file_name = args[1];
 
 	FILE *file = fopen(file_name, "r");
 
@@ -94,36 +81,24 @@ int handle_load(instructions_t *instructions, image_t *image)
 	return CONTINUE;
 }
 
-int handle_save(instructions_t *instructions, image_t *image)
+int handle_save(string_t* args, int args_size, image_t *image)
 {
-	string_t file_name = get_next_instruction(instructions);
-	string_t type = get_next_instruction(instructions);// TODO Implement
-
-	if (type == NULL || strcmp(type, "ascii") != 0) {
-		type = "binary";
-		move_cursor(instructions, -1);
+	string_t file_name = args[1];
+	string_t type = "binary";
+	if(args_size == 3){
+		type = args[2];
 	}
 
+	FILE *file = fopen(file_name, "w");
 
-	FILE *file;
+	if (NULL == file) {
+		printf("Failed to save %s\n", file_name);
+		return CONTINUE;
+	}
 
 	if (strcmp(type, "binary") == 0){
-		 file = fopen(file_name, "wb");
-
-		if (NULL == file) {
-			printf("Failed to save %s\n", file_name);
-			return CONTINUE;
-		}
-
 		save_image_binary(image, file);
 	}else{
-		 file = fopen(file_name, "w");
-
-		if (NULL == file) {
-			printf("Failed to save %s\n", file_name);
-			return CONTINUE;
-		}
-
 		save_image_ascii(image, file);
 	}
 
@@ -134,7 +109,7 @@ int handle_save(instructions_t *instructions, image_t *image)
 	return CONTINUE;
 }
 
-int handle_convert_to_mono(instructions_t *instructions, image_t *image)
+int handle_convert_to_mono( string_t* args, int args_size,image_t *image)
 {
 	if (image->type == 3) {
 		image->type = 2;
@@ -147,7 +122,7 @@ int handle_convert_to_mono(instructions_t *instructions, image_t *image)
 	return CONTINUE;
 }
 
-int handle_print(instructions_t *instructions, image_t *image)
+int handle_print( string_t* args, int args_size,image_t *image)
 {
 	printf("\n\n");
 
@@ -171,33 +146,31 @@ int handle_print(instructions_t *instructions, image_t *image)
 	return CONTINUE;
 }
 
-int handle_exit(instructions_t *instructions, image_t *image)
+int handle_exit( string_t* args, int args_size,image_t *image)
 {
 	free_image_pointer(image);
 	return EXIT;
 }
 
-int handle_select(instructions_t *instructions, image_t *image)
+int handle_select(string_t* args, int args_size, image_t *image)
 {
 	uint32_t x1, y1, x2, y2;
 
-	string_t arg_1 = get_next_instruction(instructions);
-
 	bool select_all = false;
 
-	to_lower(arg_1);
+	to_lower(args[1]);
 
-	if (strcmp(arg_1, "all") == 0) {
+	if (strcmp(args[1], "all") == 0) {
 		x1 = 0;
 		y1 = 0;
 		x2 = image->width;
 		y2 = image->height;
 		select_all = true;
 	} else {
-		x1 = strtol(arg_1, NULL, 10);
-		y1 = strtol(get_next_instruction(instructions), NULL, 10);
-		x2 = strtol(get_next_instruction(instructions), NULL, 10);
-		y2 = strtol(get_next_instruction(instructions), NULL, 10);
+		x1 = strtol(args[1], NULL, 10);
+		y1 = strtol(args[2], NULL, 10);
+		x2 = strtol(args[3], NULL, 10);
+		y2 = strtol(args[4], NULL, 10);
 	}
 
 	int result = set_selection(image, x1, y1, x2, y2);
@@ -221,10 +194,10 @@ int handle_select(instructions_t *instructions, image_t *image)
 	return CONTINUE;
 }
 
-int handle_histogram(instructions_t *instructions, image_t *image)
+int handle_histogram(string_t* args, int args_size, image_t *image)
 {
-	uint32_t max_stars = strtol(get_next_instruction(instructions), NULL, 10);
-	uint32_t bins = strtol(get_next_instruction(instructions), NULL, 10);
+	uint32_t max_stars = strtol(args[1], NULL, 10);
+	uint32_t bins = strtol(args[2], NULL, 10);
 
 	if (bins < 2 || !is_power_of_two(bins)) {
 		printf("Invalid number of bins\n");
@@ -236,31 +209,31 @@ int handle_histogram(instructions_t *instructions, image_t *image)
 	return CONTINUE;
 }
 
-int handle_equalize(instructions_t *instructions, image_t *image)
+int handle_equalize( string_t* args, int args_size,image_t *image)
 {
 	equalize(image);
 	return CONTINUE;
 }
 
-int handle_rotate(instructions_t *instructions, image_t *image)
+int handle_rotate(string_t* args, int args_size, image_t *image)
 {
-	int16_t degrees = strtol(get_next_instruction(instructions), NULL, 10);
+	int16_t degrees = strtol(args[1], NULL, 10);
 
 	rotate(image, degrees);
 
 	return CONTINUE;
 }
 
-int handle_crop(instructions_t *instructions, image_t *image)
+int handle_crop( string_t* args, int args_size,image_t *image)
 {
 	crop(image);
 
 	return CONTINUE;
 }
 
-int handle_apply(instructions_t *instructions, image_t *image)
+int handle_apply(string_t* args, int args_size, image_t *image)
 {
-	string_t filter_name = get_next_instruction(instructions);
+	string_t filter_name = args[1];
 
 	to_lower(filter_name);
 
@@ -288,7 +261,7 @@ int handle_apply(instructions_t *instructions, image_t *image)
 	return CONTINUE;
 }
 
-int handle_debug(instructions_t* instructions, image_t *image)
+int handle_debug( string_t* args, int args_size,image_t *image)
 {
 	printf("%d %d %d\n", image->data[100][149].red, image->data[100][149].green, image->data[100][149].blue);
 

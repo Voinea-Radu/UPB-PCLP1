@@ -8,37 +8,29 @@ Grupa: 315 CA
 #include "string_utils.h"
 #include "state_manager.h"
 #include "image.h"
-#include "instructions.h"
 #include "utils.h"
 
 #define MAX_COMMAND_SIZE 100
 
 int main(void)
 {
-	//tests();
-
-	instructions_t instructions = init_instructions();
-	string_t command;
+	string_t instruction;
 
 	while (1) {
-		command = read_string(MAX_COMMAND_SIZE, stdin);
+		instruction = read_line(MAX_COMMAND_SIZE, stdin);
 
-		if(command == NULL){
+		if(instruction == NULL){
 			break;
 		}
 
-		to_lower(command);
+		to_lower(instruction);
 
-		if(strcmp(command, "exit") == 0 || strcmp(command, "quit") == 0){
+		if(strcmp(instruction, "exit") == 0 || strcmp(instruction, "quit") == 0){
 			break;
 		}
 
-		add_instruction(&instructions, command);
+		process_command(instruction);
 	}
 
-	free(command);
-
-	process_instructions(instructions);
-
-	free_instructions(instructions);
+	free(instruction);
 }
