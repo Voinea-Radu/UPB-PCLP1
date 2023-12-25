@@ -1,80 +1,94 @@
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
 
 
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
+Copyright Voinea Radu-Mihai 315CAa 2023-2024
+
+Programul citeste de la utilizator linii de instructiuni care contin comanda
+precum si argumentele acesteia.
+
+Instructiunile suportate sunt sunt urmatoarele:
+1. [LOAD](#load)
+2. [SELECT](#select)
+3. [ROTATE](#rotate)
+4. [EQUALIZE](#equalize)
+5. [CROP](#crop)
+6. [APPLY](#apply)
+8. [HISTOGRAM](#histogram)
+9. [SAVE](#save)
+
+## Load
+```
+Usage:
+
+LOAD <file>
+```
+Comanda incarca in memorie fisierul \<file\>
+
+## Select
+```
+Usage:
+
+SELECT ALL
+SELECT <x1> <y1> <x2> <y2>
+```
+Comanda seteaza in structura de date a imaginii din memorie selectia dorita de
+utilizator. Fie intreaga imagine in cazul utilizarii argumentului ALL, fie
+selectia formata din coordonatele date de utilizator \<x1\> \<y1\> \<x2\>
+\<y2\>
+
+## Rotate
+```
+Usage:
+
+ROTATE <angle>
+```
+Comanda roteste imaginea intreaga sau selectia din imagine create de comanda
+[select](#select)
+
+## Equalize
+```
+Usage:
+
+EQUALIZE
+```
+Comanda egalizeaza imaginea comfor specificatiei din acest [document](https://curs.upb.ro/2023/pluginfile.php/107620/mod_folder/content/0/PLCLP1_Programarea_Calculatoarelor_2023_2024___Tema_3.pdf)
+
+## Crop
+```
+Usage:
+
+CROP
+```
+Comanda decupeaza imaginea comform selectiei create de comanda [select](#select)
+
+## Apply
+```
+Usage:
+
+APPLY <filter>
+
+Avanible filters: edge, sharpen, blur, gaussian_blur
+```
+Comanda aplica filterul selectat de utilizator comform specificatiei din acest
+ [document](https://curs.upb.ro/2023/pluginfile.php/107620/mod_folder/content/0/PLCLP1_Programarea_Calculatoarelor_2023_2024___Tema_3.pdf)
+
+## Histogram
+```
+Usage:
+
+HISTOGRAM <x> <y>
+```
+Comanda calculeaza si afiseaza histograma imaginii sau a selectie de imagine
+creata de de comanda [select](#select) comform specificatiei din acest
+[document](https://curs.upb.ro/2023/pluginfile.php/107620/mod_folder/content/0/PLCLP1_Programarea_Calculatoarelor_2023_2024___Tema_3.pdf)
 
 
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
+## Save
+```
+Usage:
 
-
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-
-
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-
-
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-
-
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-
-
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-adadasdas
-dasd
-as
-dasdasdasdasdasdas
-
-
+SAVE <file>
+SAVE <file> ascii
+```
+Comanda salveaza imaginea din memorie in fisierul dat de utilizator in mod binar
+ in cazul in care utilizatorul nu specific un mod de salvare sau in mod ascii
+ daca utilizatorul cere acest lucru.
