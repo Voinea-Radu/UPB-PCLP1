@@ -3,6 +3,8 @@ Nume: Voinea Radu-Mihai
 Grupa: 315 CA
 */
 
+#include <ctype.h>
+#include <string.h>
 #include "utils.h"
 
 
@@ -65,4 +67,15 @@ void free_matrix(void **matrix, size_t rows)
 	}
 
 	free(matrix);
+}
+
+bool is_number(string_t string)
+{
+	for (size_t i = 0; i < strlen(string); i++) {
+		if (!isdigit(string[i]) && string[i] != '-') {
+			return false;
+		}
+	}
+
+	return true;
 }

@@ -215,6 +215,18 @@ int handle_select(string_t* args, int args_size, image_t *image)
 		y2 = image->height;
 		select_all = true;
 	} else {
+		if(args_size != 5){
+			printf("Invalid command\n");
+			return CONTINUE;
+		}
+
+		for (int i = 1; i < args_size; i++) {
+			if (!is_number(args[i])) {
+				printf("Invalid command\n");
+				return CONTINUE;
+			}
+		}
+
 		x1 = strtol(args[1], NULL, 10);
 		y1 = strtol(args[2], NULL, 10);
 		x2 = strtol(args[3], NULL, 10);
