@@ -49,7 +49,7 @@ int process_command( string_t instruction)
 			return pair.handle(args,args_size, image);
 	}
 
-	printf("Unknown command\n");
+	printf("Invalid command\n");
 
 	return UNKNOWN_COMMAND;
 }

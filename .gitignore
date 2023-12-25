@@ -6,3 +6,4 @@ cmake-build-debug
 mem.dump
 pgm
 output/
+image_editor
