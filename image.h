@@ -154,13 +154,7 @@ void print_histogram(image_t *image, uint32_t x, uint32_t bins);
 
 // Setters
 
-/**
- * @return 0 - if the selection was successful
- * 		   1 - if the selection failed because one of the coordinates was out of bounds
- * 		   2 -  if the selection failed because the image was not loaded
- */
-int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2,
-				  uint32_t y2);
+int set_selection(image_t *image, uint32_t *x1, uint32_t *y1, uint32_t *x2, uint32_t *y2);
 
 void equalize(image_t *image);
 

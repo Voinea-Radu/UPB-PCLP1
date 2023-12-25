@@ -107,7 +107,11 @@ void image_read_height(image_t *image, string_t buffer)
 	}
 
 	// Set the selection to the full image
-	set_selection(image, 0, 0, image->width, image->height);
+	uint32_t x1 = 0;
+	uint32_t y1 = 0;
+	uint32_t x2 = image->width;
+	uint32_t y2 = image->height;
+	set_selection(image, &x1, &y1, &x2, &y2);
 
 	image->load = image_read_max_value;
 }
@@ -294,30 +298,32 @@ position_t new_position(uint32_t x, uint32_t y)
 	return position;
 }
 
-int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2)
+int set_selection(image_t *image, uint32_t *x1, uint32_t *y1, uint32_t *x2, uint32_t *y2)
 {
 	// The (-1)s are because the specification stats that the selection is
 	// inclusive to the left and top and exclusive to the right
 	// [x1, x2) [y1, y2)
 
-	if(x1==x2 || y1==y2){
+	if(*x1==*x2 || *y1==*y2){
 		return 1;
 	}
 
-	x2--;
-	y2--;
+	uint32_t real_x1 = min(*x1, *x2);
+	uint32_t real_x2 = max(*x1, *x2);
+	uint32_t real_y1 = min(*y1, *y2);
+	uint32_t real_y2 = max(*y1, *y2);
 
-	uint32_t real_x1 = min(x1, x2);
-	uint32_t real_x2 = max(x1, x2);
-	uint32_t real_y1 = min(y1, y2);
-	uint32_t real_y2 = max(y1, y2);
+	*x1 = real_x1;
+	*x2 = real_x2;
+	*y1 = real_y1;
+	*y2 = real_y2;
 
-	if (x1 >= image->width || x2 > image->width || y1 >= image->height || y2 > image->height) {
+	if (*x1 >= image->width ||* x2 > image->width || *y1 >= image->height || *y2 > image->height) {
 		return 1;
 	}
 
-	image->selection_start = new_position(real_x1, real_y1);
-	image->selection_end = new_position(real_x2, real_y2);
+	image->selection_start = new_position(*x1, *y1);
+	image->selection_end = new_position(*x2-1, *y2-1);
 
 	return 0;
 }

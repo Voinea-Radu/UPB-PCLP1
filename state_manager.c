@@ -221,7 +221,7 @@ int handle_select(string_t* args, int args_size, image_t *image)
 		y2 = strtol(args[4], NULL, 10);
 	}
 
-	int result = set_selection(image, x1, y1, x2, y2);
+	int result = set_selection(image, &x1, &y1,& x2, &y2);
 
 	switch (result) {
 		case 0:
