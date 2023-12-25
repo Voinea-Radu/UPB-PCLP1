@@ -103,14 +103,28 @@ int handle_save(instructions_t *instructions, image_t *image)
 		move_cursor(instructions, -1);
 	}
 
-	FILE *file = fopen(file_name, "w");
 
-	if (NULL == file) {
-		printf("Failed to save %s\n", file_name);
-		return CONTINUE;
+	FILE *file;
+
+	if (strcmp(type, "binary") == 0){
+		 file = fopen(file_name, "wb");
+
+		if (NULL == file) {
+			printf("Failed to save %s\n", file_name);
+			return CONTINUE;
+		}
+
+		save_image_binary(image, file);
+	}else{
+		 file = fopen(file_name, "w");
+
+		if (NULL == file) {
+			printf("Failed to save %s\n", file_name);
+			return CONTINUE;
+		}
+
+		save_image_ascii(image, file);
 	}
-
-	save_image(image, file);
 
 	printf("Saved %s\n", file_name);
 
@@ -263,6 +277,8 @@ int handle_apply(instructions_t *instructions, image_t *image)
 	} else {
 		printf("APPLY parameter invalid\n");
 	}
+
+	to_upper(filter_name);
 
 	if (result) {
 		printf("APPLY %s done\n", filter_name);

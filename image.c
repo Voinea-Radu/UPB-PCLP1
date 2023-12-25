@@ -416,9 +416,13 @@ void equalize(image_t *image)
 	printf("Equalize done\n");
 }
 
-void save_image(image_t *image, FILE *file)
+void save_image_ascii(image_t *image, FILE *file)
 {
-	fprintf(file, "P%d\n", image->type);
+	if(image->type > 3){
+		fprintf(file, "P%d\n", image->type-3);
+	}else{
+		fprintf(file, "P%d\n", image->type);
+	}
 	fprintf(file, "%zu %zu\n", image->width, image->height);
 
 	if (image->type == 1 || image->type == 4) {
@@ -438,6 +442,33 @@ void save_image(image_t *image, FILE *file)
 		fprintf(file, "\n");
 	}
 }
+
+void save_image_binary(image_t *image, FILE *file)
+{
+	if(image->type <= 3){
+		fprintf(file, "P%d\n", image->type+3);
+	}else{
+		fprintf(file, "P%d\n", image->type);
+	}
+	fprintf(file, "%zu %zu\n", image->width, image->height);
+
+	if (image->type == 1 || image->type == 4) {
+		fprintf(file, "1\n");
+	} else {
+		fprintf(file, "255\n");
+	}
+
+	for (size_t i = 0; i < image->height; i++) {
+		for (size_t j = 0; j < image->width; j++) {
+			if (is_mono(image)) {
+				fprintf(file, "%c", image->data[i][j].red);
+			} else {
+				fprintf(file, "%c%c%c", image->data[i][j].red, image->data[i][j].green, image->data[i][j].blue);
+			}
+		}
+	}
+}
+
 
 void rotate(image_t *image, int16_t degrees)
 {

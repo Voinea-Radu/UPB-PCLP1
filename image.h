@@ -168,7 +168,8 @@ void equalize(image_t *image);
 
 uint32_t *generate_histogram(image_t *image);
 
-void save_image(image_t *image, FILE *file);
+void save_image_ascii(image_t *image, FILE *file);
+void save_image_binary(image_t *image, FILE *file);
 
 void rotate(image_t *image, int16_t degrees);
 
