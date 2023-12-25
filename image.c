@@ -26,7 +26,7 @@ image_t new_image(FILE *file)
 	while (1) {
 		data = (char)fgetc(file);
 
-		if (data == '#') {
+		if (data == '#' && !is_binary(&image)) {
 			is_comment = true;
 		}
 
@@ -225,11 +225,16 @@ void free_image_pointer(image_t *image)
 
 void free_image(image_t image)
 {
-	for (size_t i = 0; i < image.height; i++) {
-		free(image.data[i]);
+	free_data(&image.data, image.height);
+}
+
+void free_data(pixel_t*** data, uint32_t size_y)
+{
+	for (size_t i = 0; i < size_y; i++) {
+		free((*data)[i]);
 	}
 
-	free(image.data);
+	free(*data);
 }
 
 image_t new_empty_image()
@@ -533,6 +538,13 @@ void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t
 	printf("Rotated %d\n", degrees);
 }
 
+void init_image_data(pixel_t***data_pointer, uint32_t size_x, uint32_t size_y){
+    *data_pointer = safe_malloc(size_y * sizeof(uint32_t *));
+    for (uint32_t i = 0; i < size_y; i++) {
+        (*data_pointer)[i] = safe_malloc(size_x * sizeof(uint32_t));
+    }
+}
+
 void crop(image_t *image)
 {
 	if (image->state == IMAGE_NOT_LOADED) {
@@ -543,10 +555,8 @@ void crop(image_t *image)
 	uint32_t size_x = image->selection_end.x - image->selection_start.x + 1;
 	uint32_t size_y = image->selection_end.y - image->selection_start.y + 1;
 
-	pixel_t **new_data = safe_malloc(size_y * sizeof(uint32_t *));
-	for (uint32_t i = 0; i < size_x; i++) {
-		new_data[i] = safe_malloc(size_x * sizeof(uint32_t));
-	}
+	pixel_t **new_data;
+    init_image_data(&new_data, size_x, size_y);
 
 	for (uint32_t y = 0; y < size_y; y++) {
 		for (uint32_t x = 0; x < size_x; x++) {
@@ -554,7 +564,7 @@ void crop(image_t *image)
 		}
 	}
 
-	free_image(*image);
+	free_data(&image->data, image->height);
 
 	image->width = size_x;
 	image->height = size_y;
@@ -562,18 +572,9 @@ void crop(image_t *image)
 	image->selection_start = new_position(0, 0);
 	image->selection_end = new_position(image->width - 1, image->height - 1);
 
-	image->data = malloc(image->height * sizeof(pixel_t *));
-	for (size_t i = 0; i < image->height; i++) {
-		image->data[i] = malloc(image->width * sizeof(pixel_t));
-	}
+	image->data = new_data;
 
-	for (uint32_t y = 0; y < image->height; y++) {
-		for (uint32_t x = 0; x < image->width; x++) {
-			image->data[y][x] = new_data[y][x];
-		}
-	}
-
-	printf("Cropped\n");
+	printf("Image cropped\n");
 }
 
 bool apply_filter(image_t *image, int8_t filter[3][3], double factor)

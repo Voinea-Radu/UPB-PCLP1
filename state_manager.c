@@ -26,18 +26,30 @@ static string_to_handle command_table[] = {
 		{"quit",            handle_exit} // Only for debug purposes
 };
 
-int process_command(string_t command)
+void process_instructions(instructions_t instructions)
 {
-	if (strcmp(command, " ") == 0 || strcmp(command, "\n") == 0 ||
-		strcmp(command, "") == 0)
-		return CONTINUE;
-
-	static image_t *image = NULL;
+	image_t *image = NULL;
 
 	if (image == NULL) {
 		image = safe_calloc(sizeof(image_t));
 	}
 
+	string_t command = get_next_instruction(&instructions);
+	while (command != NULL) {
+		int code = process_command(&instructions, command, image);
+
+		if (code == EXIT) {
+			break;
+		}
+
+		command = get_next_instruction(&instructions);
+	}
+
+	free_image_pointer(image);
+}
+
+int process_command(instructions_t *instructions, string_t command, image_t *image)
+{
 	static const size_t size = sizeof(command_table) / sizeof(string_to_handle);
 
 	for (size_t i = 0; i < size; i++) {
@@ -46,7 +58,7 @@ int process_command(string_t command)
 		to_lower(command);
 
 		if (strcmp(pair.key, command) == 0)
-			return pair.handle(image);
+			return pair.handle(instructions, image);
 	}
 
 	printf("Unknown command: '%s'\n", command);
@@ -54,11 +66,9 @@ int process_command(string_t command)
 	return UNKNOWN_COMMAND;
 }
 
-int handle_load(image_t *image)
+int handle_load(instructions_t *instructions, image_t *image)
 {
-	string_t file_name = read_string(MAX_ARGUMENT_SIZE, stdin);
-
-	//printf("Loading %s...\n", file_name);
+	string_t file_name = get_next_instruction(instructions);
 
 	FILE *file = fopen(file_name, "r");
 
@@ -78,15 +88,20 @@ int handle_load(image_t *image)
 		image->state = IMAGE_NOT_LOADED;
 	}
 
-	free(file_name);
 	fclose(file);
 
 	return CONTINUE;
 }
 
-int handle_save(image_t *image)
+int handle_save(instructions_t *instructions, image_t *image)
 {
-	string_t file_name = read_string(MAX_ARGUMENT_SIZE, stdin);
+	string_t file_name = get_next_instruction(instructions);
+	string_t type = get_next_instruction(instructions);// TODO Implement
+
+	if (type == NULL || strcmp(type, "ascii") != 0) {
+		type = "binary";
+		move_cursor(instructions, -1);
+	}
 
 	FILE *file = fopen(file_name, "w");
 
@@ -99,13 +114,12 @@ int handle_save(image_t *image)
 
 	printf("Saved %s\n", file_name);
 
-	free(file_name);
 	fclose(file);
 
 	return CONTINUE;
 }
 
-int handle_convert_to_mono(image_t *image)
+int handle_convert_to_mono(instructions_t *instructions, image_t *image)
 {
 	if (image->type == 3) {
 		image->type = 2;
@@ -118,12 +132,11 @@ int handle_convert_to_mono(image_t *image)
 	return CONTINUE;
 }
 
-int handle_print(image_t *image)
+int handle_print(instructions_t *instructions, image_t *image)
 {
 	printf("\n\n");
 
 	printf("Type: %d\n", image->type);
-	//printf("Max value: %zu\n", image->max_data_value);
 	printf("Size: %zux%zu\n", image->width, image->height);
 	printf("Selected: [%u %u] -> [%u %u]\n", image->selection_start.x,
 		   image->selection_start.y, image->selection_end.x,
@@ -143,30 +156,33 @@ int handle_print(image_t *image)
 	return CONTINUE;
 }
 
-int handle_exit(image_t *image)
+int handle_exit(instructions_t *instructions, image_t *image)
 {
 	free_image_pointer(image);
 	return EXIT;
 }
 
-int handle_select(image_t *image)
+int handle_select(instructions_t *instructions, image_t *image)
 {
 	uint32_t x1, y1, x2, y2;
 
-	string_t sub_command = read_string(MAX_ARGUMENT_SIZE, stdin);
+	string_t arg_1 = get_next_instruction(instructions);
+
 	bool select_all = false;
 
-	to_lower(sub_command);
+	to_lower(arg_1);
 
-	if (strcmp(sub_command, "all") == 0) {
+	if (strcmp(arg_1, "all") == 0) {
 		x1 = 0;
 		y1 = 0;
 		x2 = image->width;
 		y2 = image->height;
 		select_all = true;
 	} else {
-		x1 = strtol(sub_command, NULL, 10);
-		scanf("%u %u %u", &y1, &x2, &y2);
+		x1 = strtol(arg_1, NULL, 10);
+		y1 = strtol(get_next_instruction(instructions), NULL, 10);
+		x2 = strtol(get_next_instruction(instructions), NULL, 10);
+		y2 = strtol(get_next_instruction(instructions), NULL, 10);
 	}
 
 	int result = set_selection(image, x1, y1, x2, y2);
@@ -174,7 +190,7 @@ int handle_select(image_t *image)
 	switch (result) {
 		case 0:
 			if (select_all) {
-				printf("Selected all\n");
+				printf("Selected ALL\n");
 				break;
 			}
 			printf("Selected %u %u %u %u\n", x1, y1, x2, y2);
@@ -190,11 +206,10 @@ int handle_select(image_t *image)
 	return CONTINUE;
 }
 
-int handle_histogram(image_t *image)
+int handle_histogram(instructions_t *instructions, image_t *image)
 {
-	uint32_t max_stars, bins;
-
-	scanf("%u %u", &max_stars, &bins);
+	uint32_t max_stars = strtol(get_next_instruction(instructions), NULL, 10);
+	uint32_t bins = strtol(get_next_instruction(instructions), NULL, 10);
 
 	if (bins < 2 || !is_power_of_two(bins)) {
 		printf("Invalid number of bins\n");
@@ -206,34 +221,31 @@ int handle_histogram(image_t *image)
 	return CONTINUE;
 }
 
-int handle_equalize(image_t *image)
+int handle_equalize(instructions_t *instructions, image_t *image)
 {
 	equalize(image);
 	return CONTINUE;
 }
 
-
-int handle_rotate(image_t *image)
+int handle_rotate(instructions_t *instructions, image_t *image)
 {
-	int16_t degrees;
-
-	scanf("%hd", &degrees);
+	int16_t degrees = strtol(get_next_instruction(instructions), NULL, 10);
 
 	rotate(image, degrees);
 
 	return CONTINUE;
 }
 
-int handle_crop(image_t *image)
+int handle_crop(instructions_t *instructions, image_t *image)
 {
 	crop(image);
 
 	return CONTINUE;
 }
 
-int handle_apply(image_t *image)
+int handle_apply(instructions_t *instructions, image_t *image)
 {
-	string_t filter_name = read_string(MAX_ARGUMENT_SIZE, stdin);
+	string_t filter_name = get_next_instruction(instructions);
 
 	to_lower(filter_name);
 
@@ -246,16 +258,15 @@ int handle_apply(image_t *image)
 	} else if (strcmp(filter_name, "blur") == 0) {
 		result = apply_filter(image, BLUR_FILTER, BLUR_FILTER_FACTOR);
 	} else if (strcmp(filter_name, "gaussian_blur") == 0) {
-		result = apply_filter(image, GAUSSIAN_BLUR_FILTER, GAUSSIAN_BLUR_FILTER_FACTOR);
+		result = apply_filter(image, GAUSSIAN_BLUR_FILTER,
+							  GAUSSIAN_BLUR_FILTER_FACTOR);
 	} else {
 		printf("APPLY parameter invalid\n");
 	}
 
-	if(result){
+	if (result) {
 		printf("APPLY %s done\n", filter_name);
 	}
-
-	free(filter_name);
 
 	return CONTINUE;
 }

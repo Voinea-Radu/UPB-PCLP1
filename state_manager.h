@@ -8,11 +8,12 @@ Grupa: 315 CA
 
 #include "string_utils.h"
 #include "image.h"
+#include "instructions.h"
 
 // Handle function exit codes
 #define EXIT 0
 #define CONTINUE 1
-#define UNKNOWN_COMMAND 2
+#define UNKNOWN_COMMAND 3
 
 // Other defines
 #define MAX_ARGUMENT_SIZE 100
@@ -21,22 +22,22 @@ Grupa: 315 CA
 typedef struct{
 	string_t key;
 
-	int (*handle)(image_t *);
+	int (*handle)(instructions_t* instructions, image_t *);
 } string_to_handle;
 
-int process_command(string_t command);
+void process_instructions(instructions_t instructions);
+int process_command(instructions_t* instructions, string_t command, image_t *image);
 
-int handle_load(image_t *image);
-
-int handle_print(image_t *image);
-int handle_convert_to_mono(image_t *image);
-int handle_save(image_t *image);
-int handle_exit(image_t *image);
-int handle_select(image_t *image);
-int handle_histogram(image_t *image);
-int handle_equalize(image_t *image);
-int handle_rotate(image_t *image);
-int handle_crop(image_t *image);
-int handle_apply(image_t *image);
+int handle_load(instructions_t* instructions,image_t *image);
+int handle_print(instructions_t* instructions, image_t *image);
+int handle_convert_to_mono(instructions_t* instructions, image_t *image);
+int handle_save(instructions_t* instructions, image_t *image);
+int handle_exit(instructions_t* instructions, image_t *image);
+int handle_select(instructions_t* instructions, image_t *image);
+int handle_histogram(instructions_t* instructions, image_t *image);
+int handle_equalize(instructions_t* instructions, image_t *image);
+int handle_rotate(instructions_t* instructions, image_t *image);
+int handle_crop(instructions_t* instructions, image_t *image);
+int handle_apply(instructions_t* instructions, image_t *image);
 
 #endif //TEMA3_STATE_MANAGER_H

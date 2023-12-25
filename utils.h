@@ -3,14 +3,16 @@ Nume: Voinea Radu-Mihai
 Grupa: 315 CA
 */
 
+#ifndef TEMA3_UTILS_H
+#define TEMA3_UTILS_H
+
 #include <stddef.h>
 #include <malloc.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <bits/stdint-uintn.h>
 
-#ifndef TEMA3_UTILS_H
-#define TEMA3_UTILS_H
+#include "string_utils.h"
 
 // Math macros
 #define max(a, b) ((a) > (b) ? (a) : (b))
@@ -30,3 +32,4 @@ void *safe_realloc(void *ptr, size_t size);
 void *safe_calloc(size_t size);
 
 #endif //TEMA3_UTILS_H
+

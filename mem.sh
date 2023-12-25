@@ -2,4 +2,4 @@
 make clean; make build;
 mv pgm cmake-build-debug
 cd cmake-build-debug
-valgrind --log-file=../mem.dump --leak-check=full --track-origins=yes --show-reachable=no --show-leak-kinds=all ./pgm
+valgrind --log-file=../mem.dump --leak-check=full --track-origins=yes --show-reachable=no --show-leak-kinds=all ./image_editor
