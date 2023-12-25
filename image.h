@@ -158,12 +158,12 @@ bool apply_filter(image_t *image, string_t filter_name);
 
 void init_image_data(pixel_t ***data_pointer, __u32 size_x, __u32 size_y);
 
-__u8 **create_edge_filter(double *factor);
+int **create_edge_filter(double *factor);
 
-__u8 **create_sharpen_filter(double *factor);
+int **create_sharpen_filter(double *factor);
 
-__u8 **create_blur_filter(double *factor);
+int **create_blur_filter(double *factor);
 
-__u8 **create_gaussian_blur_filter(double *factor);
+int **create_gaussian_blur_filter(double *factor);
 
 #endif //TEMA3_IMAGE_H

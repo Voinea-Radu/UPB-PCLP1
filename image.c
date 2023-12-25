@@ -400,7 +400,7 @@ void equalize(image_t *image)
 		for (__u32 x = 0; x < image->width; x++) {
 			__u32 sum = 0;
 
-			for (__u8 i = 0; i <= image->data[y][x].red; i++)
+			for (__u16 i = 0; i <= image->data[y][x].red; i++)
 				sum += histogram[i];
 
 			image->data[y][x].red = (__u8)round(255.0 * area_reversed * sum);
@@ -616,34 +616,37 @@ bool apply_filter(image_t *image, string_t filter_name)
 		return false;
 	}
 
-	__u8 **filter;
+	int **filter;
 	double factor = 0;
 
-	if (strcmp(filter_name, "edge") == 0)
-		filter = create_edge_filter(&factor);
-	else if (strcmp(filter_name, "sharpen") == 0)
-		filter = create_sharpen_filter(&factor);
-	else if (strcmp(filter_name, "blur") == 0)
-		filter = create_blur_filter(&factor);
-	else if (strcmp(filter_name, "gaussian_blur") == 0)
-		filter = create_gaussian_blur_filter(&factor);
-	else
-		printf("APPLY parameter invalid\n");
+	to_lower(filter_name);
 
-	pixel_t **new_data = safe_malloc(image->height * sizeof(__u32 *));
-	for (__u32 i = 0; i < image->height; i++)
-		new_data[i] = safe_malloc(image->width * sizeof(__u32));
+	if (strcmp(filter_name, "edge") == 0) {
+		filter = create_edge_filter(&factor);
+	} else if (strcmp(filter_name, "sharpen") == 0) {
+		filter = create_sharpen_filter(&factor);
+	} else if (strcmp(filter_name, "blur") == 0) {
+		filter = create_blur_filter(&factor);
+	} else if (strcmp(filter_name, "gaussian_blur") == 0) {
+		filter = create_gaussian_blur_filter(&factor);
+	} else {
+		printf("APPLY parameter invalid\n");
+		return false;
+	}
+
+	pixel_t **new_data;
+	init_image_data(&new_data, image->width, image->height);
 
 	for (__u32 y = max(image->selection_start.y, 1);
 		 y <= min(image->selection_end.y, image->height - 2); y++) {
 		for (__u32 x = max(image->selection_start.x, 1);
 			 x <= min(image->selection_end.x, image->width - 2); x++) {
-			__u16 red = 0;
-			__u16 green = 0;
-			__u16 blue = 0;
+			int red = 0;
+			int green = 0;
+			int blue = 0;
 
-			for (__u8 i = -1; i <= 1; i++) {
-				for (__u8 j = -1; j <= 1; j++) {
+			for (int i = -1; i <= 1; i++) {
+				for (int j = -1; j <= 1; j++) {
 					red += image->data[y + i][x + j].red * filter[i + 1][j + 1];
 					green += image->data[y + i][x + j].green *
 							 filter[i + 1][j + 1];
@@ -652,9 +655,9 @@ bool apply_filter(image_t *image, string_t filter_name)
 				}
 			}
 
-			red = (__u16)round(red * factor);
-			green = (__u16)round(green * factor);
-			blue = (__u16)round(blue * factor);
+			red = (int)round(red * factor);
+			green = (int)round(green * factor);
+			blue = (int)round(blue * factor);
 
 			red = clamp(red, 0, 255);
 			green = clamp(green, 0, 255);
@@ -679,19 +682,21 @@ bool apply_filter(image_t *image, string_t filter_name)
 	return true;
 }
 
-__u8 **create_edge_filter(double *factor)
+int **create_edge_filter(double *factor)
 {
-	__u8 **filter = safe_malloc(3 * sizeof(__u8 *));
+	int **filter = safe_malloc(3 * sizeof(int *));
 
 	for (__u8 i = 0; i < 3; i++)
-		filter[i] = safe_malloc(3 * sizeof(__u8));
+		filter[i] = safe_malloc(3 * sizeof(int));
 
 	filter[0][0] = -1;
 	filter[0][1] = -1;
 	filter[0][2] = -1;
+
 	filter[1][0] = -1;
 	filter[1][1] = 8;
 	filter[1][2] = -1;
+
 	filter[2][0] = -1;
 	filter[2][1] = -1;
 	filter[2][2] = -1;
@@ -701,66 +706,74 @@ __u8 **create_edge_filter(double *factor)
 	return filter;
 }
 
-__u8 **create_sharpen_filter(double *factor)
+int **create_sharpen_filter(double *factor)
 {
-	__u8 **filter = safe_malloc(3 * sizeof(__u8 *));
+	int **filter = safe_malloc(3 * sizeof(int *));
 
 	for (__u8 i = 0; i < 3; i++)
-		filter[i] = safe_malloc(3 * sizeof(__u8));
+		filter[i] = safe_malloc(3 * sizeof(int));
 
 	filter[0][0] = 0;
 	filter[0][1] = -1;
 	filter[0][2] = 0;
+
 	filter[1][0] = -1;
 	filter[1][1] = 5;
 	filter[1][2] = -1;
+
 	filter[2][0] = 0;
 	filter[2][1] = -1;
+	filter[2][2] = 0;
 
 	(*factor) = 1;
 
 	return filter;
 }
 
-__u8 **create_blur_filter(double *factor)
+int **create_blur_filter(double *factor)
 {
-	__u8 **filter = safe_malloc(3 * sizeof(__u8 *));
+	int **filter = safe_malloc(3 * sizeof(int *));
 
 	for (__u8 i = 0; i < 3; i++)
-		filter[i] = safe_malloc(3 * sizeof(__u8));
+		filter[i] = safe_malloc(3 * sizeof(int));
 
 	filter[0][0] = 1;
 	filter[0][1] = 1;
 	filter[0][2] = 1;
+
 	filter[1][0] = 1;
 	filter[1][1] = 1;
 	filter[1][2] = 1;
+
 	filter[2][0] = 1;
 	filter[2][1] = 1;
 	filter[2][2] = 1;
-	(*factor) = 1 / 9.0;
+
+	(*factor) = 1.0 / 9.0;
 
 	return filter;
 }
 
-__u8 **create_gaussian_blur_filter(double *factor)
+int **create_gaussian_blur_filter(double *factor)
 {
-	__u8 **filter = safe_malloc(3 * sizeof(__u8 *));
+	int **filter = safe_malloc(3 * sizeof(int *));
 
 	for (__u8 i = 0; i < 3; i++)
-		filter[i] = safe_malloc(3 * sizeof(__u8));
+		filter[i] = safe_malloc(3 * sizeof(int));
 
 	filter[0][0] = 1;
 	filter[0][1] = 2;
 	filter[0][2] = 1;
+
 	filter[1][0] = 2;
 	filter[1][1] = 4;
 	filter[1][2] = 2;
+
 	filter[2][0] = 1;
 	filter[2][1] = 2;
 	filter[2][2] = 1;
 
-	(*factor) = 1.0 / 16;
+	(*factor) = 1.0 / 16.0;
 
 	return filter;
 }

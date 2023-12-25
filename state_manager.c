@@ -282,8 +282,6 @@ int handle_apply(string_t *args, int args_size, image_t *image)
 
 	string_t filter_name = args[1];
 
-	to_lower(filter_name);
-
 	bool result = apply_filter(image, filter_name);
 
 	to_upper(filter_name);

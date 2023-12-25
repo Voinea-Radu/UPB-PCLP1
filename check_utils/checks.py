@@ -284,7 +284,7 @@ def run_test(task, test, use_valgrind=False, ):
     return 0
 
 
-def run_test_with_env_deps(task, test, use_valgrind=True, ):
+def run_test_with_env_deps(task, test, use_valgrind=False, ):
     if task.use_env_deps:
         backup_cwd = os.getcwd()
 
