@@ -25,11 +25,11 @@ int main(void)
 
 		to_lower(instruction);
 
-		if(strcmp(instruction, "exit") == 0 || strcmp(instruction, "quit") == 0){
+		int result = process_command(instruction);
+
+		if(result == EXIT){
 			break;
 		}
-
-		process_command(instruction);
 	}
 
 	free(instruction);

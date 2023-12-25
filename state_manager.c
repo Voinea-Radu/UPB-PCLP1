@@ -14,7 +14,7 @@ Grupa: 315 CA
 static string_to_handle command_table[] = {
 		{"print",           handle_print}, // Only for debug purposes
 		{"convert_to_mono", handle_convert_to_mono}, // Only for debug purposes
-		{"save",            handle_save}, // TODO Chane. This is not to spec. Only for debug purposes as of now
+		{"save",            handle_save},
 		{"load",            handle_load},
 		{"crop",            handle_crop},
 		{"rotate",          handle_rotate},
@@ -69,9 +69,10 @@ int handle_load( string_t* args, int args_size,image_t *image)
 	free_image(*image);
 	*image = new_image(file);
 
-	if (image->state == IMAGE_LOADED)
+	if (image->state == IMAGE_LOADED){
+
 		printf("Loaded %s\n", file_name);
-	else {
+	}	else {
 		printf("Failed to load %s\n", file_name);
 		image->state = IMAGE_NOT_LOADED;
 	}
@@ -83,6 +84,11 @@ int handle_load( string_t* args, int args_size,image_t *image)
 
 int handle_save(string_t* args, int args_size, image_t *image)
 {
+	if(image->state == IMAGE_NOT_LOADED){
+		printf("No image loaded\n");
+		return CONTINUE;
+	}
+
 	string_t file_name = args[1];
 	string_t type = "binary";
 	if(args_size == 3){
@@ -148,6 +154,10 @@ int handle_print( string_t* args, int args_size,image_t *image)
 
 int handle_exit( string_t* args, int args_size,image_t *image)
 {
+	if(image->state == IMAGE_NOT_LOADED){
+		printf("No image loaded\n");
+	}
+
 	free_image_pointer(image);
 	return EXIT;
 }
@@ -233,6 +243,16 @@ int handle_crop( string_t* args, int args_size,image_t *image)
 
 int handle_apply(string_t* args, int args_size, image_t *image)
 {
+	if(image->state==IMAGE_NOT_LOADED){
+		printf("No image loaded\n");
+		return CONTINUE;
+	}
+
+	if(args_size != 2){
+		printf("Invalid command\n");
+		return CONTINUE;
+	}
+
 	string_t filter_name = args[1];
 
 	to_lower(filter_name);
