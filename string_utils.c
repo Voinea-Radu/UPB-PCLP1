@@ -17,8 +17,6 @@ string_t read_line(int max_size, FILE *stream)
 	while (1) {
 		char current_char = (char)fgetc(stream);
 
-		bool is_separator = false;
-
 		if (current_char == EOF) {
 			if (size == 0) {
 				free(data);
@@ -27,10 +25,8 @@ string_t read_line(int max_size, FILE *stream)
 			break;
 		}
 
-		if (current_char == '\n') {
-			is_separator = true;
+		if (current_char == '\n')
 			break;
-		}
 
 		data[size++] = current_char;
 	}

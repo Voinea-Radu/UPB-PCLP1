@@ -17,15 +17,9 @@ Grupa: 315 CA
 
 // Math macros
 
-__u32 max(__u32 max_a, __u32 max_b)
-{
-	return max_a > max_b ? max_a : max_b;
-}
+__u32 max(__u32 max_a, __u32 max_b);
 
-__u32 min(__u32 min_a, __u32 min_b)
-{
-	return min_a < min_b ? min_a : min_b;
-}
+__u32 min(__u32 min_a, __u32 min_b);
 
 // Math utils
 

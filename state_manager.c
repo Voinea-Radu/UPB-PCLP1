@@ -10,19 +10,16 @@ Grupa: 315 CA
 #include "utils.h"
 
 static string_to_handle command_table[] = {
-		{"print",           handle_print}, // Only for debug purposes
-		{"convert_to_mono", handle_convert_to_mono}, // Only for debug purposes
-		{"save",            handle_save},
-		{"load",            handle_load},
-		{"crop",            handle_crop},
-		{"rotate",          handle_rotate},
-		{"apply",           handle_apply},
-		{"histogram",       handle_histogram},
-		{"equalize",        handle_equalize},
-		{"select",          handle_select},
-		{"debug",           handle_debug},
-		{"exit",            handle_exit},
-		{"quit",            handle_exit} // Only for debug purposes
+		{"save",      handle_save},
+		{"load",      handle_load},
+		{"crop",      handle_crop},
+		{"rotate",    handle_rotate},
+		{"apply",     handle_apply},
+		{"histogram", handle_histogram},
+		{"equalize",  handle_equalize},
+		{"select",    handle_select},
+		{"exit",      handle_exit},
+		{"quit",      handle_exit} // Only for debug purposes
 };
 
 int process_command(string_t instruction)
@@ -47,7 +44,7 @@ int process_command(string_t instruction)
 			output = pair.handle(args, args_size, image);
 	}
 
-	free_matrix(args, args_size);
+	free_matrix((void **)args, args_size);
 
 	if (UNKNOWN_COMMAND == output)
 		printf("Invalid command\n");
@@ -57,6 +54,11 @@ int process_command(string_t instruction)
 
 int handle_load(string_t *args, int args_size, image_t *image)
 {
+	if (args_size != 2) {
+		printf("Invalid command\n");
+		return CONTINUE;
+	}
+
 	string_t file_name = args[1];
 
 	FILE *file = fopen(file_name, "r");
@@ -113,67 +115,17 @@ int handle_save(string_t *args, int args_size, image_t *image)
 	return CONTINUE;
 }
 
-int handle_convert_to_mono(string_t *args, int args_size, image_t *image)
-{
-	if (image->type == 3)
-		image->type = 2;
-	else if (image->type == 6)
-		image->type = 5;
-
-	printf("Converted to mono\n");
-
-	return CONTINUE;
-}
-
-int handle_print(string_t *args, int args_size, image_t *image)
-{
-	printf("\n\n");
-
-	if (args_size == 3) {
-		int x = strtol(args[1], NULL, 10);
-		int y = strtol(args[2], NULL, 10);
-
-		if (x < 0 || x >= image->width || y < 0 || y >= image->height) {
-			printf("Invalid coordinates\n");
-			return CONTINUE;
-		}
-
-		if (is_mono(image)) {
-			printf("%3d\n", image->data[y][x].red);
-		} else {
-			printf("(%3d %3d %3d)\n", image->data[y][x].red,
-				   image->data[y][x].green, image->data[y][x].blue);
-		}
-
-		return CONTINUE;
-	}
-
-	printf("Type: %d\n", image->type);
-	printf("Size: %zux%zu\n", image->width, image->height);
-	printf("Selected: [%u %u] -> [%u %u]\n", image->selection_start.x,
-		   image->selection_start.y, image->selection_end.x,
-		   image->selection_end.y);
-	printf("Data:\n");
-
-	if (args_size == 2 && strcmp(args[1], "meta") == 0)
-		return CONTINUE;
-
-	for (size_t i = 0; i < image->height; i++) {
-		for (size_t j = 0; j < image->width; j++) {
-			if (is_mono(image)) {
-				printf("%3d ", image->data[i][j].red);
-			} else {
-				printf("(%3d %3d %3d) ", image->data[i][j].red,
-					   image->data[i][j].green, image->data[i][j].blue);
-			}
-		}
-		printf("\n");
-	}
-	return CONTINUE;
-}
-
 int handle_exit(string_t *args, int args_size, image_t *image)
 {
+	if (args_size != 1) {
+		printf("Invalid command\n");
+		return CONTINUE;
+	}
+
+	// This is here just to not trigger a warning. The command needs to be this
+	// format.
+	args[1] = args[1];
+
 	if (image->state == IMAGE_NOT_LOADED)
 		printf("No image loaded\n");
 
@@ -271,13 +223,33 @@ int handle_histogram(string_t *args, int args_size, image_t *image)
 
 int handle_equalize(string_t *args, int args_size, image_t *image)
 {
+	if (image->state == IMAGE_NOT_LOADED) {
+		printf("No image loaded\n");
+		return CONTINUE;
+	}
+
+	// These are here to not trigger a warning. The command needs to be this
+	// format.
+	args_size = args_size;
+	args[0] = args[0];
+
 	equalize(image);
 	return CONTINUE;
 }
 
 int handle_rotate(string_t *args, int args_size, image_t *image)
 {
-	__s16 degrees = strtol(args[1], NULL, 10);
+	if (image->state == IMAGE_NOT_LOADED) {
+		printf("No image loaded\n");
+		return CONTINUE;
+	}
+
+	if (args_size != 2) {
+		printf("Invalid command\n");
+		return CONTINUE;
+	}
+
+	int degrees = strtol(args[1], NULL, 10);
 
 	rotate(image, degrees);
 
@@ -286,6 +258,11 @@ int handle_rotate(string_t *args, int args_size, image_t *image)
 
 int handle_crop(string_t *args, int args_size, image_t *image)
 {
+	// There are here to not trigger a warning. The command needs to be this
+	// format.
+	args_size = args_size;
+	args[0] = args[0];
+
 	crop(image);
 
 	return CONTINUE;
@@ -307,33 +284,12 @@ int handle_apply(string_t *args, int args_size, image_t *image)
 
 	to_lower(filter_name);
 
-	bool result = 0;
-
-	if (strcmp(filter_name, "edge") == 0) {
-		result = apply_filter(image, EDGE_FILTER, EDGE_FILTER_FACTOR);
-	} else if (strcmp(filter_name, "sharpen") == 0) {
-		result = apply_filter(image, SHARPEN_FILTER, SHARPEN_FILTER_FACTOR);
-	} else if (strcmp(filter_name, "blur") == 0) {
-		result = apply_filter(image, BLUR_FILTER, BLUR_FILTER_FACTOR);
-	} else if (strcmp(filter_name, "gaussian_blur") == 0) {
-		result = apply_filter(image, GAUSSIAN_BLUR_FILTER,
-							  GAUSSIAN_BLUR_FILTER_FACTOR);
-	} else {
-		printf("APPLY parameter invalid\n");
-	}
+	bool result = apply_filter(image, filter_name);
 
 	to_upper(filter_name);
 
 	if (result)
 		printf("APPLY %s done\n", filter_name);
-
-	return CONTINUE;
-}
-
-int handle_debug(string_t *args, int args_size, image_t *image)
-{
-	printf("%d %d %d\n", image->data[100][149].red, image->data[100][149].green,
-		   image->data[100][149].blue);
 
 	return CONTINUE;
 }

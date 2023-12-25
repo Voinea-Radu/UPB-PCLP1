@@ -194,7 +194,7 @@ bool is_mono(image_t *image)
 		   image->type == 5;
 }
 
-pixel_t new_pixel_mono_color(u__s8 color)
+pixel_t new_pixel_mono_color(__u8 color)
 {
 	pixel_t output;
 
@@ -205,7 +205,7 @@ pixel_t new_pixel_mono_color(u__s8 color)
 	return output;
 }
 
-pixel_t new_pixel_color(u__s8 red, u__s8 green, u__s8 blue)
+pixel_t new_pixel_color(__u8 red, __u8 green, __u8 blue)
 {
 	pixel_t output;
 
@@ -358,8 +358,8 @@ void print_histogram(image_t *image, __u32 max_stars, __u32 bins)
 
 	__u32 max_value = 0;
 
-	for (int bin_index = 0; bin_index < bins; bin_index++)
-		for (int element_index = 0;
+	for (__u32 bin_index = 0; bin_index < bins; bin_index++)
+		for (__u32 element_index = 0;
 			 element_index < elements_per_bin; element_index++) {
 			binned_histogram[bin_index] += histogram
 			[bin_index * elements_per_bin + element_index];
@@ -368,7 +368,7 @@ void print_histogram(image_t *image, __u32 max_stars, __u32 bins)
 				max_value = binned_histogram[bin_index];
 		}
 
-	for (int i = 0; i < bins; i++) {
+	for (__u32 i = 0; i < bins; i++) {
 		int stars = (int)(1.0 * binned_histogram[i] * max_stars / max_value);
 
 		printf("%d\t|\t", stars);
@@ -385,11 +385,6 @@ void print_histogram(image_t *image, __u32 max_stars, __u32 bins)
 
 void equalize(image_t *image)
 {
-	if (image->state == IMAGE_NOT_LOADED) {
-		printf("No image loaded\n");
-		return;
-	}
-
 	if (!is_mono(image)) {
 		printf("Black and white image needed\n");
 		return;
@@ -405,10 +400,10 @@ void equalize(image_t *image)
 		for (__u32 x = 0; x < image->width; x++) {
 			__u32 sum = 0;
 
-			for (__u32 i = 0; i <= image->data[y][x].red; i++)
+			for (__u8 i = 0; i <= image->data[y][x].red; i++)
 				sum += histogram[i];
 
-			image->data[y][x].red = (u__s8)round(255.0 * area_reversed * sum);
+			image->data[y][x].red = (__u8)round(255.0 * area_reversed * sum);
 			image->data[y][x].red = clamp(image->data[y][x].red, 0, 255);
 		}
 
@@ -465,13 +460,8 @@ void save_image_binary(image_t *image, FILE *file)
 						image->data[i][j].green, image->data[i][j].blue);
 }
 
-void rotate(image_t *image, __s16 degrees)
+void rotate(image_t *image, int degrees)
 {
-	if (image->state == IMAGE_NOT_LOADED) {
-		printf("No image loaded\n");
-		return;
-	}
-
 	if (degrees == 0) {
 		printf("Rotated 0\n");
 		return;
@@ -482,7 +472,7 @@ void rotate(image_t *image, __s16 degrees)
 		return;
 	}
 
-	u__s8 iterations = abs(degrees) / 90;
+	__u8 iterations = abs(degrees) / 90;
 
 	__u32 size_x = image->selection_end.x - image->selection_start.x + 1;
 	__u32 size_y = image->selection_end.y - image->selection_start.y + 1;
@@ -496,8 +486,8 @@ void rotate(image_t *image, __s16 degrees)
 }
 
 void
-rotate_matrix(image_t *image, __s16 degrees, __u32 size_x, __u32 size_y,
-			  u__s8 iterations)
+rotate_matrix(image_t *image, int degrees, __u32 size_x, __u32 size_y,
+			  __u8 iterations)
 {
 	pixel_t **new_data;
 	init_image_data(&new_data, size_y, size_x);
@@ -537,8 +527,8 @@ rotate_matrix(image_t *image, __s16 degrees, __u32 size_x, __u32 size_y,
 	printf("Rotated %d\n", degrees);
 }
 
-void rotate_sub_matrix(image_t *image, __s16 degrees, __u32 size_x,
-					   __u32 size_y, u__s8 iterations)
+void rotate_sub_matrix(image_t *image, int degrees, __u32 size_x,
+					   __u32 size_y, __u8 iterations)
 {
 	if (size_x != size_y) {
 		printf("The selection must be square\n");
@@ -614,7 +604,7 @@ void crop(image_t *image)
 	printf("Image cropped\n");
 }
 
-bool apply_filter(image_t *image, __s8 filter[3][3], double factor)
+bool apply_filter(image_t *image, string_t filter_name)
 {
 	if (image->state == IMAGE_NOT_LOADED) {
 		printf("No image loaded\n");
@@ -626,6 +616,20 @@ bool apply_filter(image_t *image, __s8 filter[3][3], double factor)
 		return false;
 	}
 
+	__u8 **filter;
+	double factor = 0;
+
+	if (strcmp(filter_name, "edge") == 0)
+		filter = create_edge_filter(&factor);
+	else if (strcmp(filter_name, "sharpen") == 0)
+		filter = create_sharpen_filter(&factor);
+	else if (strcmp(filter_name, "blur") == 0)
+		filter = create_blur_filter(&factor);
+	else if (strcmp(filter_name, "gaussian_blur") == 0)
+		filter = create_gaussian_blur_filter(&factor);
+	else
+		printf("APPLY parameter invalid\n");
+
 	pixel_t **new_data = safe_malloc(image->height * sizeof(__u32 *));
 	for (__u32 i = 0; i < image->height; i++)
 		new_data[i] = safe_malloc(image->width * sizeof(__u32));
@@ -634,12 +638,12 @@ bool apply_filter(image_t *image, __s8 filter[3][3], double factor)
 		 y <= min(image->selection_end.y, image->height - 2); y++) {
 		for (__u32 x = max(image->selection_start.x, 1);
 			 x <= min(image->selection_end.x, image->width - 2); x++) {
-			__s16 red = 0;
-			__s16 green = 0;
-			__s16 blue = 0;
+			__u16 red = 0;
+			__u16 green = 0;
+			__u16 blue = 0;
 
-			for (__s8 i = -1; i <= 1; i++) {
-				for (__s8 j = -1; j <= 1; j++) {
+			for (__u8 i = -1; i <= 1; i++) {
+				for (__u8 j = -1; j <= 1; j++) {
 					red += image->data[y + i][x + j].red * filter[i + 1][j + 1];
 					green += image->data[y + i][x + j].green *
 							 filter[i + 1][j + 1];
@@ -648,16 +652,16 @@ bool apply_filter(image_t *image, __s8 filter[3][3], double factor)
 				}
 			}
 
-			red = (__s16)round(red * factor);
-			green = (__s16)round(green * factor);
-			blue = (__s16)round(blue * factor);
+			red = (__u16)round(red * factor);
+			green = (__u16)round(green * factor);
+			blue = (__u16)round(blue * factor);
 
 			red = clamp(red, 0, 255);
 			green = clamp(green, 0, 255);
 			blue = clamp(blue, 0, 255);
 
-			new_data[y][x] = new_pixel_color((u__s8)red, (u__s8)green,
-											 (u__s8)blue);
+			new_data[y][x] = new_pixel_color((__u8)red, (__u8)green,
+											 (__u8)blue);
 		}
 	}
 
@@ -670,6 +674,94 @@ bool apply_filter(image_t *image, __s8 filter[3][3], double factor)
 	}
 
 	free_data(&new_data, image->height);
+	free_matrix((void **)filter, 3);
 
 	return true;
 }
+
+__u8 **create_edge_filter(double *factor)
+{
+	__u8 **filter = safe_malloc(3 * sizeof(__u8 *));
+
+	for (__u8 i = 0; i < 3; i++)
+		filter[i] = safe_malloc(3 * sizeof(__u8));
+
+	filter[0][0] = -1;
+	filter[0][1] = -1;
+	filter[0][2] = -1;
+	filter[1][0] = -1;
+	filter[1][1] = 8;
+	filter[1][2] = -1;
+	filter[2][0] = -1;
+	filter[2][1] = -1;
+	filter[2][2] = -1;
+
+	(*factor) = 1;
+
+	return filter;
+}
+
+__u8 **create_sharpen_filter(double *factor)
+{
+	__u8 **filter = safe_malloc(3 * sizeof(__u8 *));
+
+	for (__u8 i = 0; i < 3; i++)
+		filter[i] = safe_malloc(3 * sizeof(__u8));
+
+	filter[0][0] = 0;
+	filter[0][1] = -1;
+	filter[0][2] = 0;
+	filter[1][0] = -1;
+	filter[1][1] = 5;
+	filter[1][2] = -1;
+	filter[2][0] = 0;
+	filter[2][1] = -1;
+
+	(*factor) = 1;
+
+	return filter;
+}
+
+__u8 **create_blur_filter(double *factor)
+{
+	__u8 **filter = safe_malloc(3 * sizeof(__u8 *));
+
+	for (__u8 i = 0; i < 3; i++)
+		filter[i] = safe_malloc(3 * sizeof(__u8));
+
+	filter[0][0] = 1;
+	filter[0][1] = 1;
+	filter[0][2] = 1;
+	filter[1][0] = 1;
+	filter[1][1] = 1;
+	filter[1][2] = 1;
+	filter[2][0] = 1;
+	filter[2][1] = 1;
+	filter[2][2] = 1;
+	(*factor) = 1 / 9.0;
+
+	return filter;
+}
+
+__u8 **create_gaussian_blur_filter(double *factor)
+{
+	__u8 **filter = safe_malloc(3 * sizeof(__u8 *));
+
+	for (__u8 i = 0; i < 3; i++)
+		filter[i] = safe_malloc(3 * sizeof(__u8));
+
+	filter[0][0] = 1;
+	filter[0][1] = 2;
+	filter[0][2] = 1;
+	filter[1][0] = 2;
+	filter[1][1] = 4;
+	filter[1][2] = 2;
+	filter[2][0] = 1;
+	filter[2][1] = 2;
+	filter[2][2] = 1;
+
+	(*factor) = 1.0 / 16;
+
+	return filter;
+}
+

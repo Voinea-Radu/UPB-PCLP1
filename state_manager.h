@@ -24,10 +24,6 @@ int process_command(string_t instruction);
 
 int handle_load(string_t *args, int args_size, image_t *image);
 
-int handle_print(string_t *args, int args_size, image_t *image);
-
-int handle_convert_to_mono(string_t *args, int args_size, image_t *image);
-
 int handle_save(string_t *args, int args_size, image_t *image);
 
 int handle_exit(string_t *args, int args_size, image_t *image);
@@ -43,7 +39,5 @@ int handle_rotate(string_t *args, int args_size, image_t *image);
 int handle_crop(string_t *args, int args_size, image_t *image);
 
 int handle_apply(string_t *args, int args_size, image_t *image);
-
-int handle_debug(string_t *args, int args_size, image_t *image);
 
 #endif //TEMA3_STATE_MANAGER_H

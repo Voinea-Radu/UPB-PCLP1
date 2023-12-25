@@ -7,6 +7,16 @@ Grupa: 315 CA
 #include <string.h>
 #include "utils.h"
 
+__u32 max(__u32 max_a, __u32 max_b)
+{
+	return max_a > max_b ? max_a : max_b;
+}
+
+__u32 min(__u32 min_a, __u32 min_b)
+{
+	return min_a < min_b ? min_a : min_b;
+}
+
 void *safe_malloc(size_t size)
 {
 	void *result = malloc(size);
