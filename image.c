@@ -324,10 +324,15 @@ int set_selection(image_t *image, uint32_t x1, uint32_t y1, uint32_t x2, uint32_
 
 uint32_t *generate_histogram(image_t *image)
 {
+	return generate_histogram_coords(image, image->selection_start.x, image->selection_start.y, image->selection_end.x, image->selection_end.y);
+}
+
+uint32_t *generate_histogram_coords(image_t *image, uint32_t start_x, uint32_t start_y, uint32_t end_x, uint32_t end_y)
+{
 	uint32_t *histogram = calloc(255, sizeof(uint32_t));
 
-	for (size_t i = image->selection_start.y; i <= image->selection_end.y; i++) {
-		for (size_t j = image->selection_start.x; j <= image->selection_end.x; j++) {
+	for (size_t i = start_y; i <= end_y; i++) {
+		for (size_t j = start_x; j <= end_x; j++) {
 			histogram[image->data[i][j].red]++;
 		}
 	}
@@ -393,13 +398,12 @@ void equalize(image_t *image)
 		return;
 	}
 
-	uint32_t *histogram = generate_histogram(image);
+	uint32_t *histogram = generate_histogram_coords(image, 0, 0, image->width-1, image->height-1);
 
-	double area_reversed = 1.0 / ((image->selection_end.x - image->selection_start.x + 1) *
-								  (image->selection_end.y - image->selection_start.y + 1));
+	double area_reversed = 1.0 / (image->width * image->height);
 
-	for (uint32_t y = image->selection_start.y; y <= image->selection_end.y; y++)
-		for (uint32_t x = image->selection_start.x; x <= image->selection_end.x; x++) {
+	for (uint32_t y = 0; y < image->height; y++)
+		for (uint32_t x = 0; x < image->width; x++) {
 			uint32_t sum = 0;
 
 			for (uint32_t i = 0; i <= image->data[y][x].red; i++)

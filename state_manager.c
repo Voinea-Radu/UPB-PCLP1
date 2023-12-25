@@ -132,6 +132,25 @@ int handle_print( string_t* args, int args_size,image_t *image)
 {
 	printf("\n\n");
 
+	if(args_size == 3){
+		int x = strtol(args[1], NULL, 10);
+		int y = strtol(args[2], NULL, 10);
+
+		if(x < 0 || x >= image->width || y < 0 || y >= image->height) {
+			printf("Invalid coordinates\n");
+			return CONTINUE;
+		}
+
+		if (is_mono(image)) {
+			printf("%3d\n", image->data[y][x].red);
+		} else {
+			printf("(%3d %3d %3d)\n", image->data[y][x].red,
+				   image->data[y][x].green, image->data[y][x].blue);
+		}
+
+		return CONTINUE;
+	}
+
 	printf("Type: %d\n", image->type);
 	printf("Size: %zux%zu\n", image->width, image->height);
 	printf("Selected: [%u %u] -> [%u %u]\n", image->selection_start.x,

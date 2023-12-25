@@ -167,6 +167,8 @@ void equalize(image_t *image);
 // Utils
 
 uint32_t *generate_histogram(image_t *image);
+uint32_t *generate_histogram_coords(image_t *image, uint32_t start_x, uint32_t start_y, uint32_t end_x, uint32_t end_y);
+
 
 void save_image_ascii(image_t *image, FILE *file);
 void save_image_binary(image_t *image, FILE *file);
