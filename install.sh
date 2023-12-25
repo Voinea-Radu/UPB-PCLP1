@@ -1,7 +1,7 @@
 #!/bin/bash
 # Copyright 2020 Darius Neatu (neatudarius@gmail.com)
 
-sudo apt-get update
+#sudo apt-get update
 
 sudo apt-get install                        \
     gcc-8                                   \

@@ -39,5 +39,6 @@ int handle_equalize(instructions_t* instructions, image_t *image);
 int handle_rotate(instructions_t* instructions, image_t *image);
 int handle_crop(instructions_t* instructions, image_t *image);
 int handle_apply(instructions_t* instructions, image_t *image);
+int handle_debug(instructions_t* instructions, image_t *image);
 
 #endif //TEMA3_STATE_MANAGER_H

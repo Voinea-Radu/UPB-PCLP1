@@ -22,6 +22,7 @@ static string_to_handle command_table[] = {
 		{"histogram",       handle_histogram},
 		{"equalize",        handle_equalize},
 		{"select",          handle_select},
+		{"debug",          handle_debug},
 		{"exit",            handle_exit},
 		{"quit",            handle_exit} // Only for debug purposes
 };
@@ -283,6 +284,13 @@ int handle_apply(instructions_t *instructions, image_t *image)
 	if (result) {
 		printf("APPLY %s done\n", filter_name);
 	}
+
+	return CONTINUE;
+}
+
+int handle_debug(instructions_t* instructions, image_t *image)
+{
+	printf("%d %d %d\n", image->data[100][149].red, image->data[100][149].green, image->data[100][149].blue);
 
 	return CONTINUE;
 }

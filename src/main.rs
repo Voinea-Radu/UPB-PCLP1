@@ -41,16 +41,19 @@ fn compare_images(path_ref: String, path_out: String) -> ErrorTypes {
     let ref_arr = img_ref.as_bytes();
     let out_arr = img_out.as_bytes();
 
-    for (a, b) in ref_arr.iter().zip(out_arr) {
+    for (i, (a, b)) in ref_arr.iter().zip(out_arr).enumerate() {
         if a.abs_diff(*b) > EPS {
+            let x: u32 = (i / 3) as u32 % img_ref.width();
+            let y: u32 = (i / 3) as u32 / img_ref.width();
             return ErrorTypes::EPSError(
                 path_out,
                 a.abs_diff(*b),
-                100 / img_ref.width(),
-                100 % img_ref.width(),
+                x,
+                y,
             );
         }
     }
+
 
     ErrorTypes::AllGood
 }
