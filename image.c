@@ -51,7 +51,7 @@ image_t new_image(FILE *file)
 			reset_buffer(buffer, &buffer_size);
 		} else {
 			// ASCII file format
-			if (data == '\n' || data == ' ') {
+			if (data == '\n' || data == ' ' || data == '\t') {
 				if (buffer_size == 0) {
 					continue;
 				}

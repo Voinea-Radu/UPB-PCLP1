@@ -33,6 +33,8 @@ int process_command( string_t instruction)
 	static const size_t size = sizeof(command_table) / sizeof(string_to_handle);
 	static image_t *image = NULL;
 
+	int output = UNKNOWN_COMMAND;
+
 	if (image == NULL) {
 		image = safe_calloc(sizeof(image_t));
 	}
@@ -45,13 +47,18 @@ int process_command( string_t instruction)
 	for (size_t i = 0; i < size; i++) {
 		string_to_handle pair = command_table[i];
 
-		if (strcmp(pair.key, args[0]) == 0)
-			return pair.handle(args,args_size, image);
+		if (strcmp(pair.key, args[0]) == 0){
+			output = pair.handle(args,args_size, image);
+		}
 	}
 
-	printf("Invalid command\n");
+	free_matrix(args, args_size);
 
-	return UNKNOWN_COMMAND;
+	if(UNKNOWN_COMMAND == output){
+		printf("Invalid command\n");
+	}
+
+	return output;
 }
 
 int handle_load( string_t* args, int args_size,image_t *image)

@@ -31,5 +31,7 @@ void *safe_realloc(void *ptr, size_t size);
 
 void *safe_calloc(size_t size);
 
+void free_matrix(void **matrix, size_t rows);
+
 #endif //TEMA3_UTILS_H
 

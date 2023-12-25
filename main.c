@@ -26,11 +26,11 @@ int main(void)
 		to_lower(instruction);
 
 		int result = process_command(instruction);
+		free(instruction);
 
 		if(result == EXIT){
 			break;
 		}
 	}
 
-	free(instruction);
 }

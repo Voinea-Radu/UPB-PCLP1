@@ -57,3 +57,12 @@ int clamp(int value, int min, int max)
 
 	return value;
 }
+
+void free_matrix(void **matrix, size_t rows)
+{
+	for (size_t i = 0; i < rows; i++) {
+		free(matrix[i]);
+	}
+
+	free(matrix);
+}
