@@ -582,7 +582,7 @@ void rotate_sub_matrix(image_t *image, int16_t degrees, uint32_t size_x,uint32_t
 
 
 	if(iterations!=1){
-		rotate_matrix(image, degrees, size_y, size_x, iterations-1);
+		rotate_sub_matrix(image, degrees, size_y, size_x, iterations-1);
 		return;
 	}
 
